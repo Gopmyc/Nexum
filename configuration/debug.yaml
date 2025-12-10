@@ -1,0 +1,68 @@
+ENABLED:          true
+HOT_RELOAD_TIME:  1
+PREFIX_DEFAULT:   "ARCNET"
+
+COLORS:
+  # ┌───────────────────┐
+  # │ FILES DEBUG COLOR │
+  # └───────────────────┘
+  DEFAULT:
+    R: 46
+    G: 204
+    B: 113
+  INFO:
+    R: 52
+    G: 152
+    B: 219
+  WARNING:
+    R: 241
+    G: 196
+    B: 15
+  ERROR:
+    R: 231
+    G: 76
+    B: 60
+  LOG:
+    R: 52
+    G: 152
+    B: 219
+  WHITE:
+    R: 255
+    G: 255
+    B: 255
+
+  # ┌───────────────────┐
+  # │ FILES DEBUG COLOR │
+  # └───────────────────┘
+  CLASSES:
+    R: 216
+    G: 191
+    B: 216
+  CORE:
+    R: 186
+    G: 148
+    B: 255
+  PANELS:
+    R: 159
+    G: 120
+    B: 255
+  MODULES:
+    R: 139
+    G: 0
+    B: 255
+  MODULES/PLAYER/MANAGERS:
+    R: 118
+    G: 0
+    B: 220
+  MODULES/PLAYER/MODULES:
+    R: 97
+    G: 0
+    B: 186
+  ENTITIES:
+    R: 75
+    G: 0
+    B: 153
+  NETS:
+    R: 54
+    G: 0
+    B: 112
