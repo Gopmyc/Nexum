@@ -1,0 +1,23 @@
+# === Ignore VS Code settings ===
+.vscode/
+
+# === Ignore ENV settings ===
+.env
+
+# === Ignore versioner build ===
+version.exe
+version.a
+
+# === Ignore commit build ===
+commit.exe
+commit.a
+
+# === Ignore commit configuration file ===
+commit_config.json
+
+# === Ignore all object file ===
+*.o
+
+# === Ignore tool_builder build ===
+tool_builder.exe
+tool_builder.a
