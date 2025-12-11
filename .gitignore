@@ -9,14 +9,16 @@ version.exe
 version.a
 
 # === Ignore commit build ===
-commit.exe
-commit.a
+auto_commit.exe
+auto_commit.a
+auto_commit
 
 # === Ignore commit configuration file ===
 commit_config.json
 
 # === Ignore all object file ===
 *.o
+.objs/
 
 # === Ignore tool_builder build ===
 tool_builder.exe
