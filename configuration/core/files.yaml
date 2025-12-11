@@ -1,3 +1,21 @@
 SUBLOADER:  "core/"
 SHARED:     true
-CONTENT:    {}
+CONTENT:
+
+  - KEY:              "enet"
+    PATH:             "enet"
+    ARGS:             {}
+    IS_BINARY:        true
+    LOAD_SUBFOLDERS:  false
+    SIDES:
+      CLIENT: true
+      SERVER: true
+
+  - KEY:              ""
+    PATH:             ""
+    ARGS:             {}
+    IS_BINARY:        false
+    LOAD_SUBFOLDERS:  true
+    SIDES:
+      CLIENT: false
+      SERVER: true
