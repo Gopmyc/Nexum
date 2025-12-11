@@ -157,13 +157,6 @@ static int bProcessFile(
 		return 1;
 	}
 
-	if (eType == COMMIT_DELETE && !exists)
-	{
-		printf("[SKIP] Deleted file not present: %s\n", pFile->sPath);
-		free(msg);
-		return 1;
-	}
-
 	char *tmp = sCreateTempFile(iIndex);
 	if (!tmp)
 	{
