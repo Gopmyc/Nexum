@@ -21,7 +21,7 @@ function SUBLOADER:Initialize(tContent)
 
 	for sID, tFile in ipairs(tContent) do
 		if not (istable(tFile) and isstring(tFile.path) and istable(tFile.sides) and isstring(tFile.key) and istable(tFile.args)) then
-			self:GetLoader():DebugPrint("Invalid file entry at index '" ..iID.. "' for " .. self:GetID(), "ERROR")
+			MsgC(self:GetLoader():GetConfig().DEBUG.COLORS.ERROR, "[MODULES SUB-LOADER] Invalid file entry at index '" ..iID.. "' for " .. self:GetID())
 			goto continue
 		end
 
@@ -43,15 +43,15 @@ function SUBLOADER:LoadFile(tFile, fChunk)
 
 	local bIsReload		= isfunction(fChunk)
 	local bShared		= tFile.sides.client
-	local tDependencies	= self:GetLoader():GetDependencies(tFile.args, tFile.sides, self)
+	local tDependencies	= self:GetLoader():GetLibrary("RESSOURCES"):GetDependencies(tFile.args, tFile.sides, self)
 
 	if not istable(tDependencies) and (#tFile.args > 0) then 
-		return self:GetLoader():DebugPrint("The dependencies for the file '" ..tFile.key.. "' could not be resolved.", "ERROR")
+		return MsgC(self:GetLoader():GetConfig().DEBUG.COLORS.ERROR, "[MODULES SUB-LOADER] The dependencies for the file '" ..tFile.key.. "' could not be resolved.\n")
 	end
 
-	local _				= self:GetLoader():IncludeFiles(bIsReload and fChunk or tFile.path, tFile.sides, tDependencies, self:GetEnv())
+	local _				= self:GetLoader():GetLibrary("RESSOURCES"):IncludeFiles(bIsReload and fChunk or tFile.path, tFile.sides, tDependencies, self:GetEnv())
 
-	self:GetLoader():DebugPrint("The file '" .. tFile.key .. "' was " .. (bIsReload and "reload" or "loaded") .." successfully", self:GetID())
+	MsgC(self:GetLoader():GetConfig().DEBUG.COLORS.SUCCESS, "The file '" .. tFile.key .. "' was " .. (bIsReload and "reload" or "loaded") .." successfully for " .. self:GetID() .. "\n")
 
 	return _, bShared
 end
