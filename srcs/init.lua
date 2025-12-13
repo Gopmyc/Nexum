@@ -37,13 +37,47 @@ string.explode = function(sSeparator, sString, bWithPattern)
 	return tResult
 end
 
+table.Copy = function(tTable, bDeep, tSeen)
+	tSeen = (bDeep and tSeen) or nil
+	if bDeep and istable(tSeen) and tSeen[tTable] then return tSeen[tTable] end
+
+	local tCopy = {}
+	if bDeep then
+		tSeen			= tSeen or {}
+		tSeen[tTable]	= tCopy
+	end
+
+	for kKey, vValue in pairs(tTable) do
+		tCopy[kKey] = (bDeep and istable(vValue) and table.Copy(vValue, true, tSeen)) or vValue
+	end
+
+	return tCopy
+end
+
+Color			= function(iR, iG, iB)
+	return {
+		[1]		= iR,
+		[2]		= iG,
+		[3]		= iB,
+		[4]		= 255,
+		__hex	= string.format("#%02X%02X%02X", iR, iG, iB),
+	}
+end
+
 MsgC			= function(...)
 	local tArgs			= {...}
 	local tCurrentColor	= {255,255,255}
 	local sOutput		= ""
 
 	for _, Arg in ipairs(tArgs) do
-		if istable(Arg) and #Arg >= 3 then
+		if istable(Arg) then
+			local iR, iG, iB	= Arg[1] or Arg.R or Arg.r, Arg[2] or Arg.G or Arg.g, Arg[3] or Arg.B or Arg.b
+			if not (isnumber(iR) and isnumber(iG) and isnumber(iB)) then
+				MsgC(Color(255, 0, 0), "[ERROR] Invalid color table passed to MsgC.\n")
+				goto continue
+			end
+			if not isstring(Arg.__hex) then Arg=Color(iR, iG, iB); end
+
 			tCurrentColor	= Arg
 		else
 			sOutput	= sOutput .. string.format(
@@ -54,6 +88,8 @@ MsgC			= function(...)
 				tostring(Arg)
 			)
 		end
+
+		::continue::
 	end
 
 	print(sOutput)
@@ -72,10 +108,6 @@ PrintTable			= function(tTable, sPrefix)
     end
 end
 
-Color			= function(iR, iG, iB)
-	return {iR, iG, iB}
-end
-
 FilesFind		= function(sPath)
 	local tFiles, tDirs = {}, {}
 
@@ -89,6 +121,22 @@ FilesFind		= function(sPath)
 	end
 
 	return tFiles, tDirs
+end
+
+LoadFileInEnvironment	= function(sPath, tEnvironment)
+	local sCode					= lovr.filesystem.read(sPath)
+	if not sCode then
+		return MsgC(Color(231, 76, 60), "[ENV-LOADER] Cannot read file: " .. sPath .. "\n")
+	end
+
+	local fChunk, sCompileErr	= loadstring(sCode, sFileSource)
+	if not fChunk then
+		return MsgC(Color(231, 76, 60), "[ENV-LOADER] Compile error: " .. tostring(sCompileErr) .. " in file: " .. sPath .. "\n")
+	end
+
+	setfenv(fChunk, tEnvironment)
+
+	return fChunk
 end
 
 local CONFIGURATION_PATH	= "configuration/"
