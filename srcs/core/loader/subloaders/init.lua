@@ -59,8 +59,8 @@ function SUBLOADER_BASE:Initialize(tConfig, sBasePath, tLoader)
 end
 
 function SUBLOADER_BASE:InitializeGroup(sGroup)
-	if not self.INITIALIZED then return MsgC(Color(231,76,60), "[LOADER] SubLoader base not initialized\n") end
-	if not isstring(sGroup) then return MsgC(Color(231,76,60), "[LOADER] sGroup not a string : "..type(sGroup).."\n") end
+	if not self.INITIALIZED then return MsgC(self:GetAttribute("LOADER"):GetConfig().DEBUG.COLORS.ERROR, "[LOADER] SubLoader base not initialized\n") end
+	if not isstring(sGroup) then return MsgC(self:GetAttribute("LOADER"):GetConfig().DEBUG.COLORS.ERROR, "[LOADER] sGroup not a string : "..type(sGroup).."\n") end
 
 	local tConfig			= self:GetAttribute("CONFIG")
 	local sBasePath			= self:GetAttribute("BASE_PATH")
@@ -71,25 +71,25 @@ function SUBLOADER_BASE:InitializeGroup(sGroup)
 
 	local bValid, sError	= fValidateGroup(sGroup, tGroup)
 	if not bValid then
-		return MsgC(Color(231,76,60), string.format("[LOADER] Group '%s' validation failed: %s\n", sGroup, sError or "unknown"))
+		return MsgC(tLoader:GetConfig().DEBUG.COLORS.ERROR, string.format("[LOADER] Group '%s' validation failed: %s\n", sGroup, sError or "unknown"))
 	end
 
 	local sPath					= sBasePath .. tGroup.FILES.SUBLOADER
 	local bSubOk, tSubLoader	= pcall(function() return tLoader:LoadSubLoader(sPath, tGroup.FILES.CONTENT, tGroup.FILES.SHARED, sGroup) end)
 	if not bSubOk then
-		return MsgC(Color(231,76,60), string.format("[LOADER] Failed to load SubLoader for '%s', sPath : '%s', ERROR : %s\n", sGroup, sPath, tSubLoader))
+		return MsgC(tLoader:GetConfig().DEBUG.COLORS.ERROR, string.format("[LOADER] Failed to load SubLoader for '%s', sPath : '%s', ERROR : %s\n", sGroup, sPath, tSubLoader))
 	end
 
 	local bSubValid, sSubError = fValidateSubLoader(sGroup, tSubLoader)
 	if not bSubValid then
-		return MsgC(Color(231,76,60), string.format("[LOADER] SubLoader '%s' validation failed: %s\n", sGroup, sSubError or "unknown"))
+		return MsgC(tLoader:GetConfig().DEBUG.COLORS.ERROR, string.format("[LOADER] SubLoader '%s' validation failed: %s\n", sGroup, sSubError or "unknown"))
 	end
 
-	MsgC(Color(46, 204, 113), "[LOADER] SubLoader for group '"..sGroup.."' loaded successfully !\n")
+	MsgC(tLoader:GetConfig().DEBUG.COLORS.SUCCESS, "[LOADER] SubLoader for group '"..sGroup.."' loaded successfully !\n")
 
 	local bInitOk, tInitialized = pcall(function() return tSubLoader[1]:Initialize(tSubLoader[2]) end)
 	if not bInitOk then
-		return MsgC(Color(231,76,60), string.format("[LOADER] SubLoader '%s' initialization failed ! ERROR : %s\n", sGroup, tInitialized))
+		return MsgC(tLoader:GetConfig().DEBUG.COLORS.ERROR, string.format("[LOADER] SubLoader '%s' initialization failed ! ERROR : %s\n", sGroup, tInitialized))
 	end
 
 	self.SUBLOADERS[sGroup]	= tSubLoader
@@ -116,6 +116,6 @@ end
 
 function SUBLOADER_BASE:GetSubLoader(sGroup)
 	return self.SUBLOADERS[sGroup]
-end
+end	
 
 return SUBLOADER_BASE
