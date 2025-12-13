@@ -50,8 +50,8 @@ function SUBLOADER:Initialize(tContent)
 		local bOk, tHotRelod		= pcall(function() return self:HotReloadInitialize() end)
 
 		self.HotReload	= tHotRelod
-		MsgC(bOk and Color(46, 204, 113) or Color(231, 76, 60),	"[HOT-RELOAD] HotReloadInitialize " .. (bOk and "success" or "failed") .. "!\n")
-		if not bOk then return MsgC(Color(231, 76, 60), "Error: " .. tostring(tHotRelod) .. "\n") and debug.Trace() end
+		MsgC(bOk and self:GetLoader():GetConfig().DEBUG.COLORS.SUCCESS or self:GetLoader():GetConfig().DEBUG.COLORS.ERROR,	"[HOT-RELOAD] HotReloadInitialize " .. (bOk and "success" or "failed") .. "!\n")
+		if not bOk then return MsgC(self:GetLoader():GetConfig().DEBUG.COLORS.ERROR, "Error: " .. tostring(tHotRelod) .. "\n") and debug.Trace() end
 
 		--timer.Create(
 		--	ProjectNameCapital .. ":HotReload",
@@ -63,7 +63,7 @@ function SUBLOADER:Initialize(tContent)
 		--				return self:HotReloading()
 		--			end,
 		--			function(sErr)
-		--				MsgC(Color(231,76,60), string.format("[HOT-RELOAD] Error during HotReload: %s\n", sErr))
+		--				MsgC(self:GetLoader():GetConfig().DEBUG.COLORS.ERROR, string.format("[HOT-RELOAD] Error during HotReload: %s\n", sErr))
 		--				debug.Trace()
 		--			end
 		--		)
@@ -90,7 +90,7 @@ function SUBLOADER:HotReloadInitialize()
 			local tFile				= self.tExeptedGroup[sGroup] and {path = ""} or fGetFileInGroup(tGroupConfig, sFileKey)
 
 			if not (tFile and isstring(tFile.path)) then
-				MsgC(Color(231, 76, 60), string.format("[HOT-RELOAD] File '%s' in group '%s' has no valid path\n", sFileKey, sGroup))
+				MsgC(self:GetLoader():GetConfig().DEBUG.COLORS.ERROR, string.format("[HOT-RELOAD] File '%s' in group '%s' has no valid path\n", sFileKey, sGroup))
 				goto continue
 			end
 
@@ -132,8 +132,8 @@ function SUBLOADER:HotReloadInitialize()
 end
 
 function SUBLOADER:HotReloading()
-	local tNetScript	= self:GetLoader():GetScript("net")
-	local tHookScript	= self:GetLoader():GetScript("hook")
+	local tNetScript	= self:GetLoader():GetLibrary("RESSOURCES"):GetScript("net")
+	local tHookScript	= self:GetLoader():GetLibrary("RESSOURCES"):GetScript("hook")
 	local sPrefix		= "HOT_RELOAD"
 
 	if SERVER then
