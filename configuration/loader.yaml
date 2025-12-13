@@ -9,3 +9,7 @@ LOAD_PRIORITY:
   1: "CLASSES"
   2: "CORE"
   3: "MODULES"
+
+LIBRARIES:
+  RESSOURCES:   "srcs/core/loader/libraries/ressources.lua"
+  FINDER:       "srcs/core/loader/libraries/finder.lua"
