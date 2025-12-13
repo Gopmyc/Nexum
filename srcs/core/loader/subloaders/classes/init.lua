@@ -22,7 +22,7 @@ function SUBLOADER:Initialize(tContent)
 
 	for iID, tFile in ipairs(tContent) do
 		if not (istable(tFile) and isstring(tFile.path) and isstring(tFile.key)) then
-			self:GetLoader():DebugPrint("Invalid file entry at index '" ..iID.. "' for " .. self:GetID(), "ERROR")
+			MsgC(self:GetLoader():GetConfig().DEBUG.COLORS.ERROR, "[CLASSES SUB-LOADER] Invalid file entry at index '" ..iID.. "' for " .. self:GetID())
 			goto continue
 		end
 
@@ -43,9 +43,9 @@ function SUBLOADER:LoadFile(tFile, fChunk)
 
 	local bIsReload		= isfunction(fChunk)
 	local bShared		= self.tFileSides.client
-	local _				= self:GetLoader():IncludeFiles(bIsReload and fChunk or tFile.path, self.tFileSides, nil, self:GetEnv())
+	local _				= self:GetLoader():GetLibrary("RESSOURCES"):IncludeFiles(bIsReload and fChunk or tFile.path, self.tFileSides, nil, self:GetEnv())
 
-	self:GetLoader():DebugPrint("The file '" .. tFile.key .. "' was " .. (bIsReload and "reload" or "loaded") .." successfully", self:GetID())
+	MsgC(self:GetLoader():GetConfig().DEBUG.COLORS.SUCCESS, "The file '" .. tFile.key .. "' was " .. (bIsReload and "reload" or "loaded") .." successfully for " .. self:GetID() .. "\n")
 
 	return _, bShared
 end
