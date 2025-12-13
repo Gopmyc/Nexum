@@ -19,9 +19,9 @@ function SUBLOADER:Initialize(tContent)
 	self.__ENV.CONTENT.CORE.__LIBRARIES	= self:GetLoader():GetLibrariesBase("libraries", self.__ENV.CONTENT.CORE)
 	self.__BUFFER						= {}
 		
-	for sID, tFile in ipairs(tContent) do
+	for sID, tFile in ipairs(tContent) do -- TODO : Make a methode in SUBLOADER_BASE to check structure intergrity for each file in config and throw a error message ilf struct is invalide, check if has a PATH, KEY, ARGS, ect...
 		if not (istable(tFile) and isstring(tFile.path) and istable(tFile.sides) and isstring(tFile.key) and istable(tFile.args)) then
-			self:GetLoader():DebugPrint("Invalid file entry at index '" ..iID.. "' for " .. self:GetID(), "ERROR")
+			MsgC(self:GetLoader():GetConfig().DEBUG.COLORS.ERROR, "[OBJECTS SUB-LOADER] Invalid file entry at index '" ..sID.. "' for " .. self:GetID())
 			goto continue
 		end
 
@@ -44,15 +44,15 @@ function SUBLOADER:LoadFile(tFile, fChunk)
 
 	local bIsReload		= isfunction(fChunk)
 	local bShared		= tFile.sides.client
-	local tDependencies	= self:GetLoader():GetDependencies(tFile.args, tFile.sides, self)
+	local tDependencies	= self:GetLoader():GetLibrary("RESSOURCES"):GetDependencies(tFile.args, tFile.sides, self)
 
 	if not istable(tDependencies) and (#tFile.args > 0) then 
-		return self:GetLoader():DebugPrint("The dependencies for the file '" ..tFile.key.. "' could not be resolved.", "ERROR")
+		return MsgC(self:GetLoader():GetConfig().DEBUG.COLORS.ERROR, "[OBJECTS SUB-LOADER] The dependencies for the file '" ..tFile.key.. "' could not be resolved.\n")
 	end
 
-	local _				= self:GetLoader():IncludeFiles(bIsReload and fChunk or tFile.path, tFile.sides, tDependencies, self:GetEnv(), tFile.is_binary)
+	local _				= self:GetLoader():GetLibrary("RESSOURCES"):IncludeFiles(bIsReload and fChunk or tFile.path, tFile.sides, tDependencies, self:GetEnv(), tFile.is_binary)
 
-	self:GetLoader():DebugPrint("The file '" .. tFile.key .. "' was " .. (bIsReload and "reload" or "loaded") .." successfully", self:GetID())
+	MsgC(self:GetLoader():GetConfig().DEBUG.COLORS.SUCCESS, "The file '" .. tFile.key .. "' was " .. (bIsReload and "reload" or "loaded") .." successfully for " .. self:GetID() .. "\n")
 
 	return _, bShared
 end
