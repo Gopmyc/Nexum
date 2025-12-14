@@ -2909,7 +2909,7 @@ function LIBRARY:Compile(sFilePath, sFileName)
 	end, function(sErr)
 		MsgC(
 			Color(231, 76, 60), "[SUBLOADER] File read failed: ",
-			Color(255, 255, 255), tostring(sErr), "\n"
+			Color(255, 255, 255), tostring(sErr)
 		)
 		debug.Trace()
 	end, sFilePath)
@@ -2932,7 +2932,7 @@ function LIBRARY:Compile(sFilePath, sFileName)
 	end, function(sErr)
 		MsgC(
 			Color(231, 76, 60), "[SUBLOADER] Compilation failed: ",
-			Color(255, 255, 255), tostring(sErr), "\n"
+			Color(255, 255, 255), tostring(sErr)
 		)
 		debug.Trace()
 	end, sFileContent, sFileName)
