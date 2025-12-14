@@ -16,7 +16,7 @@ function LOADER:Initialize(sConfigPath, tLibraries)
 		return (istable(tLoader.CONFIG.DEBUG) and tLoader.CONFIG.DEBUG.ENABLED) and fMsgC(...) or (not istable(tLoader.CONFIG.DEBUG) and fMsgC(...))
 	end
 
-	tLoader.SUBLOADER_BASE			= self:InitializeSubloaders(tLoader, tLoader.CONFIG)
+	self:InitializeSubloaders(tLoader, tLoader.CONFIG)
 
 	return tLoader
 end
@@ -52,20 +52,18 @@ function LOADER:CreateLoaderInstance(tConfig)
 end
 
 function LOADER:InitializeSubloaders(tLoader, tConfig)
-	local tSubloaderBase = require(tLoader.SUBLOADERS_PATH):Initialize(tConfig, tLoader.SUBLOADERS_PATH, tLoader)
+	tLoader.SUBLOADER_BASE	= require(tLoader.SUBLOADERS_PATH):Initialize(tConfig, tLoader.SUBLOADERS_PATH, tLoader)
 
 	if istable(tLoader.CONFIG.DEBUG) and tLoader.CONFIG.DEBUG.ENABLED then
 		tLoader.LOAD_PRIORITY[#tLoader.LOAD_PRIORITY + 1]	= "HOT_RELOAD"
 	end
 
 	for _, sGroup in ipairs(tLoader.LOAD_PRIORITY) do
-		local tSubLoader, tInitialized = tSubloaderBase:InitializeGroup(sGroup)
+		local tSubLoader, tInitialized = tLoader.SUBLOADER_BASE:InitializeGroup(sGroup)
 		if istable(tSubLoader) then
 			tLoader.RESSOURCES[tSubLoader[1]:GetID()] = tInitialized
 		end
 	end
-
-	return tSubloaderBase
 end
 
 function LOADER:LoadConfiguration(sPath, tLibraries, tTable)
@@ -215,23 +213,23 @@ end
 function LOADER:GetLibrary(sName)
 	assert(isstring(sName) and #sName > 0, "[LIBRARY] Library name must be a non-empty string")
 	return (self.LIBRARIES and self.LIBRARIES.BUFFER and self.LIBRARIES.BUFFER[sName])
-		or MsgC(Color(231, 76, 60), "[LIBRARY] Library not found: " .. sName .. "\n")
+		or MsgC(Color(231, 76, 60), "[LIBRARY] Library not found: " .. sName)
 end
 
 function LOADER:PrintLibraries()
 	if not istable(self.LIBRARIES) then
-		return MsgC(self:GetConfig().DEBUG.COLORS.ERROR, "[LIBRARY] 'LIBRARIES' table not initialized.\n")
+		return MsgC(self:GetConfig().DEBUG.COLORS.ERROR, "[LIBRARY] 'LIBRARIES' table not initialized.")
 	end
 
 	if not istable(self.LIBRARIES.BUFFER) or not next(self.LIBRARIES.BUFFER) then
-		return MsgC(self:GetConfig().DEBUG.COLORS.ERROR, "[LIBRARY] No libraries loaded.\n")
+		return MsgC(self:GetConfig().DEBUG.COLORS.ERROR, "[LIBRARY] No libraries loaded.")
 	end
 		
 	for sID, _ in pairs(self.LIBRARIES.BUFFER) do
 		MsgC(
 			Color(52, 152, 219), "[LIBRARY] ",
 			Color(46, 204, 113), "Loaded: ",
-			Color(236, 240, 241), sID, "\n"
+			Color(236, 240, 241), sID
 		)
 	end
 end
