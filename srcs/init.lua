@@ -73,7 +73,7 @@ MsgC			= function(...)
 		if istable(Arg) then
 			local iR, iG, iB	= Arg[1] or Arg.R or Arg.r, Arg[2] or Arg.G or Arg.g, Arg[3] or Arg.B or Arg.b
 			if not (isnumber(iR) and isnumber(iG) and isnumber(iB)) then
-				MsgC(Color(255, 0, 0), "[ERROR] Invalid color table passed to MsgC.\n")
+				MsgC(Color(255, 0, 0), "[ERROR] Invalid color table passed to MsgC.")
 				goto continue
 			end
 			if not isstring(Arg.__hex) then Arg=Color(iR, iG, iB); end
@@ -126,12 +126,12 @@ end
 LoadFileInEnvironment	= function(sPath, tEnvironment)
 	local sCode					= lovr.filesystem.read(sPath)
 	if not sCode then
-		return MsgC(Color(231, 76, 60), "[ENV-LOADER] Cannot read file: " .. sPath .. "\n")
+		return MsgC(Color(231, 76, 60), "[ENV-LOADER] Cannot read file: " .. sPath)
 	end
 
 	local fChunk, sCompileErr	= loadstring(sCode, sFileSource)
 	if not fChunk then
-		return MsgC(Color(231, 76, 60), "[ENV-LOADER] Compile error: " .. tostring(sCompileErr) .. " in file: " .. sPath .. "\n")
+		return MsgC(Color(231, 76, 60), "[ENV-LOADER] Compile error: " .. tostring(sCompileErr) .. " in file: " .. sPath)
 	end
 
 	setfenv(fChunk, tEnvironment)
