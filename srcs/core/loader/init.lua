@@ -16,7 +16,9 @@ function LOADER:Initialize(sConfigPath, tLibraries)
 		return (istable(tLoader.CONFIG.DEBUG) and tLoader.CONFIG.DEBUG.ENABLED) and fMsgC(...) or (not istable(tLoader.CONFIG.DEBUG) and fMsgC(...))
 	end
 
-	self:InitializeSubloaders(tLoader, tLoader.CONFIG)
+	tLoader:InitializeSubloaders(tLoader, tLoader.CONFIG)
+
+	print(tLoader:GetLibrary("RESSOURCES"):GetScript("networking").GetHost)
 
 	return tLoader
 end
@@ -61,7 +63,7 @@ function LOADER:InitializeSubloaders(tLoader, tConfig)
 	for _, sGroup in ipairs(tLoader.LOAD_PRIORITY) do
 		local tSubLoader, tInitialized = tLoader.SUBLOADER_BASE:InitializeGroup(sGroup)
 		if istable(tSubLoader) then
-			tLoader.RESSOURCES[tSubLoader[1]:GetID()] = tInitialized
+			tLoader:GetLibrary("RESSOURCES").RESSOURCES[tSubLoader[1]:GetID()] = tInitialized
 		end
 	end
 end
