@@ -1,7 +1,6 @@
 SUBLOADER:  "core/"
 SHARED:     true
 CONTENT:
-
   - KEY:              "enet"
     PATH:             "enet"
     ARGS:             {}
@@ -10,12 +9,12 @@ CONTENT:
     SIDES:
       CLIENT: true
       SERVER: true
-
-  - KEY:              ""
-    PATH:             ""
-    ARGS:             {}
+  - KEY:              "networking"
+    PATH:             "srcs/core/networking/init.lua"
+    ARGS:
+      - "enet"
     IS_BINARY:        false
-    LOAD_SUBFOLDERS:  true
+    LOAD_SUBFOLDERS:  false
     SIDES:
-      CLIENT: false
+      CLIENT: true
       SERVER: true
