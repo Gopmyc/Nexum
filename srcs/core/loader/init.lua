@@ -18,8 +18,6 @@ function LOADER:Initialize(sConfigPath, tLibraries)
 
 	tLoader:InitializeSubloaders(tLoader, tLoader.CONFIG)
 
-	print(tLoader:GetLibrary("RESSOURCES"):GetScript("networking").GetHost)
-
 	return tLoader
 end
 
