@@ -10,13 +10,13 @@ local function fGetFileInGroup(tGroup, sFile)
 
 	tGroup = (tGroup.FILES and tGroup.FILES.CONTENT) or tGroup
 
-	if #tGroup < 1 then return MsgC(Color(231,76,60), "[SUBLOADER] The group has no files to search for '"..sFile.."'\n") end
+	if #tGroup < 1 then return MsgC(Color(231,76,60), "[SUBLOADER] The group has no files to search for '"..sFile.."'") end
 
 	for iID, tFile in ipairs(tGroup) do
-		if tFile.key == sFile then return tFile end
+		if tFile.KEY == sFile then return tFile end
 	end
 	
-	return MsgC(Color(231,76,60), "[SUBLOADER] File '"..sFile.."' not found in the given group\n")
+	return MsgC(Color(231,76,60), "[SUBLOADER] File '"..sFile.."' not found in the given group")
 end
 
 local function fGetConfigGroup(tConfig, sGroup)
@@ -29,7 +29,7 @@ local function fGetConfigGroup(tConfig, sGroup)
 		tGroup = tGroup and tGroup[sPart] or nil
 
 		if not tGroup then
-			MsgC(Color(231,76,60), "[LOADER] Config segment not found: '"..sPart.."' in group '"..sGroup.."'\n")
+			MsgC(Color(231,76,60), "[LOADER] Config segment not found: '"..sPart.."' in group '"..sGroup)
 			break
 		end
 	end
@@ -50,8 +50,8 @@ function SUBLOADER:Initialize(tContent)
 		local bOk, tHotRelod		= pcall(function() return self:HotReloadInitialize() end)
 
 		self.HotReload	= tHotRelod
-		MsgC(bOk and self:GetLoader():GetConfig().DEBUG.COLORS.SUCCESS or self:GetLoader():GetConfig().DEBUG.COLORS.ERROR,	"[HOT-RELOAD] HotReloadInitialize " .. (bOk and "success" or "failed") .. "!\n")
-		if not bOk then return MsgC(self:GetLoader():GetConfig().DEBUG.COLORS.ERROR, "Error: " .. tostring(tHotRelod) .. "\n") and debug.Trace() end
+		MsgC(bOk and self:GetLoader():GetConfig().DEBUG.COLORS.SUCCESS or self:GetLoader():GetConfig().DEBUG.COLORS.ERROR,	"[HOT-RELOAD] HotReloadInitialize " .. (bOk and "success" or "failed") .. "!")
+		if not bOk then return MsgC(self:GetLoader():GetConfig().DEBUG.COLORS.ERROR, "Error: " .. tostring(tHotRelod)) and debug.Trace() end
 
 		--timer.Create(
 		--	ProjectNameCapital .. ":HotReload",
@@ -63,7 +63,7 @@ function SUBLOADER:Initialize(tContent)
 		--				return self:HotReloading()
 		--			end,
 		--			function(sErr)
-		--				MsgC(self:GetLoader():GetConfig().DEBUG.COLORS.ERROR, string.format("[HOT-RELOAD] Error during HotReload: %s\n", sErr))
+		--				MsgC(self:GetLoader():GetConfig().DEBUG.COLORS.ERROR, string.format("[HOT-RELOAD] Error during HotReload: %s", sErr))
 		--				debug.Trace()
 		--			end
 		--		)
@@ -89,15 +89,15 @@ function SUBLOADER:HotReloadInitialize()
 		for sFileKey, _ in pairs(tGroupRessources) do
 			local tFile				= self.tExeptedGroup[sGroup] and {path = ""} or fGetFileInGroup(tGroupConfig, sFileKey)
 
-			if not (tFile and isstring(tFile.path)) then
-				MsgC(self:GetLoader():GetConfig().DEBUG.COLORS.ERROR, string.format("[HOT-RELOAD] File '%s' in group '%s' has no valid path\n", sFileKey, sGroup))
+			if not (tFile and isstring(tFile.PATH)) then
+				MsgC(self:GetLoader():GetConfig().DEBUG.COLORS.ERROR, string.format("[HOT-RELOAD] File '%s' in group '%s' has no valid path", sFileKey, sGroup))
 				goto continue
 			end
 
 			local iIndex			= #tHotReload + 1
 			tHotReload[iIndex]	= {
 				[1] = sFileKey,
-				[2] = lovr.filesystem.getLastModified(tFile.path),
+				[2] = lovr.filesystem.getLastModified(tFile.PATH),
 				[3] = sGroup,
 				[4] = tFile,
 				[5] = {},
@@ -166,7 +166,7 @@ function SUBLOADER:HotReloading()
 			tFileData[2] = iTimeStamp
 
 			if bShared then
-				local sBinary	= self:LoadFile(tFile.path)
+				local sBinary	= self:LoadFile(tFile.PATH)
 				tNetScript:SendLong(player.GetHumans(), sBinary, sPrefix, {tSubLoader[1]:GetID(), sModuleKey})
 			end
 
