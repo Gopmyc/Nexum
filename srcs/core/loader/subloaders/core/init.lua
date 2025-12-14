@@ -43,7 +43,7 @@ function SUBLOADER:LoadFile(tFile, fChunk)
 
 	local _				= self:GetLoader():GetLibrary("RESSOURCES"):IncludeFiles(bIsReload and fChunk or tFile.PATH, tFile.SIDES, tDependencies, self:GetEnv(), tFile.IS_BINARY)
 
-	MsgC(self:GetLoader():GetConfig().DEBUG.COLORS.SUCCESS, "\tThe file '" .. tFile.KEY .. "' was " .. (bIsReload and "reload" or "loaded") .." successfully for " .. self:GetID())
+	MsgC(self:GetLoader():GetConfig().DEBUG.COLORS[self:GetID()], "\tThe file '" .. tFile.KEY .. "' was " .. (bIsReload and "reload" or "loaded") .." successfully for " .. self:GetID())
 
 	return _, bShared
 end
