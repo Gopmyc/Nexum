@@ -1,6 +1,6 @@
 LIBRARY.RESSOURCES	= {}
 
-function LIBRARY:LoadInEnv(sFileSource, tSandEnv, sAccessPoint, tFileArgs, bLoadSubFolders)
+function LIBRARY:LoadInEnv(sFileSource, tSandEnv, sAccessPoint, tFileArgs, bLoadSubFolders, tCapabilities)
 	assert(isstring(sFileSource),					"[ENV-RESSOURCES] FileSource must be a string (#1)")
 	assert(istable(tSandEnv),						"[ENV-RESSOURCES] ENV must be a table (#2)")
 	assert(isstring(sAccessPoint),					"[ENV-RESSOURCES] AccessPoint must be a string (#3)")
@@ -36,6 +36,7 @@ function LIBRARY:LoadInEnv(sFileSource, tSandEnv, sAccessPoint, tFileArgs, bLoad
 
 	local tEnv							= setmetatable(table.Copy(tSandEnv, true), { __index = _G })
 
+	tEnv[sAccessPoint].GetConfig		= function() return tCapabilities end
 	tEnv[sAccessPoint].GetDependence	= function(_, sKey) return tFileArgs and tFileArgs[sKey] end
 	tEnv[sAccessPoint].__PATH			= sFileSource:match("^(.*[/\\])[^/\\]+%.lua$") or nil
 	tEnv[sAccessPoint].__NAME			= sFileSource:match("([^/\\]+)%.lua$") or "compiled-chunk"
@@ -65,8 +66,8 @@ function LIBRARY:LoadInEnv(sFileSource, tSandEnv, sAccessPoint, tFileArgs, bLoad
 	return tEnv[sAccessPoint]
 end
 
-function LIBRARY:GetDependencies(tDependencies, tSides, tSubLoader)
-	assert(istable(tDependencies),	"[RESSOURCES] The 'getDependencies' method requires a table of dependencies")
+function LIBRARY:ResolveDependencies(tDependencies, tSides, tSubLoader)
+	assert(istable(tDependencies),	"[RESSOURCES] The 'ResolveDependencies' method requires a table of dependencies")
 	assert(istable(tSides),			"[RESSOURCES] The 'tSides' argument must be a table with 'client' and 'server' keys")
 
 	local tDependenciesFinded	= {}
@@ -105,7 +106,7 @@ function LIBRARY:GetScript(sName)
 	return nil
 end
 
-function LIBRARY:IncludeFiles(FileSource, tSide, tFileArgs, tSandEnv, bIsBinary)
+function LIBRARY:IncludeFiles(FileSource, tSide, tFileArgs, tSandEnv, bIsBinary, bLoadSubFolders, tCapabilities)
 	assert(isstring(FileSource) or isfunction(FileSource),	"[RESSOURCES] The 'IncludeFiles' method requires a valid file path as a string or a function [#1]")
 	assert(istable(tSide),									"[RESSOURCES] The 'tSide' argument must be a table with 'client' and 'server' keys [#2]")
 	assert((tFileArgs == nil) or istable(tFileArgs),		"[RESSOURCES] The 'tFileArgs' argument must be a table or nil [#3]")
@@ -130,15 +131,11 @@ function LIBRARY:IncludeFiles(FileSource, tSide, tFileArgs, tSandEnv, bIsBinary)
 			)
 			or bIsEnvLoad and
 			(
-				self:LoadInEnv(FileSource, tSandEnv.CONTENT, tSandEnv.ACCESS_POINT, tFileArgs)
+				self:LoadInEnv(FileSource, tSandEnv.CONTENT, tSandEnv.ACCESS_POINT, tFileArgs, bLoadSubFolders, tCapabilities)
 			)
 			or isfunction(FileSource) and
 			(
 				FileSource(tFileArgs)
-			)
-			or bIsLuaFile and
-			(
-				require(FileSource)(tFileArgs)
 			)
 			or
 				MsgC(Color(255, 0, 0), "[RESSOURCES] Failed to include file: ", tostring(FileSource))
@@ -154,4 +151,49 @@ end
 
 function LIBRARY:AddCSLuaFile(sPath)
 	-- TODO : Shared file handling
+end
+
+function LIBRARY:ResolveCapabilities(tConfig, tCapabilities)
+	assert(istable(tConfig),		"tConfig must be a table")
+	assert(istable(tCapabilities),	"tCapabilities must be a table")
+
+	local tConfigBuffer	= {}
+
+	for _, sCapability in ipairs(tCapabilities) do
+		local tSource	= tConfig
+		local tTarget	= tConfigBuffer
+		local sLastKey	= nil
+
+		for sKey in string.gmatch(sCapability, "[^%.]+") do
+			local sUpperKey	= sKey:upper()
+			if sKey ~= sUpperKey then
+				MsgC(
+					Color(255, 180, 0),
+					"[CONFIG WARNING] key '" .. sKey .. "' is not uppercase, normalized to '" .. sUpperKey
+				)
+			end
+
+			if sLastKey then
+				tTarget[sLastKey]	= tTarget[sLastKey] or {}
+				tTarget				= tTarget[sLastKey]
+				tSource				= tSource and tSource[sLastKey] or nil
+			end
+
+			sLastKey	= sUpperKey
+		end
+
+		if sLastKey and tSource then
+			tTarget[sLastKey]	= tSource[sLastKey]
+		end
+	end
+
+	return setmetatable({},
+		{
+			__index		= tConfigBuffer,
+			__metatable	= false,
+			__newindex	= function()
+				error("Configuration table is read-only", 2)
+			end,
+		}
+	)
 end
