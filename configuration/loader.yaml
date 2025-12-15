@@ -6,9 +6,9 @@ RESSOURCES:       {}
 
 # Defines the order in which resource groups should be loaded
 LOAD_PRIORITY:
-  1: "CLASSES"
-  2: "CORE"
-  3: "MODULES"
+#  - "CLASSES"
+  - "CORE"
+#  - "MODULES"
 
 LIBRARIES:
   RESSOURCES:   "srcs/core/loader/libraries/ressources.lua"
