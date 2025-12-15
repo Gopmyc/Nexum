@@ -59,19 +59,3 @@ COLORS:
     R: 139
     G: 0
     B: 255
-  MODULES/PLAYER/MANAGERS:
-    R: 118
-    G: 0
-    B: 220
-  MODULES/PLAYER/MODULES:
-    R: 97
-    G: 0
-    B: 186
-  ENTITIES:
-    R: 75
-    G: 0
-    B: 153
-  NETS:
-    R: 54
-    G: 0
-    B: 112
