@@ -16,7 +16,7 @@ function SUBLOADER:Initialize(tContent)
 	assert(istable(tContent),			"[OBJECTS SUB-LOADER] Content must be a table")
 	assert(isfunction(self.GetLoader),	"[OBJECTS SUB-LOADER] Loader access method is missing")
 
-	self.__ENV.CONTENT.CORE.__LIBRARIES	= self:GetLoader():GetLibrariesBase("libraries", self.__ENV.CONTENT.CORE)
+	self.__ENV.CONTENT.CORE.LIBRARIES	= self:GetLoader():GetLibrariesBase("libraries", self.__ENV.CONTENT.CORE)
 	self.__BUFFER						= {}
 		
 	for iID, tFile in ipairs(tContent) do
@@ -45,7 +45,7 @@ function SUBLOADER:LoadFile(tFile, fChunk)
 		)
 	end
 
-	local _				= self:GetLoader():GetLibrary("RESSOURCES"):IncludeFiles(
+	local tFileLoaded = self:GetLoader():GetLibrary("RESSOURCES"):IncludeFiles(
 		bIsReload and fChunk or tFile.PATH,
 		tFile.SIDES,
 		tDependencies,
@@ -55,10 +55,12 @@ function SUBLOADER:LoadFile(tFile, fChunk)
 		tCapabilities
 	)
 
-	MsgC(
-		self:GetLoader():GetConfig().DEBUG.COLORS[self:GetID()],
-		"\tThe file '" .. tFile.KEY .. "' was " .. (bIsReload and "reload" or "loaded") .." successfully for " .. self:GetID()
-	)
+	if tFileLoaded then
+		MsgC(
+			self:GetLoader():GetConfig().DEBUG.COLORS[self:GetID()],
+			"\tThe file '" .. tFile.KEY .. "' was " .. (bIsReload and "reload" or "loaded") .." successfully for " .. self:GetID()
+		)
+	end
 
-	return _, bShared
+	return tFileLoaded, bShared
 end
