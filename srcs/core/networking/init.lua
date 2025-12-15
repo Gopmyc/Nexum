@@ -1,6 +1,6 @@
 -- Fetch default config server settings
 
--- TODO : Find a way to fetch config in Env, like CORE:GetConfig()
+PrintTable(CORE:GetConfig().SERVER)
 function CORE:Initialize()
 	return setmetatable({
 		CLIENTS			= setmetatable({}, {__mode = "kv"}),
