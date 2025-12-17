@@ -1,5 +1,3 @@
-
-
 local LOADER = {
 	PATH			= "srcs/core/loader/",
 }
@@ -33,8 +31,12 @@ function LOADER:CreateLoaderInstance(tConfig)
 	tLoader.LIBRARIES.BUFFER	= {}
 	for sName, sPath in pairs(tLoader.LIBRARIES or {}) do
 		if sName == "BUFFER" then goto continue end
-		-- TODO : Handling shared files
-		local tEnv		= setmetatable({ LIBRARY = {} }, { __index = _G })
+
+		local tEnv		= setmetatable({ LIBRARY = {
+			GetLibrary	= function(self, sLibName)
+				return tLoader.LIBRARIES.BUFFER and tLoader.LIBRARIES.BUFFER[sLibName]
+			end,
+		} }, { __index = _G })
 		local fChunk	= LoadFileInEnvironment(sPath, tEnv)
 
 		local bOk, sRunErr = pcall(fChunk)
@@ -48,7 +50,7 @@ function LOADER:CreateLoaderInstance(tConfig)
 		::continue::
 	end
 
-	tLoader:GetLibrary("ENVIRONEMENT"):SetEnvSpecification(tLoader.SAFE_GLOBALS)
+	tLoader:GetLibrary("ENV_BUILDER"):SetEnvSpecification(tLoader.SAFE_GLOBAL)
 
 	return tLoader
 end
@@ -106,7 +108,7 @@ function LOADER:LoadSubLoader(sPath, Content, bShared, sID)
 
 	local bShouldLoad	= (bShared and CLIENT) or SERVER
 	if bShouldLoad then
-		local tSubLoader	= self:GetLibrary("ENVIRONEMENT"):Load(sPath,
+		local tSubLoader	= self:GetLibrary("ENV_LOADER"):Load(sPath,
 		{
 			SUBLOADER = (function()
 				local _			= {}
@@ -200,7 +202,7 @@ function LOADER:GetLibrariesBase(sBasePath, tParent)
 			local fSide																= tBoth[sLibFolder] or tBoth[sPrefix] or tBoth["sh_"]
 
 			if not fSide(sFile) then goto continue end
-			tLibSelf.BUFFER[string.upper(sFile:match("libraries/(.-)%.lua$"))]	= self:GetLibrary("ENVIRONEMENT"):Load(sFile, { LIBRARY = {} }, "LIBRARY", {}, false)
+			tLibSelf.BUFFER[string.upper(sFile:match("libraries/(.-)%.lua$"))]	= self:GetLibrary("ENV_LOADER"):Load(sFile, { LIBRARY = {} }, "LIBRARY", {}, false)
 
 			::continue::
 		end
