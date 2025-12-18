@@ -10,11 +10,12 @@ LOAD_PRIORITY:
   - "CORE"
 #  - "MODULES"
 
+LIBRARIES_PATH: "srcs/core/loader/libraries/"
 LIBRARIES:
-  ENV_BUILDER:  "srcs/core/loader/libraries/env/builder.lua"
-  ENV_LOADER:   "srcs/core/loader/libraries/env/loader.lua"
-  RESSOURCES:   "srcs/core/loader/libraries/ressources.lua"
-  FINDER:       "srcs/core/loader/libraries/finder.lua"
+  ENV_BUILDER:  "env/builder.lua"
+  ENV_LOADER:   "env/loader.lua"
+  RESSOURCES:   "ressources.lua"
+  FINDER:       "finder.lua"
 
 RULES_FILES:
   1:
