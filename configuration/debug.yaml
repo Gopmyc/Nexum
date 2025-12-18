@@ -3,7 +3,6 @@ HOT_RELOAD_TIME:  1
 PREFIX_DEFAULT:   "ARCNET"
 
 COLORS:
-
   # ┌───────────────────┐
   # │ FILES DEBUG COLOR │
   # └───────────────────┘
@@ -35,6 +34,9 @@ COLORS:
     R: 46
     G: 204
     B: 113
+  # ┌─────────────────────┐
+  # │ NETWORK DEBUG COLOR │
+  # └─────────────────────┘
   CLIENT:
     R: 255
     G: 241
@@ -43,6 +45,9 @@ COLORS:
     R: 156
     G: 241
     B: 255
+  # ┌───────────────────┐
+  # │ FILES DEBUG COLOR │
+  # └───────────────────┘
   CLASSES:
     R: 216
     G: 191
@@ -50,10 +55,6 @@ COLORS:
   CORE:
     R: 186
     G: 148
-    B: 255
-  PANELS:
-    R: 159
-    G: 120
     B: 255
   MODULES:
     R: 139
