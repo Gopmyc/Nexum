@@ -25,7 +25,7 @@ function LIBRARY:CallHook(sID, tData)
 	end
 		
 	for iID, fCallBack in ipairs(self._HOOKS[sID]) do
-		if not (type(fCallBack) == "function") then goto continue end
+		if not isfunction(fCallBack) then goto continue end
 
 		fCallBack(unpack(tData))
 
