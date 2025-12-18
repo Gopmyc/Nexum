@@ -1,3 +1,5 @@
+print(CORE:GetConfig().IP, CORE:GetConfig().PORT)
+
 CORE:PrintLibraries()
 
 function CORE:Initialize()
