@@ -1,6 +1,9 @@
 SUBLOADER:  "core/"
 SHARED:     true
 CONTENT:
+  # ┌────────────────┐
+  # │ FILE #1 : ENET │
+  # └────────────────┘
   - KEY:              "enet"
     PATH:             "enet"
     ARGS:             {}
@@ -9,7 +12,13 @@ CONTENT:
     SIDES:
       CLIENT: true
       SERVER: true
-    CAPABILITIES:     {}
+    CAPABILITIES:
+      SERVER: {}
+      CLIENT: {}
+      SHARED: {}
+  # ┌──────────────────────┐
+  # │ FILE #2 : NETWORKING │
+  # └──────────────────────┘
   - KEY:              "networking"
     PATH:             "srcs/core/networking/"
     ARGS:
@@ -20,4 +29,7 @@ CONTENT:
       CLIENT: true
       SERVER: true
     CAPABILITIES:
-      - "SERVER"
+      SERVER:
+        - "SERVER"
+      CLIENT: {}
+      SHARED: {}
