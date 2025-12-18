@@ -16,7 +16,7 @@ function LIBRARY:ResolveFileSource(sFileSource)
 	end
 
 	local sFallback	= sFileSource .. (SERVER and "server/" or "client/")
-	MsgC(Color(241, 196, 15), "[WARNING][ENV-RESSOURCES] maint 'init.lua' not found, switch to : " .. sFallback)
+	MsgC(Color(241, 196, 15), "[WARNING][ENV-RESSOURCES] main file 'init.lua' not found, switch to : " .. sFallback)
 
 	return self:ResolveFileSource(sFallback .. "init.lua")
 end
@@ -60,7 +60,6 @@ function LIBRARY:MergeSubEnvironment(tMainEnv, tSubEnv)
 	end
 end
 
--- TODO : Improve to overload .../client/libraries/ or .../server/libraries/ in .../libraries/ and give acces to sub part (client/ or server/) at .../libraries/
 function LIBRARY:Load(sFileSource, tSandEnv, sAccessPoint, tFileArgs, bLoadSubFolders, tCapabilities)
 	assert(isstring(sFileSource),					"[ENV-RESSOURCES] FileSource must be a string (#1)")
 	assert(istable(tSandEnv),						"[ENV-RESSOURCES] ENV must be a table (#2)")
