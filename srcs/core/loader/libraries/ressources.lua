@@ -92,7 +92,6 @@ end
 
 function LIBRARY:AddCSLuaFile(sPath)
 	-- TODO : Shared file handling
-	return SERVER
 end
 
 function LIBRARY:ResolveCapabilities(tConfig, tCapabilities)
