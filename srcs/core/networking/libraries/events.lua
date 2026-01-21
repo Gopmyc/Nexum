@@ -34,7 +34,7 @@ end
 function LIBRARY:Call(tServer, tEvent)
 	return xpcall(
 		function()
-			return self.__EVENTS[tEvent.sType](self, tServer, tEvent)
+			return self.__EVENTS[tEvent.sType](tServer, tEvent)
 		end,
 		function(sErr)
 			MsgC(Color(255, 0, 0), "[ERROR] Event error : " .. tostring(sErr))
@@ -55,20 +55,20 @@ function LIBRARY:BuildEvent(sType, tPeer, Data, iChannel)
 end
 
 local EVENTS_DEFAULT	= {
-	["connect"]		=	function(self, tEvent)
-		local sID			=	tostring(tEvent.peer:connect_id())
+	["connect"]		=	function(tServer, tEvent)
+		local sID			=	tostring(tEvent.tPeer:connect_id())
 
-		MsgC(Color(52, 152, 219), "Client [ID : " .. sID .. "] connected : " .. tostring(tEvent.peer))
+		MsgC(Color(52, 152, 219), "Client [ID : " .. sID .. "] connected : " .. tostring(tEvent.tPeer))
 	
-		self._CLIENTS[sID]	=	{tEvent.peer, os.time()}
+		tServer.CLIENTS[sID]	=	{tEvent.tPeer, os.time()}
 	end,
 			
-	["receive"]		=	function(self, tEvent) -- tData : {sID, ...}
-		local sID			=	tostring(tEvent.peer:connect_id())
-		local tPeer			=	self:IsValidClient(sID)
+	["receive"]		=	function(tServer, tEvent) -- tData : {sID, ...}
+		local sID			=	tostring(tEvent.tPeer:connect_id())
+		local tPeer			=	tServer:IsValidClient(sID)
 
 		if not tPeer then
-			return MsgC(Color(231, 76, 60), "Unregister Client [ID : " .. sID .. "] attempted to send message : " .. tostring(tEvent.data))
+			return MsgC(Color(231, 76, 60), "Unregister Client [ID : " .. sID .. "] attempted to send message : " .. tostring(tEvent.tData))
 		end
 	
 		---- pcall all steps ----
@@ -76,29 +76,29 @@ local EVENTS_DEFAULT	= {
 		-- // TODO : Uncompress data...
 		-- // TODO : JSON to Table...
 		
-		if not self:IsValidMessage(tData[1]) then
+		if not tServer:IsValidMessage(tData[1]) then
 			return MsgC(Color(231, 76, 60), "Client [ID : " .. sID .. "] attempted to send an undeclared message : " .. tostring(tData[1]))
 		end
 	
-		self._CLIENTS[sID][2]	=	os.time()
-		self._HOOKS:CallHook(tData[1], tData[2])
+		tServer.CLIENTS[sID][2]	=	os.time()
+		tServer.HOOKS:CallHook(tData[1], tData[2])
 	end,
 			
-	["disconnect"]	=	function(self, tEvent)
-		local sID			=	tostring(tEvent.peer:connect_id())
+	["disconnect"]	=	function(tServer, tEvent)
+		local sID			=	tostring(tEvent.tPeer:connect_id())
 	
-		if not self:IsValidClient(sID) then return end
-		MsgC(Color(52, 152, 219), "Client [ID : " .. sID .. "] disconnected : " .. tostring(tEvent.peer))
+		if not tServer:IsValidClient(sID) then return end
+		MsgC(Color(52, 152, 219), "Client [ID : " .. sID .. "] disconnected : " .. tostring(tEvent.tPeer))
 	
-		self._CLIENTS[sID]	=	nil
+		tServer.CLIENTS[sID]	=	nil
 	end,
 			
-	["send"]		=	function(self, tEvent)
-		local sID			=	tostring(tEvent.peer:connect_id())
-		local tPeer			=	self:IsValidClient(sID)
-		local tData			=	tEvent.data
+	["send"]		=	function(tServer, tEvent)
+		local sID			=	tostring(tEvent.tPeer:connect_id())
+		local tPeer			=	tServer:IsValidClient(sID)
+		local tData			=	tEvent.tData
 		local sFlag			=	tData.flag
-		
+
 		if not tPeer then
 			return MsgC(Color(231, 76, 60), "Attempted to send message to unregister Client [ID : " .. sID .. "]  : " . .tostring(tPeer))
 		end
@@ -114,6 +114,6 @@ local EVENTS_DEFAULT	= {
 		-- // TODO : Crypt data...
 		-- // TODO : Compress data..
 		
-		tPeer:send(tData, tEvent.channel, sFlag or "reliable")
+		tPeer:send(tData, tEvent.iChannel, sFlag or "reliable")
 	end,
 }
