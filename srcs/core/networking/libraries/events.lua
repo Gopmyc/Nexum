@@ -53,3 +53,67 @@ function LIBRARY:BuildEvent(sType, tPeer, Data, iChannel)
 		iChannel	= iChannel,
 	}
 end
+
+local EVENTS_DEFAULT	= {
+	["connect"]		=	function(self, tEvent)
+		local sID			=	tostring(tEvent.peer:connect_id())
+
+		MsgC(Color(52, 152, 219), "Client [ID : " .. sID .. "] connected : " .. tostring(tEvent.peer))
+	
+		self._CLIENTS[sID]	=	{tEvent.peer, os.time()}
+	end,
+			
+	["receive"]		=	function(self, tEvent) -- tData : {sID, ...}
+		local sID			=	tostring(tEvent.peer:connect_id())
+		local tPeer			=	self:IsValidClient(sID)
+
+		if not tPeer then
+			return MsgC(Color(231, 76, 60), "Unregister Client [ID : " .. sID .. "] attempted to send message : " .. tostring(tEvent.data))
+		end
+	
+		---- pcall all steps ----
+		-- // TODO : Decrypt data...
+		-- // TODO : Uncompress data...
+		-- // TODO : JSON to Table...
+		
+		if not self:IsValidMessage(tData[1]) then
+			return MsgC(Color(231, 76, 60), "Client [ID : " .. sID .. "] attempted to send an undeclared message : " .. tostring(tData[1]))
+		end
+	
+		self._CLIENTS[sID][2]	=	os.time()
+		self._HOOKS:CallHook(tData[1], tData[2])
+	end,
+			
+	["disconnect"]	=	function(self, tEvent)
+		local sID			=	tostring(tEvent.peer:connect_id())
+	
+		if not self:IsValidClient(sID) then return end
+		MsgC(Color(52, 152, 219), "Client [ID : " .. sID .. "] disconnected : " .. tostring(tEvent.peer))
+	
+		self._CLIENTS[sID]	=	nil
+	end,
+			
+	["send"]		=	function(self, tEvent)
+		local sID			=	tostring(tEvent.peer:connect_id())
+		local tPeer			=	self:IsValidClient(sID)
+		local tData			=	tEvent.data
+		local sFlag			=	tData.flag
+		
+		if not tPeer then
+			return MsgC(Color(231, 76, 60), "Attempted to send message to unregister Client [ID : " .. sID .. "]  : " . .tostring(tPeer))
+		end
+
+		if not istable(tData) then
+			return MsgC(Color(231, 76, 60), "Attempt to send data type other than table"..type(tData))
+		end
+		
+		tData	=	{tData.id, tData.packet}
+				
+		---- pcall all steps ----
+		-- // TODO : Table data to JSON...
+		-- // TODO : Crypt data...
+		-- // TODO : Compress data..
+		
+		tPeer:send(tData, tEvent.channel, sFlag or "reliable")
+	end,
+}
