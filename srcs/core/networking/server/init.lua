@@ -9,12 +9,17 @@ function CORE:Initialize()
 	local MESS_TIMEOUT	= assert(self:GetConfig().SERVER.MESS_TIMEOUT,	"[CORE] 'MESS_TIMEOUT' is required to initialize the networking core")
 
 	return setmetatable({
+		HOST			= ENET.host_create(IP .. ":" .. PORT, MAX_CLIENTS, CHANNELS, IN_BANDWIDTH, OUT_BANDWIDTH),
+		MESS_TIMEOUT	= MESS_TIMEOUT,
 		CLIENTS			= setmetatable({}, {__mode = "kv"}),
 		NETWORK_ID		= setmetatable({}, {__mode = "kv"}),
 		HOOKS			= self:GetLibrary("HOOKS"):Initialize(),
-		-- EVENTS			= {}, make a subloader and load all events from a folder, then pass it here 'self:GetLibrary("HOOKS"):Initialize()'
-		MESS_TIMEOUT	= MESS_TIMEOUT,
-		HOST			= ENET.host_create(IP .. ":" .. PORT, MAX_CLIENTS, CHANNELS, IN_BANDWIDTH, OUT_BANDWIDTH),
+		EVENTS			= self:GetLibrary("HOOKS"):Initialize({
+			connect		= self:GetLibrary("CONNECT"),
+			disconnect	= self:GetLibrary("DISCONNECT"),
+			receive		= self:GetLibrary("RECEIVE"),
+			send		= self:GetLibrary("SEND"),
+		}),
 	}, {__index = CORE})
 end
 
@@ -77,7 +82,13 @@ function CORE:SubNetworkID(sID)
 end
 
 function CORE:IsValidClient(sID)
-	return (isstring(sID) and istable(self.CLIENTS[sID]) and next(self.CLIENTS[sID])) and self.CLIENTS[sID] or false
+	return
+		(
+			isstring(sID) and
+			istable(self.CLIENTS[sID]) and
+			next(self.CLIENTS[sID])
+		) and
+	self.CLIENTS[sID] or false
 end
 
 function CORE:IsValidMessage(sID)
