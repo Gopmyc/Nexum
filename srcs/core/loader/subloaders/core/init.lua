@@ -13,8 +13,8 @@ SUBLOADER.__ENV	= {
 }
 
 function SUBLOADER:Initialize(tContent)
-	assert(istable(tContent),			"[OBJECTS SUB-LOADER] Content must be a table")
-	assert(isfunction(self.GetLoader),	"[OBJECTS SUB-LOADER] Loader access method is missing")
+	assert(istable(tContent),			"[CORE SUB-LOADER] Content must be a table")
+	assert(isfunction(self.GetLoader),	"[CORE SUB-LOADER] Loader access method is missing")
 
 	self.__ENV.CONTENT.CORE.LIBRARIES	= self:GetLoader():GetLibrariesBase("libraries", self.__ENV.CONTENT.CORE)
 	self.__BUFFER						= {}
