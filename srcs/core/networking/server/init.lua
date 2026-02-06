@@ -1,24 +1,24 @@
 function CORE:Initialize()
-	local ENET			= assert(self:GetLibrary("enet"),				"[CORE] 'ENET' library is required to initialize the networking core")
+	local ENET			= assert(self:GetDependence("enet"),			"[CORE] 'ENET' library is required to initialize the networking core")
 	local IP			= assert(self:GetConfig().SERVER.IP,			"[CORE] 'IP' is required to initialize the networking core")
 	local PORT			= assert(self:GetConfig().SERVER.PORT,			"[CORE] 'PORT' is required to initialize the networking core")
 	local MAX_CLIENTS	= assert(self:GetConfig().SERVER.MAX_CLIENTS,	"[CORE] 'MAX_CLIENTS' is required to initialize the networking core")
-	local CHANNELS		= assert(self:GetConfig().SERVER.CHANNELS,		"[CORE] 'CHANNELS' is required to initialize the networking core")
+	local MAX_CHANNELS	= assert(self:GetConfig().SERVER.MAX_CHANNELS,	"[CORE] 'MAX_CHANNELS' is required to initialize the networking core")
 	local IN_BANDWIDTH	= assert(self:GetConfig().SERVER.IN_BANDWIDTH,	"[CORE] 'IN_BANDWIDTH' is required to initialize the networking core")
 	local OUT_BANDWIDTH	= assert(self:GetConfig().SERVER.OUT_BANDWIDTH,	"[CORE] 'OUT_BANDWIDTH' is required to initialize the networking core")
 	local MESS_TIMEOUT	= assert(self:GetConfig().SERVER.MESS_TIMEOUT,	"[CORE] 'MESS_TIMEOUT' is required to initialize the networking core")
 
 	local tNetwork	= setmetatable({
-		HOST			= ENET.host_create(IP .. ":" .. PORT, MAX_CLIENTS, CHANNELS, IN_BANDWIDTH, OUT_BANDWIDTH),
+		HOST			= ENET.host_create(IP .. ":" .. PORT, MAX_CLIENTS, MAX_CHANNELS, IN_BANDWIDTH, OUT_BANDWIDTH),
 		MESS_TIMEOUT	= MESS_TIMEOUT,
 		CLIENTS			= setmetatable({}, {__mode = "kv"}),
 		NETWORK_ID		= setmetatable({}, {__mode = "kv"}),
 		HOOKS			= self:GetLibrary("HOOKS"):Initialize(),
 		EVENTS			= self:GetLibrary("HOOKS"):Initialize({
-			connect		= self:GetLibrary("CONNECT"),
-			disconnect	= self:GetLibrary("DISCONNECT"),
-			receive		= self:GetLibrary("RECEIVE"),
-			send		= self:GetLibrary("SEND"),
+			connect		= self:GetLibrary("SERVER/EVENTS/CONNECT"),
+			disconnect	= self:GetLibrary("SERVER/EVENTS/DISCONNECT"),
+			receive		= self:GetLibrary("SERVER/EVENTS/RECEIVE"),
+			send		= self:GetLibrary("SERVER/EVENTS/SEND"),
 		}),
 	}, {__index = CORE})
 
