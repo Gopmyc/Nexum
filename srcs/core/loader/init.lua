@@ -252,9 +252,15 @@ function LOADER:Instanciate(sFileName)
 	local sGroup, iFileID, _	= self:GetSubLoaderBase():GetGroupByFileName(sFileName)
 	local tFileRuntimeConfig	= self:GetConfig()[sGroup].FILES.CONTENT[iFileID].RUNTIME
 
-	PrintTable(tFileRuntimeConfig)
-
 	return self:GetLibrary("RUNTIME"):Instantiate(sFileName, tFileRuntimeConfig)
+end
+
+function LOADER:Update(...)
+	return self:GetLibrary("RUNTIME"):Update(...)
+end
+
+function LOADER:Draw(...)
+	return self:GetLibrary("RUNTIME"):Draw(...)
 end
 
 return LOADER
