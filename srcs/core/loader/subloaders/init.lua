@@ -154,6 +154,18 @@ end
 
 function SUBLOADER_BASE:GetSubLoader(sGroup)
 	return self.SUBLOADERS[sGroup]
-end	
+end
+
+function SUBLOADER_BASE:GetGroupByFileName(sFileName)
+	for sGroup, tSubLoader in pairs(self.SUBLOADERS) do
+		for iID, tFile in pairs(tSubLoader[2]) do
+			if tFile.NAME == sFileName then
+				return sGroup, iID, tFile
+			end
+		end
+	end
+
+	return nil, nil, nil
+end
 
 return SUBLOADER_BASE
