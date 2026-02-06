@@ -33,3 +33,10 @@ CONTENT:
         - "SERVER"
       CLIENT: {}
       SHARED: {}
+    RUNTIME:
+      UPDATE:
+        STAGE:  "PROCESS"
+        ORDER:  20
+      DRAW:
+        STAGE:  "OVERLAY"
+        ORDER:  0
