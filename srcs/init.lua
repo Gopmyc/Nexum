@@ -145,3 +145,7 @@ local LIBRARIES				= {
 }
 
 local LOADER    = require("srcs/core/loader/init"):Initialize(CONFIGURATION_PATH, LIBRARIES)
+
+LOADER:Instanciate("networking")
+
+return LOADER
