@@ -9,8 +9,9 @@ function LIBRARY:SetRuntimeConfig(tRuntimeConfig)
 	self.RUNTIME_CONFIG = tRuntimeConfig
 end
 
-function LIBRARY:Instantiate(sFileName)
+function LIBRARY:Instantiate(sFileName, tFileRuntimeConfig)
 	assert(isstring(sFileName), "FileName must be a string")
+	assert(istable(tFileRuntimeConfig) and istable(tFileRuntimeConfig.UPDATE) and istable(tFileRuntimeConfig.DRAW), "Runtime configuration must be a valid configuration")
 
 	local tLibRess	= assert(self:GetLibrary("RESSOURCES"), "'RESSOURCES' library is required")
 	local tClass	= assert(tLibRess:GetScript(sFileName), "File '" .. sFileName .. "' not found in RESSOURCES")
@@ -29,6 +30,9 @@ function LIBRARY:Instantiate(sFileName)
 	end
 
 	self.INSTANCES[#self.INSTANCES + 1] = tInstance
+
+	tInstance.STAGE_UPDATE				= tFileRuntimeConfig.UPDATE
+	tInstance.STAGE_DRAW				= tFileRuntimeConfig.DRAW
 
 	self:RegisterInstance(tInstance)
 
