@@ -75,29 +75,31 @@ SAFE_GLOBAL:
   # │ FUNCTIONS │
   # └───────────┘
   functions:
-    assert:     true
-    error:      true
-    ipairs:     true
-    next:       true
-    pairs:      true
-    pcall:      true
-    select:     true
-    tonumber:   true
-    tostring:   true
-    type:       true
-    unpack:     true
-    xpcall:     true
-    istable:    true
-    isnumber:   true
-    isstring:   true
-    isbool:     true
-    isfunction: true
-    isthread:   true
-    isuserdata: true
-    Color:      true
-    MsgC:       true
-    PrintTable: true
-    print:      true
+    assert:       true
+    error:        true
+    ipairs:       true
+    next:         true
+    pairs:        true
+    pcall:        true
+    select:       true
+    tonumber:     true
+    tostring:     true
+    type:         true
+    unpack:       true
+    xpcall:       true
+    istable:      true
+    isnumber:     true
+    isstring:     true
+    isbool:       true
+    isfunction:   true
+    isthread:     true
+    isuserdata:   true
+    Color:        true
+    MsgC:         true
+    PrintTable:   true
+    print:        true
+    setmetatable: true
+    getmetatable: false
   # ┌───────────┐
   # │ LIBRARIES │
   # └───────────┘
@@ -131,8 +133,6 @@ SAFE_GLOBAL:
   # │ META-TABLE │
   # └────────────┘
   metatable:
-    getmetatable:      false
-    setmetatable:      false
     allow_string_meta: false
     allow_table_meta:  false
   # ┌──────────┐
