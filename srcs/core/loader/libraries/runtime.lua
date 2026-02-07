@@ -7,16 +7,28 @@ function LIBRARY:SetRuntimeConfig(tRuntimeConfig)
 	self.RUNTIME_CONFIG = tRuntimeConfig
 end
 
-function LIBRARY:Instantiate(sFileName, tFileRuntimeConfig)
+function LIBRARY:Instantiate(sFileName, tFileRuntimeConfig, tArgs)
 	assert(isstring(sFileName), "FileName must be a string")
-	assert(istable(tFileRuntimeConfig) and istable(tFileRuntimeConfig.UPDATE) and istable(tFileRuntimeConfig.DRAW), "Runtime configuration must be a valid configuration")
+	assert(
+		istable(tFileRuntimeConfig) and
+		istable(tFileRuntimeConfig.UPDATE) and
+		istable(tFileRuntimeConfig.DRAW) and
+		isstring(tFileRuntimeConfig.ID),
+		"Runtime configuration must be a valid configuration"
+	)
 
-	local tLibRess	= assert(self:GetLibrary("RESSOURCES"), "'RESSOURCES' library is required")
-	local tClass	= assert(tLibRess:GetScript(sFileName), "File '" .. sFileName .. "' not found in RESSOURCES")
+	self.INSTANCES[sFileName]	= self.INSTANCES[sFileName] or {}
+
+	if istable(self.INSTANCES[sFileName][tFileRuntimeConfig.ID]) then
+		return MsgC(Color(231, 76, 60), "ERROR : The instance with ID: '" .. tFileRuntimeConfig.ID .. "' already exists")
+	end
+
+	local tLibRess				= assert(self:GetLibrary("RESSOURCES"), "'RESSOURCES' library is required")
+	local tClass				= assert(tLibRess:GetScript(sFileName), "File '" .. sFileName .. "' not found in RESSOURCES")
 
 	local bSuccess, tInstance = xpcall(
 		function()
-			return tClass:Initialize()
+			return tClass:Initialize(unpack(tArgs))
 		end,
 		function(sErr)
 			return MsgC(Color(231, 76, 60), "[ERROR] " .. sErr .. "\n" .. debug.traceback())
@@ -27,12 +39,12 @@ function LIBRARY:Instantiate(sFileName, tFileRuntimeConfig)
 		return MsgC(Color(231, 76, 60), "[ERROR] Failed to instantiate '" .. sFileName .. "'\n")
 	end
 
-	self.INSTANCES[#self.INSTANCES + 1] = tInstance
+	self.INSTANCES[sFileName][tFileRuntimeConfig.ID]	= tInstance
 
-	tInstance.STAGE_UPDATE				= tFileRuntimeConfig.UPDATE
-	tInstance.STAGE_DRAW				= tFileRuntimeConfig.DRAW
+	tInstance.STAGE_UPDATE								= tFileRuntimeConfig.UPDATE
+	tInstance.STAGE_DRAW								= tFileRuntimeConfig.DRAW
 
-	self:RegisterInstance(tInstance)
+	self:RegisterInstance(self.INSTANCES[sFileName][tFileRuntimeConfig.ID])
 
 	return tInstance
 end
@@ -92,7 +104,7 @@ function LIBRARY:Update(...)
 	local tArgs	= {...}
 
 	for i = 1, #self.UPDATE_PIPELINE do
-		local tNode	= self.UPDATE_PIPELINE[i]
+		local tNode		= self.UPDATE_PIPELINE[i]
 
 		if not tNode.bEnabled then goto continue end
 
@@ -126,7 +138,7 @@ function LIBRARY:Draw(...)
 	local tArgs	= {...}
 	
 	for i = 1, #self.DRAW_PIPELINE do
-		local tNode	= self.DRAW_PIPELINE[i]
+		local tNode		= self.DRAW_PIPELINE[i]
 
 		if not tNode.bEnabled then goto continue end
 		
@@ -154,4 +166,24 @@ function LIBRARY:Draw(...)
 
 		::continue::
 	end
+end
+
+function LIBRARY:GetInstanceByID(sGroupID, sID) -- I'll make it a cleaner thing later
+	assert(isstring(sGroupID), "Group ID name must be a string")
+	
+	local tGroup	= self.INSTANCES[sGroupID]
+    
+	if not istable(tGroup) then
+		return nil
+	end
+
+    if isstring(sID) then
+		return tGroup[sID]
+	end
+
+    for _, v in pairs(tGroup) do
+		return v
+	end
+    
+	return nil
 end
