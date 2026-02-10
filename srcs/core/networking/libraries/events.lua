@@ -39,7 +39,6 @@ end
 function LIBRARY:Call(tServer, tEvent)
 	return xpcall(
 		function()
-			PrintTable(tEvent)
 			return self.__EVENTS[tEvent.type]:Call(tServer, self:BuildEvent(tEvent.type, tEvent.peer, tEvent.data, tEvent.channel))
 		end,
 		function(sErr)
