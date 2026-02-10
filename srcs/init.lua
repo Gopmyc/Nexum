@@ -1,5 +1,3 @@
-SERVER			= true
-
 istable			= function(v) return type(v) == "table" end
 isnumber		= function(v) return type(v) == "number" end
 isstring		= function(v) return type(v) == "string" end
@@ -146,6 +144,11 @@ local LIBRARIES				= {
 
 local LOADER    = require("srcs/core/loader/init"):Initialize(CONFIGURATION_PATH, LIBRARIES)
 
-LOADER:Instanciate("networking", "server")
+if SERVER then
+	LOADER:Instanciate("networking", "server")
+elseif CLIENT then
+	LOADER:Instanciate("networking", "client", "localhost", 22122, 1, 200)
+end
+
 
 return LOADER
