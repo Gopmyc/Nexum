@@ -1,8 +1,8 @@
 function LIBRARY:Call(tServer, tEvent) -- tData : {sID, ...}
-	local sID			=	tostring(tEvent.tPeer:connect_id())
-	local tPeer			=	tServer:IsValidClient(sID)
+	local sID		= tostring(tEvent.udPeer:connect_id())
+	local udPeer	= tServer:IsValidClient(sID)
 	
-	if not tPeer then
+	if not udPeer then
 		return MsgC(Color(231, 76, 60), "Unregister Client [ID : " .. sID .. "] attempted to send message : " .. tostring(tEvent.tData))
 	end
 
