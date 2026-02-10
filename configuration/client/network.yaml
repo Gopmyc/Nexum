@@ -1,0 +1,11 @@
+# Server IP Address
+IP:             "localhost"
+
+# Server Port
+PORT:           22122
+
+# Maximum Channels
+MAX_CHANNELS:   1
+
+# Message Timeout (in milliseconds)
+MESS_TIMEOUT:   200
