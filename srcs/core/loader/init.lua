@@ -6,6 +6,8 @@ function LOADER:Initialize(sConfigPath, tLibraries)
 	assert(isstring(sConfigPath), "[LOADER] Configuration path must be a string")
 	assert(istable(tLibraries), "[LOADER] Libraries must be a table")
 
+	MsgC("\n")
+
 	local tLoader					= self:CreateLoaderInstance(self:LoadConfiguration(sConfigPath, tLibraries))
 
 	-- It's not clean, it needs to be changed later
