@@ -282,4 +282,8 @@ function LOADER:Draw(...)
 	return self:GetLibrary("RUNTIME"):Draw(...)
 end
 
+function LOADER:Quit()
+	return self:GetLibrary("RUNTIME"):DestroyAllInstances()
+end
+
 return LOADER
