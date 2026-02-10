@@ -30,7 +30,7 @@ CONTENT:
       SERVER: true
     CAPABILITIES:
       SERVER:
-        - "SERVER"
+        - "NETWORK"
       CLIENT: {}
       SHARED: {}
     RUNTIME:
