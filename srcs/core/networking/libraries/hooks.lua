@@ -21,7 +21,7 @@ function LIBRARY:CallHook(sID, tData)
 	assert(istable(tData),	"[ERROR] 'CallHook' : hook Data must be a table")
 
 	if not (istable(self._HOOKS[sID]) and next(self._HOOKS[sID])) then
-		return
+		return MsgC(Color(255, 0, 0), "[ERROR] 'CallHook' : no hooks found for ID '" .. sID)
 	end
 		
 	for iID, fCallBack in ipairs(self._HOOKS[sID]) do
@@ -41,4 +41,24 @@ function LIBRARY:RemoveHook(sID, iID)
 	end
 
 	self._HOOKS[sID]	= nil
+end
+
+function LIBRARY:Destroy()
+	if not istable(self) then return end
+
+	local tHooks = rawget(self, "_HOOKS")
+	if istable(tHooks) then
+		for sID, tList in pairs(tHooks) do
+			if istable(tList) then
+				for i = 1, #tList do
+					tList[i] = nil
+				end
+			end
+			tHooks[sID] = nil
+		end
+	end
+
+	self._HOOKS = nil
+
+	setmetatable(self, nil)
 end
