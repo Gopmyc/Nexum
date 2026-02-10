@@ -13,3 +13,7 @@ end
 function lovr.draw(Pass)
 	ArcNet:Draw(Pass)
 end
+
+function lovr.quit()
+	ArcNet:Quit()
+end
