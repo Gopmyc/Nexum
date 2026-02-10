@@ -1,7 +1,8 @@
 function LIBRARY:Initialize()
 	return setmetatable({},
 		{
-			__mode	= "kv"
+			__index	= LIBRARY,
+			__mode	= "kv",
 		}
 	)
 end
