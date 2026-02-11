@@ -3,4 +3,9 @@ function LIBRARY:Call(tServer, tEvent)
 	MsgC(Color(52, 152, 219), "Client [ID : " .. sID .. "] connected : " .. tostring(tEvent.udPeer) .. " [" .. os.date("%Y-%m-%d %H:%M:%S") .. "]")
 
 	tServer.CLIENTS[sID]	=	{tEvent.udPeer, os.time()}
+
+	-- AddNetworkID
+	for sID, tClient in pairs(tServer.CLIENTS) do
+		tServer:SendToClient(sID, tServer:BuildPacket("message-id-test", "Hello friend !"))
+	end
 end
