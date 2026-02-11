@@ -12,6 +12,12 @@ function CORE:Initialize(sAddr, iPort, iMaxChannels, iTimeout)
 	tNetwork.PEER			= tNetwork.HOST:connect(string.format("%s:%d", sAddr, iPort), iMaxChannels)
 	tNetwork.MESS_TIMEOUT	= iTimeout
 	tNetwork.HOOKS			= self:GetLibrary("HOOKS"):Initialize()
+	tNetwork.CODEC			= self:GetLibrary("CODEC"):Initialize(
+		self:GetDependence("JSON"),
+		self:GetDependence("CHACHA20"),
+		self:GetDependence("POLY1305"),
+		self:GetDependence("LZW")
+	)
 	tNetwork.EVENTS			= self:GetLibrary("EVENTS"):Initialize({
 		connect		= self:GetLibrary("CLIENT/EVENTS/CONNECT"),
 		disconnect	= self:GetLibrary("CLIENT/EVENTS/DISCONNECT"),
