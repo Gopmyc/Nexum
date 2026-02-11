@@ -1,12 +1,12 @@
-function LIBRARY:Call(tServer, tEvent)
-	local sID				=	tostring(tEvent.peer:connect_id())
-	local bSuccess, tData	=	pcall(JSON.decode, tEvent.data)
-
-	if not (bSuccess and istable(tData)) then
-		return MsgC(Color(241, 196, 15), "[WARNING] Invalid JSON received from server [ID : " .. sID .. "]")
+function LIBRARY:Call(tClient, tEvent)
+	local sID		= tostring(tEvent.udPeer:connect_id())
+	local udPeer	= tClient:IsValidClient(sID)
+	
+	if not udPeer then
+		return MsgC(Color(231, 76, 60), "Unregister Client [ID : " .. sID .. "] attempted to send message : " .. tostring(tEvent.Data))
 	end
 
-	MsgC(Color(52, 152, 219), "Received message [" .. tostring(tData[1]) .. "] from server")
-		
-	return tServer.HOOKS:CallHook(tData[1], tData[2])
+	local sPacketID, Content	= tClient.CODEC:Decode(tEvent.Data)
+
+	tClient.HOOKS:CallHook(sPacketID, Content)
 end
