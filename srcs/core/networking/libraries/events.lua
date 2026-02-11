@@ -39,7 +39,7 @@ end
 function LIBRARY:Call(tServer, tEvent)
 	return xpcall(
 		function()
-			return self.__EVENTS[tEvent.type]:Call(tServer, self:BuildEvent(tEvent.type, tEvent.peer, tEvent.data, tEvent.channel))
+			return self.__EVENTS[tEvent.type]:Call(tServer, self:BuildEvent(tEvent.type, tEvent.peer, tEvent.data, tEvent.channel, tEvent.flag))
 		end,
 		function(sErr)
 			MsgC(Color(255, 0, 0), "[ERROR] Event error : " .. tostring(sErr))
@@ -47,27 +47,28 @@ function LIBRARY:Call(tServer, tEvent)
 	)
 end
 	
-function LIBRARY:BuildEvent(sType, udPeer, Data, iChannel)
-	assert(isstring(sType),	"BuildEvent : Type event must be a string")
+function LIBRARY:BuildEvent(sType, udPeer, Data, iChannel, sFlag)
+	assert(isstring(sType),		"BuildEvent : Type event must be a string")
 	assert(isuserdata(udPeer),	"BuildEvent : Peer event must be a userdata")
+	assert(Data ~= nil,			"BuildEvent : Data event must not be nil")
 		
 	return {
 		sType		= sType,
 		udPeer		= udPeer,
-		tData		= Data,
+		Data		= Data,
 		iChannel	= iChannel,
+		sFlag		= sFlag,
 	}
 end
 
 function LIBRARY:Destroy()
 	if not istable(self) then return end
 
-	local tEvents = rawget(self, "__EVENTS")
-	if istable(tEvents) then
-		setmetatable(tEvents, nil)
+	if istable(self.__EVENTS) then
+		setmetatable(self.__EVENTS, nil)
 
-		for kKey in pairs(tEvents) do
-			tEvents[kKey] = nil
+		for kKey in pairs(self.__EVENTS) do
+			self.__EVENTS[kKey] = nil
 		end
 	end
 
