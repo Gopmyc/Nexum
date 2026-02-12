@@ -24,6 +24,7 @@ CONTENT:
     ARGS:
       - "enet"
       - "JSON"
+      - "BASE64"
       - "CHACHA20"
       - "POLY1305"
       - "LZW"
@@ -35,7 +36,8 @@ CONTENT:
     CAPABILITIES:
       SERVER:
         - "NETWORK"
-      CLIENT: {}
+      CLIENT:
+        - "NETWORK"
       SHARED: {}
     RUNTIME:
       UPDATE:
