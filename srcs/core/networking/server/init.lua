@@ -1,12 +1,13 @@
 function CORE:Initialize()
-	local ENET			= assert(self:GetDependence("enet"),			"[CORE] 'ENET' library is required to initialize the networking core")
-	local IP			= assert(self:GetConfig().NETWORK.IP,			"[CORE] 'IP' is required to initialize the networking core")
-	local PORT			= assert(self:GetConfig().NETWORK.PORT,			"[CORE] 'PORT' is required to initialize the networking core")
-	local MAX_CLIENTS	= assert(self:GetConfig().NETWORK.MAX_CLIENTS,	"[CORE] 'MAX_CLIENTS' is required to initialize the networking core")
-	local MAX_CHANNELS	= assert(self:GetConfig().NETWORK.MAX_CHANNELS,	"[CORE] 'MAX_CHANNELS' is required to initialize the networking core")
-	local IN_BANDWIDTH	= assert(self:GetConfig().NETWORK.IN_BANDWIDTH,	"[CORE] 'IN_BANDWIDTH' is required to initialize the networking core")
-	local OUT_BANDWIDTH	= assert(self:GetConfig().NETWORK.OUT_BANDWIDTH,	"[CORE] 'OUT_BANDWIDTH' is required to initialize the networking core")
-	local MESS_TIMEOUT	= assert(self:GetConfig().NETWORK.MESS_TIMEOUT,	"[CORE] 'MESS_TIMEOUT' is required to initialize the networking core")
+	local ENET				= assert(self:GetDependence("enet"),				"[CORE] 'ENET' library is required to initialize the networking core")
+	local IP				= assert(self:GetConfig().NETWORK.IP,				"[CORE] 'IP' is required to initialize the networking core")
+	local PORT				= assert(self:GetConfig().NETWORK.PORT,				"[CORE] 'PORT' is required to initialize the networking core")
+	local MAX_CLIENTS		= assert(self:GetConfig().NETWORK.MAX_CLIENTS,		"[CORE] 'MAX_CLIENTS' is required to initialize the networking core")
+	local MAX_CHANNELS		= assert(self:GetConfig().NETWORK.MAX_CHANNELS,		"[CORE] 'MAX_CHANNELS' is required to initialize the networking core")
+	local IN_BANDWIDTH		= assert(self:GetConfig().NETWORK.IN_BANDWIDTH,		"[CORE] 'IN_BANDWIDTH' is required to initialize the networking core")
+	local OUT_BANDWIDTH		= assert(self:GetConfig().NETWORK.OUT_BANDWIDTH,	"[CORE] 'OUT_BANDWIDTH' is required to initialize the networking core")
+	local MESS_TIMEOUT		= assert(self:GetConfig().NETWORK.MESS_TIMEOUT,		"[CORE] 'MESS_TIMEOUT' is required to initialize the networking core")
+	local ENCRYPTION_KEY	= assert(self:GetConfig().NETWORK.ENCRYPTION_KEY,	"[CORE] 'ENCRYPTION_KEY' is required to initialize the networking core")
 
 	local tNetwork	= setmetatable({
 		HOST			= ENET.host_create(IP .. ":" .. PORT, MAX_CLIENTS, MAX_CHANNELS, IN_BANDWIDTH, OUT_BANDWIDTH),
@@ -18,13 +19,16 @@ function CORE:Initialize()
 			self:GetDependence("JSON"),
 			self:GetDependence("CHACHA20"),
 			self:GetDependence("POLY1305"),
-			self:GetDependence("LZW")
+			self:GetDependence("LZW"),
+			self:GetDependence("BASE64"),
+			ENCRYPTION_KEY
 		),
 		EVENTS			= self:GetLibrary("EVENTS"):Initialize({
 			connect		= self:GetLibrary("SERVER/EVENTS/CONNECT"),
 			disconnect	= self:GetLibrary("SERVER/EVENTS/DISCONNECT"),
 			receive		= self:GetLibrary("SERVER/EVENTS/RECEIVE"),
 			send		= self:GetLibrary("SERVER/EVENTS/SEND"),
+			unhandled	= self:GetLibrary("SERVER/EVENTS/UNHANDLED"),
 		}),
 	}, {__index = CORE})
 
@@ -55,19 +59,18 @@ end
 
 function CORE:SendToClient(sID, tPacket, iChannel, sFlag)
 	assert(isstring(sID),			"[SERVER] Invalid argument: sID must be a number")
-	assert(isstring(sMessageID),	"[SERVER] Invalid argument: sMessageID must be a string")
-	assert(istable(tData),			"[SERVER] Invalid argument: tData must be a table")
+	assert(istable(tPacket),		"[SERVER] Invalid argument: tPacket must be a table")
 
 	sFlag	= ((sFlag == "unsequenced") or (sFlag == "unreliable") or (sFlag == "reliable")) and sFlag or "reliable"
 
-	local udPeer	= self:IsValidClient(sID)
-	if not udPeer then
-		return MsgC(Color(231,76,60), "[ERROR] Attempted to send message to unregistered Client [ID : "..sID.."]  : "..tostring(udPeer))
+	local tPeer	= self:IsValidClient(sID)
+	if not tPeer then
+		return MsgC(Color(231,76,60), "[ERROR] Attempted to send message to unregistered Client [ID : "..sID.."]  : "..tostring(tPeer[1]))
 	end
 
 	self.EVENTS:Call(self, {
 		type	= "send",
-		peer	= udPeer,
+		peer	= tPeer[1],
 		data	= tPacket,
 		channel	= iChannel or 0,
 		flag	= sFlag,
