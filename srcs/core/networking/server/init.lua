@@ -8,14 +8,18 @@ function CORE:Initialize()
 	local OUT_BANDWIDTH		= assert(self:GetConfig().NETWORK.OUT_BANDWIDTH,	"[CORE] 'OUT_BANDWIDTH' is required to initialize the networking core")
 	local MESS_TIMEOUT		= assert(self:GetConfig().NETWORK.MESS_TIMEOUT,		"[CORE] 'MESS_TIMEOUT' is required to initialize the networking core")
 	local ENCRYPTION_KEY	= assert(self:GetConfig().NETWORK.ENCRYPTION_KEY,	"[CORE] 'ENCRYPTION_KEY' is required to initialize the networking core")
+	local DEFAULT_ENCRYPT	= assert(self:GetConfig().NETWORK.DEFAULT_ENCRYPT,		"[CORE] 'DEFAULT_ENCRYPT' is required to initialize the networking core")
+	local DEFAULT_COMPRESS	= assert(self:GetConfig().NETWORK.DEFAULT_COMPRESS,	"[CORE] 'DEFAULT_COMPRESS' is required to initialize the networking core")
 
 	local tNetwork	= setmetatable({
-		HOST			= ENET.host_create(IP .. ":" .. PORT, MAX_CLIENTS, MAX_CHANNELS, IN_BANDWIDTH, OUT_BANDWIDTH),
-		MESS_TIMEOUT	= MESS_TIMEOUT,
-		CLIENTS			= setmetatable({}, {__mode = "kv"}),
-		NETWORK_ID		= setmetatable({}, {__mode = "kv"}),
-		HOOKS			= self:GetLibrary("HOOKS"):Initialize(),
-		CODEC			= self:GetLibrary("CODEC"):Initialize(
+		HOST				= ENET.host_create(IP .. ":" .. PORT, MAX_CLIENTS, MAX_CHANNELS, IN_BANDWIDTH, OUT_BANDWIDTH),
+		MESS_TIMEOUT		= MESS_TIMEOUT,
+		DEFAULT_ENCRYPT		= DEFAULT_ENCRYPT,
+		DEFAULT_COMPRESS	= DEFAULT_COMPRESS,
+		CLIENTS				= setmetatable({}, {__mode = "kv"}),
+		NETWORK_ID			= setmetatable({}, {__mode = "kv"}),
+		HOOKS				= self:GetLibrary("HOOKS"):Initialize(),
+		CODEC				= self:GetLibrary("CODEC"):Initialize(
 			self:GetDependence("JSON"),
 			self:GetDependence("CHACHA20"),
 			self:GetDependence("POLY1305"),
@@ -23,7 +27,7 @@ function CORE:Initialize()
 			self:GetDependence("BASE64"),
 			ENCRYPTION_KEY
 		),
-		EVENTS			= self:GetLibrary("EVENTS"):Initialize({
+		EVENTS				= self:GetLibrary("EVENTS"):Initialize({
 			connect		= self:GetLibrary("SERVER/EVENTS/CONNECT"),
 			disconnect	= self:GetLibrary("SERVER/EVENTS/DISCONNECT"),
 			receive		= self:GetLibrary("SERVER/EVENTS/RECEIVE"),
@@ -91,8 +95,8 @@ function CORE:BuildPacket(sMessageID, Content, bCrypt, bCompress)
 	assert(isstring(sMessageID),	"[SERVER] Invalid argument: sMessageID must be a string")
 	assert(Content ~= nil,			"[SERVER] Invalid argument: Content must not be nil")
 
-	bCrypt		= (bCrypt == true)		and true or false 
-	bCompress	= (bCompress == true)	and true or false
+	bCrypt		= (bCrypt == true)		and true or self.DEFAULT_ENCRYPT
+	bCompress	= (bCompress == true)	and true or self.DEFAULT_COMPRESS
 
 	return {
 		ID			= sMessageID,
