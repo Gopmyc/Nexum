@@ -49,6 +49,7 @@ end
 	
 function LIBRARY:BuildEvent(sType, udPeer, Data, iChannel, sFlag)
 	assert(isstring(sType),		"BuildEvent : Type event must be a string")
+	if istable(udPeer) then PrintTable(udPeer) end
 	assert(isuserdata(udPeer),	"BuildEvent : Peer event must be a userdata")
 	assert(Data ~= nil,			"BuildEvent : Data event must not be nil")
 		
