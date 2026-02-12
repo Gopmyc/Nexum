@@ -1,17 +1,17 @@
 LIBRARY.RESSOURCES	= {}
 
 function LIBRARY:ResolveDependencies(tDependencies, tSides, tSubLoader)
-	assert(istable(tDependencies),	"[RESSOURCES] The 'ResolveDependencies' method requires a table of dependencies")
-	assert(istable(tSides),			"[RESSOURCES] The 'tSides' argument must be a table with 'client' and 'server' keys")
+	assert(IsTable(tDependencies),	"[RESSOURCES] The 'ResolveDependencies' method requires a table of dependencies")
+	assert(IsTable(tSides),			"[RESSOURCES] The 'tSides' argument must be a table with 'client' and 'server' keys")
 
 	local tDependenciesFinded	= {}
 
 	local bShoulLoad			= (CLIENT and tSides.CLIENT) or (SERVER and tSides.SERVER)
 	if not bShoulLoad then return tDependenciesFinded end
 
-	local tScopeSearch			= (istable(tSubLoader) and isfunction(tSubLoader.GetScript)) and tSubLoader or self
+	local tScopeSearch			= (IsTable(tSubLoader) and IsFunction(tSubLoader.GetScript)) and tSubLoader or self
 	for iID, sDependence in ipairs(tDependencies) do
-		if not isstring(sDependence) then
+		if not IsString(sDependence) then
 			MsgC(Color(241, 196, 15), "[WARNING][RESSOURCES] Invalid dependency at index '"..iID.."': expected string, got "..type(sDependence))
 			goto continue
 		end
@@ -29,10 +29,10 @@ function LIBRARY:ResolveDependencies(tDependencies, tSides, tSubLoader)
 end
 
 function LIBRARY:GetScript(sName)
-	assert(isstring(sName), "[RESSOURCES] The 'GetScript' method only accepts a string as an argument")
+	assert(IsString(sName), "[RESSOURCES] The 'GetScript' method only accepts a string as an argument")
 
 	for sGroupKey, tGroup in pairs(self.RESSOURCES) do
-		if istable(tGroup) and tGroup[sName] then
+		if IsTable(tGroup) and tGroup[sName] then
 			return tGroup[sName]
 		end
 	end
@@ -41,19 +41,19 @@ function LIBRARY:GetScript(sName)
 end
 
 function LIBRARY:IncludeFiles(FileSource, tSide, tFileArgs, tSandEnv, bIsBinary, bLoadSubFolders, tCapabilities)
-	assert(isstring(FileSource) or isfunction(FileSource),	"[RESSOURCES] The 'IncludeFiles' method requires a valid file path as a string or a function [#1]")
-	assert(istable(tSide),									"[RESSOURCES] The 'tSide' argument must be a table with 'client' and 'server' keys [#2]")
-	assert((tFileArgs == nil) or istable(tFileArgs),		"[RESSOURCES] The 'tFileArgs' argument must be a table or nil [#3]")
+	assert(IsString(FileSource) or IsFunction(FileSource),	"[RESSOURCES] The 'IncludeFiles' method requires a valid file path as a string or a function [#1]")
+	assert(IsTable(tSide),									"[RESSOURCES] The 'tSide' argument must be a table with 'client' and 'server' keys [#2]")
+	assert((tFileArgs == nil) or IsTable(tFileArgs),		"[RESSOURCES] The 'tFileArgs' argument must be a table or nil [#3]")
 
-	if (SERVER and tSide.CLIENT and isstring(FileSource)) and not lovr.filesystem.isDirectory(FileSource) then
+	if (SERVER and tSide.CLIENT and IsString(FileSource)) and not lovr.filesystem.isDirectory(FileSource) then
 		self:AddCSLuaFile(FileSource)
 	end
 
 	local bShouldLoad	= ((CLIENT and tSide.CLIENT) or (SERVER and tSide.SERVER))
 	if not bShouldLoad then return nil end
 
-	local bIsEnvLoad	= (istable(tSandEnv) and isstring(tSandEnv.ACCESS_POINT) and istable(tSandEnv.CONTENT))
-	local bIsLuaFile	= (isstring(FileSource) and string.find(FileSource, "%.lua$"))
+	local bIsEnvLoad	= (IsTable(tSandEnv) and IsString(tSandEnv.ACCESS_POINT) and IsTable(tSandEnv.CONTENT))
+	local bIsLuaFile	= (IsString(FileSource) and string.find(FileSource, "%.lua$"))
 
 	return
 	(
@@ -74,7 +74,7 @@ function LIBRARY:IncludeFiles(FileSource, tSide, tFileArgs, tSandEnv, bIsBinary,
 					tCapabilities
 				)
 			)
-			or isfunction(FileSource) and
+			or IsFunction(FileSource) and
 			(
 				FileSource(tFileArgs)
 			)
@@ -95,11 +95,11 @@ function LIBRARY:AddCSLuaFile(sPath)
 end
 
 function LIBRARY:ResolveCapabilities(tConfig, tCapabilities)
-	assert(istable(tConfig),				"Config must be a table")
-	assert(istable(tCapabilities),			"Capabilities must be a table")
-	assert(istable(tCapabilities.SHARED),	"Capabilities.SHARED must be a table")
-	assert(istable(tCapabilities.SERVER),	"Capabilities.SERVER must be a table")
-	assert(istable(tCapabilities.CLIENT),	"Capabilities.CLIENT must be a table")
+	assert(IsTable(tConfig),				"Config must be a table")
+	assert(IsTable(tCapabilities),			"Capabilities must be a table")
+	assert(IsTable(tCapabilities.SHARED),	"Capabilities.SHARED must be a table")
+	assert(IsTable(tCapabilities.SERVER),	"Capabilities.SERVER must be a table")
+	assert(IsTable(tCapabilities.CLIENT),	"Capabilities.CLIENT must be a table")
 
 	local tConfigBuffer = {}
 
