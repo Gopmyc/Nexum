@@ -13,8 +13,8 @@ SUBLOADER.__ENV	= {
 }
 
 function SUBLOADER:Initialize(tContent)
-	assert(istable(tContent),			"[CORE SUB-LOADER] Content must be a table")
-	assert(isfunction(self.GetLoader),	"[CORE SUB-LOADER] Loader access method is missing")
+	assert(IsTable(tContent),			"[CORE SUB-LOADER] Content must be a table")
+	assert(IsFunction(self.GetLoader),	"[CORE SUB-LOADER] Loader access method is missing")
 
 	self.__ENV.CONTENT.CORE.LIBRARIES	= self:GetLoader():GetLibrariesBase("libraries", self.__ENV.CONTENT.CORE)
 	self.__BUFFER						= {}
@@ -33,12 +33,12 @@ function SUBLOADER:Initialize(tContent)
 end
 
 function SUBLOADER:LoadFile(tFile, fChunk)
-	local bIsReload		= isfunction(fChunk)
+	local bIsReload		= IsFunction(fChunk)
 	local bShared		= tFile.SIDES.CLIENT
 	local tDependencies	= self:GetLoader():GetLibrary("RESSOURCES"):ResolveDependencies(tFile.ARGS, tFile.SIDES, self)
 	local tCapabilities	= self:GetLoader():GetLibrary("RESSOURCES"):ResolveCapabilities(self:GetLoader():GetConfig(), tFile.CAPABILITIES)
 
-	if not istable(tDependencies) and (#tFile.ARGS > 0) then 
+	if not IsTable(tDependencies) and (#tFile.ARGS > 0) then 
 		return MsgC(
 			self:GetLoader():GetConfig().DEBUG.COLORS.ERROR,
 			"[OBJECTS SUB-LOADER] The dependencies for the file '" ..tFile.KEY.. "' could not be resolved."
