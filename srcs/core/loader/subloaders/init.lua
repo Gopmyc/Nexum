@@ -3,7 +3,7 @@ local function fResolveField(tRoot, sPath)
 
 	if sPath ~= "ROOT" then
 		for sKey in string.gmatch(sPath, "[^%.]+") do
-			if istable(tValue) then
+			if IsTable(tValue) then
 				tValue	= tValue[sKey]
 			else
 				tValue	= nil
@@ -16,11 +16,11 @@ local function fResolveField(tRoot, sPath)
 end
 
 local function fGetConfigGroup(tConfig, sGroup)
-	assert(istable(tConfig), "[SUBLOADER] Invalid argument: tConfig must be a table")
-	assert(isstring(sGroup), "[SUBLOADER] Invalid argument: sGroup must be a string")
+	assert(IsTable(tConfig), "[SUBLOADER] Invalid argument: tConfig must be a table")
+	assert(IsString(sGroup), "[SUBLOADER] Invalid argument: sGroup must be a string")
 
 	local tGroup	= tConfig
-	for _, sPart in ipairs(string.explode("/", sGroup)) do
+	for _, sPart in ipairs(string.Explode("/", sGroup)) do
 		tGroup = tGroup and tGroup[sPart] or nil
 
 		if not tGroup then
@@ -33,13 +33,13 @@ local function fGetConfigGroup(tConfig, sGroup)
 end
 
 local function fValidateGroup(sGroup, tGroup)
-	if not istable(tGroup) then
+	if not IsTable(tGroup) then
 		return false, "[SUBLOADER] Invalid config group '"..sGroup.."': expected table, got "..type(tGroup)
 	end
-	if not istable(tGroup.FILES) then
+	if not IsTable(tGroup.FILES) then
 		return false, "[SUBLOADER] Missing 'FILES' table in group '"..sGroup.."'"
 	end
-	if not isstring(tGroup.FILES.SUBLOADER) then
+	if not IsString(tGroup.FILES.SUBLOADER) then
 		return false, "[SUBLOADER] Invalid 'FILES.SUBLOADER' in group '"..sGroup.."': expected string"
 	end
 	if not tGroup.FILES.CONTENT then
@@ -49,10 +49,10 @@ local function fValidateGroup(sGroup, tGroup)
 end
 
 local function fValidateSubLoader(sGroup, tSubLoader)
-	if not istable(tSubLoader) then
+	if not IsTable(tSubLoader) then
 		return false, "[SUBLOADER] Sub-loader for group '"..sGroup.."' did not return a valid table"
 	end
-	if not (istable(tSubLoader[1]) and isfunction(tSubLoader[1].Initialize)) then
+	if not (IsTable(tSubLoader[1]) and IsFunction(tSubLoader[1].Initialize)) then
 		return false, "[SUBLOADER] Sub-loader for group '"..sGroup.."' is missing a valid Initialize method"
 	end
 	return true
@@ -77,7 +77,7 @@ end
 
 function SUBLOADER_BASE:InitializeGroup(sGroup)
 	if not self.INITIALIZED then return MsgC(self:GetAttribute("LOADER"):GetConfig().DEBUG.COLORS.ERROR, "[LOADER] SubLoader base not initialize") end
-	if not isstring(sGroup) then return MsgC(self:GetAttribute("LOADER"):GetConfig().DEBUG.COLORS.ERROR, "[LOADER] sGroup not a string : "..type(sGroup)) end
+	if not IsString(sGroup) then return MsgC(self:GetAttribute("LOADER"):GetConfig().DEBUG.COLORS.ERROR, "[LOADER] sGroup not a string : "..type(sGroup)) end
 
 	local tConfig			= self:GetAttribute("CONFIG")
 	local sBasePath			= self:GetAttribute("BASE_PATH")
@@ -118,9 +118,9 @@ function SUBLOADER_BASE:CheckFileStructureIntegrity(iID, tFile)
 	for _, tRule in ipairs(self:GetAttribute("LOADER").RULES_FILES) do
 		local sField	= tRule.FIELD
 		local sType		= tRule.TYPE
-		local fCheck	= _G["is" .. sType]
+		local fCheck	= _G["Is" .. sType]
 
-		if not isfunction(fCheck) then
+		if not IsFunction(fCheck) then
 			error("[OBJECTS SUB-LOADER] Unknown type checker 'is" .. sType .. "'")
 		end
 
@@ -136,14 +136,14 @@ function SUBLOADER_BASE:CheckFileStructureIntegrity(iID, tFile)
 end
 
 function SUBLOADER_BASE:SetAttribute(sKey, Value)
-	assert(isstring(sKey),	"[SUBLOADER_BASE] Key must be a string")
+	assert(IsString(sKey),	"[SUBLOADER_BASE] Key must be a string")
 	assert(Value ~= nil,	"[SUBLOADER_BASE] Value cannot be nil")
 
 	self.ATTRIBUTES[sKey] = Value
 end
 
 function SUBLOADER_BASE:GetAttribute(sKey)
-	assert(isstring(sKey), 	"[SUBLOADER_BASE] Key must be a string")
+	assert(IsString(sKey), 	"[SUBLOADER_BASE] Key must be a string")
 
 	return self.ATTRIBUTES[sKey]
 end
