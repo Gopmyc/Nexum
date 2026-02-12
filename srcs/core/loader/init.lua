@@ -3,8 +3,8 @@ local LOADER = {
 }
 
 function LOADER:Initialize(sConfigPath, tLibraries)
-	assert(isstring(sConfigPath), "[LOADER] Configuration path must be a string")
-	assert(istable(tLibraries), "[LOADER] Libraries must be a table")
+	assert(IsString(sConfigPath), "[LOADER] Configuration path must be a string")
+	assert(IsTable(tLibraries), "[LOADER] Libraries must be a table")
 
 	MsgC("\n")
 
@@ -13,7 +13,7 @@ function LOADER:Initialize(sConfigPath, tLibraries)
 	-- It's not clean, it needs to be changed later
 	local fMsgC	= MsgC
 	MsgC	= function(...)
-		return (istable(tLoader.CONFIG.DEBUG) and tLoader.CONFIG.DEBUG.ENABLED) and fMsgC(...) or (not istable(tLoader.CONFIG.DEBUG) and fMsgC(...))
+		return (IsTable(tLoader.CONFIG.DEBUG) and tLoader.CONFIG.DEBUG.ENABLED) and fMsgC(...) or (not IsTable(tLoader.CONFIG.DEBUG) and fMsgC(...))
 	end
 
 	tLoader:InitializeSubloaders(tLoader, tLoader.CONFIG)
@@ -23,7 +23,7 @@ end
 
 function LOADER:CreateLoaderInstance(tConfig, tLibraries)
 	local tLoaderConfig	= tConfig.LOADER
-	if not istable(tLoaderConfig) then return error("[CONFIG-LOADER] Missing 'LOADER' configuration table") end
+	if not IsTable(tLoaderConfig) then return error("[CONFIG-LOADER] Missing 'LOADER' configuration table") end
 	tConfig.LOADER				= nil
 
 	local tLoader				= setmetatable(tLoaderConfig, {__index = LOADER})
@@ -64,33 +64,33 @@ end
 function LOADER:InitializeSubloaders(tLoader, tConfig)
 	tLoader.SUBLOADER_BASE	= require(tLoader.SUBLOADERS_PATH):Initialize(tConfig, tLoader.SUBLOADERS_PATH, tLoader)
 
-	--if istable(tLoader.CONFIG.DEBUG) and tLoader.CONFIG.DEBUG.ENABLED then
+	--if IsTable(tLoader.CONFIG.DEBUG) and tLoader.CONFIG.DEBUG.ENABLED then
 	--	tLoader.LOAD_PRIORITY[#tLoader.LOAD_PRIORITY + 1]	= "HOT_RELOAD"
 	--end
 
 	for _, sGroup in ipairs(tLoader.LOAD_PRIORITY) do
 		local tSubLoader, tInitialized = tLoader.SUBLOADER_BASE:InitializeGroup(sGroup)
-		if istable(tSubLoader) then
+		if IsTable(tSubLoader) then
 			tLoader:GetLibrary("RESSOURCES").RESSOURCES[tSubLoader[1]:GetID()] = tInitialized
 		end
 	end
 end
 
 function LOADER:LoadConfiguration(sPath, tLibraries, tTable, bIsRoot)
-	assert(isstring(sPath), "[CONFIG-LOADER] Path must be a string")
-	assert(istable(tLibraries), "[CONFIG-LOADER] Libraries must be a table")
+	assert(IsString(sPath), "[CONFIG-LOADER] Path must be a string")
+	assert(IsTable(tLibraries), "[CONFIG-LOADER] Libraries must be a table")
 
-	tTable		= istable(tTable) and tTable or {}
+	tTable		= IsTable(tTable) and tTable or {}
 	bIsRoot		= (bIsRoot == nil) and true or bIsRoot
 
 	local tFiles, tDirs	= FilesFind(sPath)
 	for _, sFile in ipairs(tFiles) do
-		if not sFile:sub(-5) == ".yaml" then goto continue end
+		if not (sFile:sub(-5) == ".yaml") then goto continue end
 		
 		local sData		= lovr.filesystem.read(sPath .. "/" .. sFile)
 		local tParsed	= sData and tLibraries.YAML.eval(sData) or nil
 
-		tTable[string.upper(sFile:sub(1, -6))] = istable(tParsed) and tParsed or nil
+		tTable[string.upper(sFile:sub(1, -6))] = IsTable(tParsed) and tParsed or nil
 
 		::continue::
 	end
@@ -118,9 +118,9 @@ function LOADER:GetSubLoaderBase()
 end
 
 function LOADER:LoadSubLoader(sPath, Content, bShared, sID)
-	assert(isstring(sPath),	"[SUB-LOADER] Path must be a string")
+	assert(IsString(sPath),	"[SUB-LOADER] Path must be a string")
 	assert(Content ~= nil,	"[SUB-LOADER] Content must be a table")
-	assert(isbool(bShared),	"[SUB-LOADER] Shared flag must be a boolean")
+	assert(IsBool(bShared),	"[SUB-LOADER] Shared flag must be a boolean")
 
 	if bShared and SERVER then
 		self:GetLibrary("RESSOURCES"):AddCSLuaFile(sPath)
@@ -174,9 +174,9 @@ function LOADER:LoadSubLoader(sPath, Content, bShared, sID)
 		"SUBLOADER", nil)
 
 		tSubLoader.__PARENT	= self
-		tSubLoader.__ID		= isstring(sID) and sID or "UNKNOWN_SUBLOADER"
+		tSubLoader.__ID		= IsString(sID) and sID or "UNKNOWN_SUBLOADER"
 
-		if not (istable(tSubLoader) and isstring(tSubLoader.__ID)) then
+		if not (IsTable(tSubLoader) and IsString(tSubLoader.__ID)) then
 			return MsgC(Color(255, 0, 0), "[SUB-LOADER] The sub-loader at path '"..sPath.."' did not return a valid table with an '__ID' string.")
 		end
 
@@ -190,11 +190,11 @@ end
 
 function LOADER:GetLibrariesBase(sBasePath, tParent)
 	local tLibraries	= {}
-	tLibraries.PATH		= isstring(sBasePath) and sBasePath or "libraries"
+	tLibraries.PATH		= IsString(sBasePath) and sBasePath or "libraries"
 	tLibraries.BUFFER	= {}
 
 	tLibraries.Load	= function(tLibSelf, sPath)
-		assert(isstring(sPath), "[LIBRARY {LOADER}] Path must be a string")
+		assert(IsString(sPath), "[LIBRARY {LOADER}] Path must be a string")
 
 		local tBoth		= {
 			["sh_"]	= function(sPath)
@@ -226,7 +226,7 @@ function LOADER:GetLibrariesBase(sBasePath, tParent)
 		end
 	end
 
-	if istable(tParent) then
+	if IsTable(tParent) then
 		tParent.GetLibrary		= LOADER.GetLibrary
 		tParent.PrintLibraries	= LOADER.PrintLibraries
 	end
@@ -235,7 +235,7 @@ function LOADER:GetLibrariesBase(sBasePath, tParent)
 end
 
 function LOADER:GetLibrary(sName)
-	assert(isstring(sName) and #sName > 0, "[LIBRARY] Library name must be a non-empty string")
+	assert(IsString(sName) and #sName > 0, "[LIBRARY] Library name must be a non-empty string")
 	return (self.LIBRARIES and self.LIBRARIES.BUFFER and self.LIBRARIES.BUFFER[sName])
 		or MsgC(Color(231, 76, 60), "[LIBRARY] Library not found: " .. sName)
 end
@@ -243,11 +243,11 @@ end
 function LOADER:PrintLibraries()
 	local sID		= self.__PATH .. self.__NAME or "unknown"
 	local tBuffer	= self.LIBRARIES.BUFFER
-	if not istable(self.LIBRARIES) then
+	if not IsTable(self.LIBRARIES) then
 		return MsgC(Color(231, 76, 60), "[LIBRARY] 'LIBRARIES' table not initialized.")
 	end
 
-	if not istable(tBuffer) or not next(tBuffer) then
+	if not IsTable(tBuffer) or not next(tBuffer) then
 		return MsgC(Color(231, 76, 60), "[LIBRARY] No libraries loaded for : '" .. sID .."'")
 	end
 		
@@ -266,8 +266,8 @@ function LOADER:PrintLibraries()
 end
 
 function LOADER:Instanciate(sFileName, sIntanceName, ...)
-	assert(isstring(sFileName),		"File name must be a string")
-	assert(isstring(sIntanceName),	"Intance name must be a string")
+	assert(IsString(sFileName),		"File name must be a string")
+	assert(IsString(sIntanceName),	"Intance name must be a string")
 
 	local tArgs					= {...}
 	local sGroup, iFileID, _	= self:GetSubLoaderBase():GetGroupByFileName(sFileName)
