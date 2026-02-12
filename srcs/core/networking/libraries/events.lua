@@ -48,9 +48,8 @@ function LIBRARY:Call(tServer, tEvent)
 end
 	
 function LIBRARY:BuildEvent(sType, udPeer, Data, iChannel, sFlag)
-	assert(isstring(sType),		"BuildEvent : Type event must be a string")
-	if istable(udPeer) then PrintTable(udPeer) end
-	assert(isuserdata(udPeer),	"BuildEvent : Peer event must be a userdata")
+	assert(IsString(sType),		"BuildEvent : Type event must be a string")
+	assert(IsUserdata(udPeer),	"BuildEvent : Peer event must be a userdata")
 	assert(Data ~= nil,			"BuildEvent : Data event must not be nil")
 		
 	return {
@@ -63,9 +62,9 @@ function LIBRARY:BuildEvent(sType, udPeer, Data, iChannel, sFlag)
 end
 
 function LIBRARY:Destroy()
-	if not istable(self) then return end
+	if not IsTable(self) then return end
 
-	if istable(self.__EVENTS) then
+	if IsTable(self.__EVENTS) then
 		setmetatable(self.__EVENTS, nil)
 
 		for kKey in pairs(self.__EVENTS) do
