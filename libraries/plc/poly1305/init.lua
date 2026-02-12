@@ -60,195 +60,165 @@ See also:
 -----------------------------------------------------------
 -- poly1305
 
-local sunp = string.unpack
+local bit = require("bit")
+
+local unpack32
+if table.unpack then
+	unpack32 = table.unpack
+else
+	unpack32 = unpack
+end
+
+local function unpack_u32_le(s, idx, n)
+	idx = idx or 1
+	n   = n or math.floor((#s - idx + 1)/4)
+	local t = {}
+	for i = 0,n-1 do
+		local a,b,c,d = s:byte(idx+i*4, idx+i*4+3)
+		t[#t+1] = a + b*2^8 + c*2^16 + d*2^24
+	end
+	return t
+end
+
+local function pack_u32_le(t)
+	local s = {}
+	for i=1,#t do
+		local n = t[i]
+		s[#s+1] = string.char(
+			bit.band(n,0xff),
+			bit.band(bit.rshift(n,8),0xff),
+			bit.band(bit.rshift(n,16),0xff),
+			bit.band(bit.rshift(n,24),0xff)
+		)
+	end
+	return table.concat(s)
+end
 
 local function poly_init(k)
-	-- k: 32-byte key as a string
-	-- initialize internal state
+	local r = unpack_u32_le(k,1,8)
 	local st = {
 		r = {
-			(sunp('<I4', k,  1)     ) & 0x3ffffff,  --r0
-			(sunp('<I4', k,  4) >> 2) & 0x3ffff03,  --r1
-			(sunp('<I4', k,  7) >> 4) & 0x3ffc0ff,  --r2
-			(sunp('<I4', k, 10) >> 6) & 0x3f03fff,  --r3
-			(sunp('<I4', k, 13) >> 8) & 0x00fffff,  --r4
+			bit.band(r[1],0x3ffffff),
+			bit.band(bit.rshift(r[2],2),0x3ffff03),
+			bit.band(bit.rshift(r[3],4),0x3ffc0ff),
+			bit.band(bit.rshift(r[4],6),0x3f03fff),
+			bit.band(bit.rshift(r[5],8),0x00fffff),
 		},
-		h = { 0,0,0,0,0 },
-		pad = {	sunp('<I4', k, 17),  -- 's' in rfc
-			sunp('<I4', k, 21),
-			sunp('<I4', k, 25),
-			sunp('<I4', k, 29),
-		},
-		buffer = "", --
+		h = {0,0,0,0,0},
+		pad = {r[5],r[6],r[7],r[8]},
+		buffer = "",
 		leftover = 0,
 		final = false,
-	}--st
+	}
 	return st
-end --poly_init()
+end
 
-local function poly_blocks(st, m)
-	-- st: internal state
-	-- m: message:string
+local function poly_blocks(st,m)
 	local bytes = #m
-	local midx = 1
-	local hibit = st.final and 0 or 0x01000000 -- 1 << 24
-	local r0 = st.r[1]
-	local r1 = st.r[2]
-	local r2 = st.r[3]
-	local r3 = st.r[4]
-	local r4 = st.r[5]
-	local s1 = r1 * 5
-	local s2 = r2 * 5
-	local s3 = r3 * 5
-	local s4 = r4 * 5
-	local h0 = st.h[1]
-	local h1 = st.h[2]
-	local h2 = st.h[3]
-	local h3 = st.h[4]
-	local h4 = st.h[5]
-	local d0, d1, d2, d3, d4, c
-	--
-	while bytes >= 16 do  -- 16 = poly1305_block_size
-		-- h += m[i]  (in rfc:  a += n with 0x01 byte)
-		h0 = h0 + ((sunp('<I4', m, midx     )     ) & 0x3ffffff)
-		h1 = h1 + ((sunp('<I4', m, midx +  3) >> 2) & 0x3ffffff)
-		h2 = h2 + ((sunp('<I4', m, midx +  6) >> 4) & 0x3ffffff)
-		h3 = h3 + ((sunp('<I4', m, midx +  9) >> 6) & 0x3ffffff)
-		h4 = h4 + ((sunp('<I4', m, midx + 12) >> 8) | hibit)--0x01 byte
-		--
-		-- h *= r % p (partial)
+	local midx  = 1
+	local hibit = st.final and 0 or 0x01000000
+
+	local r0,r1,r2,r3,r4 = unpack32(st.r)
+	local s1,s2,s3,s4     = r1*5,r2*5,r3*5,r4*5
+	local h0,h1,h2,h3,h4  = unpack32(st.h)
+	local d0,d1,d2,d3,d4,c
+
+	while bytes >= 16 do
+		local u = unpack_u32_le(m,midx,4)
+		h0 = h0 + bit.band(u[1],0x3ffffff)
+		h1 = h1 + bit.band(bit.rshift(u[2],2),0x3ffffff)
+		h2 = h2 + bit.band(bit.rshift(u[3],4),0x3ffffff)
+		h3 = h3 + bit.band(bit.rshift(u[4],6),0x3ffffff)
+		h4 = h4 + bit.bor(bit.rshift(u[4],8), hibit)
+
 		d0 = h0*r0 + h1*s4 + h2*s3 + h3*s2 + h4*s1
 		d1 = h0*r1 + h1*r0 + h2*s4 + h3*s3 + h4*s2
 		d2 = h0*r2 + h1*r1 + h2*r0 + h3*s4 + h4*s3
 		d3 = h0*r3 + h1*r2 + h2*r1 + h3*r0 + h4*s4
 		d4 = h0*r4 + h1*r3 + h2*r2 + h3*r1 + h4*r0
-		--
-		              c = (d0>>26) & 0xffffffff ; h0 = d0 & 0x3ffffff
-		d1 = d1 + c ; c = (d1>>26) & 0xffffffff ; h1 = d1 & 0x3ffffff
-		d2 = d2 + c ; c = (d2>>26) & 0xffffffff ; h2 = d2 & 0x3ffffff
-		d3 = d3 + c ; c = (d3>>26) & 0xffffffff ; h3 = d3 & 0x3ffffff
-		d4 = d4 + c ; c = (d4>>26) & 0xffffffff ; h4 = d4 & 0x3ffffff
-		h0 = h0 + (c*5) ; c = h0>>26 ; h0 = h0 & 0x3ffffff
-		h1 = h1 + c
-		--
-		midx = midx + 16 -- 16 = poly1305_block_size
-		bytes = bytes - 16
-	end --while
-	st.h[1] = h0
-	st.h[2] = h1
-	st.h[3] = h2
-	st.h[4] = h3
-	st.h[5] = h4
-	st.bytes = bytes -- remaining bytes. must be < 16 here
-	st.midx = midx -- index of first remaining bytes
-	return st
-end --poly_blocks()
 
-local function poly_update(st, m)
-	-- st: internal state
-	-- m: message:string
-	st.bytes, st.midx = #m, 1
-	-- process full blocks if any
-	if st.bytes >= 16 then
-		poly_blocks(st, m)
+		c  = math.floor(d0 / 2^26); h0 = d0 % 2^26
+		d1 = d1 + c; c = math.floor(d1 / 2^26); h1 = d1 % 2^26
+		d2 = d2 + c; c = math.floor(d2 / 2^26); h2 = d2 % 2^26
+		d3 = d3 + c; c = math.floor(d3 / 2^26); h3 = d3 % 2^26
+		d4 = d4 + c; c = math.floor(d4 / 2^26); h4 = d4 % 2^26
+		h0 = h0 + c*5; c = math.floor(h0 / 2^26); h0 = h0 % 2^26
+		h1 = h1 + c
+
+		midx = midx + 16
+		bytes = bytes - 16
 	end
-	--handle remaining bytes
-	if st.bytes == 0 then -- no bytes left
-		-- nothing to do? no add 0x01? - apparently not.
-	else
-		local buffer = 	string.sub(m, st.midx)
-			.. '\x01' .. string.rep('\0', 16 - st.bytes -1)
-		assert(#buffer == 16)
-		st.final = true  -- this is the last block
---~ 		p16(buffer)
-		poly_blocks(st, buffer)
-	end
-	--
+
+	st.h[1],st.h[2],st.h[3],st.h[4],st.h[5] = h0,h1,h2,h3,h4
+	st.bytes,st.midx = bytes,midx
 	return st
-end --poly_update
+end
+
+local function poly_update(st,m)
+	st.bytes, st.midx = #m, 1
+	if st.bytes >= 16 then poly_blocks(st,m) end
+	if st.bytes > 0 then
+		local buffer = string.sub(m,st.midx) .. "\x01" .. string.rep("\0",16-st.bytes-1)
+		st.final = true
+		poly_blocks(st,buffer)
+	end
+	return st
+end
 
 local function poly_finish(st)
-	--
-	local c, mask 	--u32
-	local f  	--u64
-	-- fully carry h
-	local h0 = st.h[1]
-	local h1 = st.h[2]
-	local h2 = st.h[3]
-	local h3 = st.h[4]
-	local h4 = st.h[5]
-	--
-		         c = h1 >> 26; h1 = h1 & 0x3ffffff
-	h2 = h2 +     c; c = h2 >> 26; h2 = h2 & 0x3ffffff
-	h3 = h3 +     c; c = h3 >> 26; h3 = h3 & 0x3ffffff
-	h4 = h4 +     c; c = h4 >> 26; h4 = h4 & 0x3ffffff
-	h0 = h0 + (c*5); c = h0 >> 26; h0 = h0 & 0x3ffffff
+	local h0,h1,h2,h3,h4 = unpack32(st.h)
+	local c
+
+	c  = math.floor(h1/2^26); h1 = h1 % 2^26
+	h2 = h2 + c; c = math.floor(h2/2^26); h2 = h2 % 2^26
+	h3 = h3 + c; c = math.floor(h3/2^26); h3 = h3 % 2^26
+	h4 = h4 + c; c = math.floor(h4/2^26); h4 = h4 % 2^26
+	h0 = h0 + c*5; c = math.floor(h0/2^26); h0 = h0 % 2^26
 	h1 = h1 + c
-	--
-	--compute h + -p
-	local g0 = (h0 + 5) ; c = g0 >> 26; g0 = g0 & 0x3ffffff
-	local g1 = (h1 + c) ; c = g1 >> 26; g1 = g1 & 0x3ffffff
-	local g2 = (h2 + c) ; c = g2 >> 26; g2 = g2 & 0x3ffffff
-	local g3 = (h3 + c) ; c = g3 >> 26; g3 = g3 & 0x3ffffff
-	local g4 = (h4 + c - 0x4000000) &0xffffffff  -- (1 << 26)
-	--
-	-- select h if h < p, or h + -p if h >= p
-	mask = ((g4 >> 31) -1) & 0xffffffff
-	--
-	g0 = g0 & mask
-	g1 = g1 & mask
-	g2 = g2 & mask
-	g3 = g3 & mask
-	g4 = g4 & mask
-	--
-	mask = (~mask)  & 0xffffffff
-	h0 = (h0 & mask) | g0
-	h1 = (h1 & mask) | g1
-	h2 = (h2 & mask) | g2
-	h3 = (h3 & mask) | g3
-	h4 = (h4 & mask) | g4
-	--
-	--h = h % (2^128)
-	h0 = ((h0      ) | (h1 << 26)) & 0xffffffff
-	h1 = ((h1 >>  6) | (h2 << 20)) & 0xffffffff
-	h2 = ((h2 >> 12) | (h3 << 14)) & 0xffffffff
-	h3 = ((h3 >> 18) | (h4 <<  8)) & 0xffffffff
-	--
-	-- mac = (h + pad) % (2^128)
-	f = h0 + st.pad[1]             ; h0 = f & 0xffffffff
-	f = h1 + st.pad[2] + (f >> 32) ; h1 = f & 0xffffffff
-	f = h2 + st.pad[3] + (f >> 32) ; h2 = f & 0xffffffff
-	f = h3 + st.pad[4] + (f >> 32) ; h3 = f & 0xffffffff
-	--
-	local mac = string.pack('<I4I4I4I4', h0, h1, h2, h3)
-	-- (should zero out the state?)
-	--
-	return mac
-end --poly_finish()
 
-local function poly_auth(m, k)
-	-- m: msg string
-	-- k: key string (must be 32 bytes)
-	-- return mac 16-byte string
-	assert(#k == 32)
+	local g0 = h0+5; c = math.floor(g0/2^26); g0 = g0 % 2^26
+	local g1 = h1+c; c = math.floor(g1/2^26); g1 = g1 % 2^26
+	local g2 = h2+c; c = math.floor(g2/2^26); g2 = g2 % 2^26
+	local g3 = h3+c; c = math.floor(g3/2^26); g3 = g3 % 2^26
+	local g4 = h4+c-0x4000000
+
+	local mask = bit.bnot(bit.rshift(g4,31))
+	h0 = bit.bor(bit.band(h0,mask), g0)
+	h1 = bit.bor(bit.band(h1,mask), g1)
+	h2 = bit.bor(bit.band(h2,mask), g2)
+	h3 = bit.bor(bit.band(h3,mask), g3)
+	h4 = bit.bor(bit.band(h4,mask), g4)
+
+	h0 = bit.band(h0 + bit.lshift(h1,26),0xffffffff)
+	h1 = bit.band(bit.rshift(h1,6) + bit.lshift(h2,20),0xffffffff)
+	h2 = bit.band(bit.rshift(h2,12) + bit.lshift(h3,14),0xffffffff)
+	h3 = bit.band(bit.rshift(h3,18) + bit.lshift(h4,8),0xffffffff)
+
+	local f
+	f  = h0 + st.pad[1]; h0 = bit.band(f,0xffffffff)
+	f  = h1 + st.pad[2] + math.floor(f/2^32); h1 = bit.band(f,0xffffffff)
+	f  = h2 + st.pad[3] + math.floor(f/2^32); h2 = bit.band(f,0xffffffff)
+	f  = h3 + st.pad[4] + math.floor(f/2^32); h3 = bit.band(f,0xffffffff)
+
+	return pack_u32_le({h0,h1,h2,h3})
+end
+
+local function poly_auth(m,k)
+	assert(#k==32)
 	local st = poly_init(k)
-	poly_update(st, m)
-	local mac = poly_finish(st)
-	return mac
-end --poly_auth()
+	poly_update(st,m)
+	return poly_finish(st)
+end
 
-local function poly_verify(m, k, mac)
-	local macm = poly_auth(m, k)
-	return macm == mac
-end --poly_verify()
-
-------------------------------------------------------------
--- return poly1305 module
+local function poly_verify(m,k,mac)
+	return poly_auth(m,k) == mac
+end
 
 return {
-	init = poly_init,
+	init   = poly_init,
 	update = poly_update,
 	finish = poly_finish,
-	auth = poly_auth,
+	auth   = poly_auth,
 	verify = poly_verify,
-	}
+	mac    = poly_auth
+}
