@@ -6,6 +6,6 @@ function LIBRARY:Call(tServer, tEvent)
 
 	-- AddNetworkID
 	for sID, tClient in pairs(tServer.CLIENTS) do
-		tServer:SendToClient(sID, tServer:BuildPacket("message-id-test", "Hello friend !"))
+		tServer:SendToClient(sID, tServer:BuildPacket("message-id-test", "Hello friend !", false, true))
 	end
 end
