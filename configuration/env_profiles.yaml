@@ -1,0 +1,84 @@
+# ┌────────────────┐
+# │ 'CORE' PROFILE │
+# └────────────────┘
+CORE:
+  # ┌───────────┐
+  # │ CONSTANTS │
+  # └───────────┘
+  constants:
+    SERVER:   true
+    CLIENT:   true
+    _VERSION: false
+  # ┌───────────┐
+  # │ FUNCTIONS │
+  # └───────────┘
+  functions:
+    assert:       true
+    error:        true
+    ipairs:       true
+    next:         true
+    pairs:        true
+    pcall:        true
+    select:       true
+    tonumber:     true
+    tostring:     true
+    type:         true
+    unpack:       true
+    xpcall:       true
+    IsTable:      true
+    IsNumber:     true
+    IsUserdata:   true
+    IsString:     true
+    IsBool:       true
+    IsFunction:   true
+    IsThread:     true
+    Color:        true
+    MsgC:         true
+    PrintTable:   true
+    print:        true
+    setmetatable: true
+    getmetatable: false
+  # ┌───────────┐
+  # │ LIBRARIES │
+  # └───────────┘
+  libraries:
+    math:       full
+    string:     full
+    os:
+      time:     true
+      date:     true
+    table:
+      insert:   true
+      remove:   true
+      sort:     true
+      concat:   true
+      copy:     true
+  # ┌─────────────┐
+  # │ NAME-SPACES │
+  # └─────────────┘
+  namespaces:
+    ENV:
+      exposed:  true
+      readonly: false
+  # ┌───────────┐
+  # │ EXECUTION │
+  # └───────────┘
+  execution:
+    load:       false
+    loadstring: false
+    dofile:     false
+    loadfile:   false
+    setfenv:    false
+    getfenv:    false
+  # ┌────────────┐
+  # │ META-TABLE │
+  # └────────────┘
+  metatable:
+    allow_string_meta: false
+    allow_table_meta:  false
+  # ┌──────────┐
+  # │ FALLBACK │
+  # └──────────┘
+  fallback:
+    global:           false
+    error_on_missing: true
