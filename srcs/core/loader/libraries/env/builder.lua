@@ -1,3 +1,22 @@
+-- Do you think it's ugly ? Me too
+local MergeBool				= function(a, b) if a == nil then return b end; if b == nil then return a end; return a and b end
+local MergeFunctionTable	= function(dst, src) for k, v in pairs(src) do dst[k] = MergeBool(dst[k], v); end end
+local MergeLibrary			= function(dstLib, srcLib)
+	if dstLib == nil then if srcLib == "full" then return "full" end; return table.Copy(srcLib); end
+	if dstLib == "full" and srcLib == "full" then return "full" end
+	if dstLib == "full" and type(srcLib) == "table" then return table.Copy(srcLib) end
+	if type(dstLib) == "table" and srcLib == "full" then return table.Copy(dstLib) end
+
+	if type(dstLib) == "table" and type(srcLib) == "table" then
+		local t = {}
+		for fn, allow in pairs(dstLib) do if srcLib[fn] ~= nil then t[fn] = allow and srcLib[fn]; end end
+		return t
+	end
+
+	return nil
+end
+----------
+
 function LIBRARY:ApplyConstants(tEnv, tPolicy)
 	for sKey, vValue in pairs(tPolicy.constants or {}) do
 		tEnv[sKey] = vValue
@@ -103,13 +122,63 @@ function LIBRARY:LoadInternalLibraries(tEnv, sAccessPoint, sPath)
 	return tEnv
 end
 
+function LIBRARY:BuildPolicy(tEnvProfile)
+	if not (IsTable(self.SAFE_GLOBALS) and IsTable(tEnvProfile)) then
+		return nil
+	end
 
-function LIBRARY:BuildEnvironment(sFileSource, tSandEnv, sAccessPoint, tFileArgs, tCapabilities, bLoadLibraries)
+	local tPolicy	= {
+		constants	= {},
+		functions	= {},
+		libraries	= {},
+		namespaces	= {},
+		fallback	= nil,
+	}
+
+	for _, profileName in ipairs(tEnvProfile) do
+		local tProfile	= self.SAFE_GLOBALS[profileName]
+		if not IsTable(tProfile) then
+			continue
+		end
+
+		for k, v in pairs(tProfile.constants or {}) do
+			if tPolicy.constants[k] == nil then
+				tPolicy.constants[k]	= v
+			end
+		end
+
+		MergeFunctionTable(tPolicy.functions, tProfile.functions or {})
+
+		for lib, cfg in pairs(tProfile.libraries or {}) do
+			tPolicy.libraries[lib]	= MergeLibrary(tPolicy.libraries[lib], cfg)
+		end
+
+		for name, ns in pairs(tProfile.namespaces or {}) do
+			tPolicy.namespaces[name]			= tPolicy.namespaces[name] or {}
+			tPolicy.namespaces[name].exposed	= MergeBool(tPolicy.namespaces[name].exposed, ns.exposed)
+		end
+
+		if tProfile.fallback then
+			if not tPolicy.fallback then
+				tPolicy.fallback	= table.Copy(tProfile.fallback)
+			else
+				tPolicy.fallback.global				= MergeBool(tPolicy.fallback.global, tProfile.fallback.global)
+				tPolicy.fallback.error_on_missing	= MergeBool(tPolicy.fallback.error_on_missing, tProfile.fallback.error_on_missing)
+			end
+		end
+
+		::continue::
+	end
+
+	return tPolicy
+end
+
+function LIBRARY:BuildEnvironment(sFileSource, tSandEnv, sAccessPoint, tFileArgs, tCapabilities, tEnvProfile, bLoadLibraries)
 	local tEnv		= table.Copy(tSandEnv, true)
-	local tPolicy	= self.SAFE_GLOBAL
+	local tPolicy	= self:BuildPolicy(tEnvProfile)
 
 	if not IsTable(tPolicy) then
-		return MsgC(Color(241, 196, 15), "[WARNING] 'BuildEnvironement' fail for : '" .. sFileSource .. "', 'SAFE_GLOBAL' not set.")
+		return MsgC(Color(241, 196, 15), "[WARNING] 'BuildEnvironement' fail for : '" .. sFileSource .. "', 'SAFE_GLOBALS' not set.")
 	end
 
 	self:ApplyConstants(tEnv, tPolicy)
@@ -124,5 +193,5 @@ function LIBRARY:BuildEnvironment(sFileSource, tSandEnv, sAccessPoint, tFileArgs
 end
 
 function LIBRARY:SetEnvSpecification(tEnv)
-	self.SAFE_GLOBAL	= tEnv
+	self.SAFE_GLOBALS	= tEnv
 end
