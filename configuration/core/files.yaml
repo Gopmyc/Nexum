@@ -9,6 +9,7 @@ CONTENT:
     ARGS:             {}
     IS_BINARY:        true
     LOAD_SUBFOLDERS:  false
+    ENV_PROFILE:      {}
     SIDES:
       CLIENT: true
       SERVER: true
@@ -30,6 +31,8 @@ CONTENT:
       - "LZW"
     IS_BINARY:        false
     LOAD_SUBFOLDERS:  true
+    ENV_PROFILE:
+      - "CORE"
     SIDES:
       CLIENT: true
       SERVER: true
