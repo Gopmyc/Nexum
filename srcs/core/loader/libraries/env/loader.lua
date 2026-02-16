@@ -86,7 +86,7 @@ function LIBRARY:MergeSubEnvironments(tMainEnv, ...)
 	end
 end
 
-function LIBRARY:Load(sFileSource, tSandEnv, sAccessPoint, tFileArgs, bLoadSubFolders, tCapabilities, bNotLoadLibraries)
+function LIBRARY:Load(sFileSource, tSandEnv, sAccessPoint, tFileArgs, bLoadSubFolders, tCapabilities, tEnvProfile, bNotLoadLibraries)
 	assert(IsString(sFileSource),					"[ENV-RESSOURCES] FileSource must be a string (#1)")
 	assert(IsTable(tSandEnv),						"[ENV-RESSOURCES] ENV must be a table (#2)")
 	assert(IsString(sAccessPoint),					"[ENV-RESSOURCES] AccessPoint must be a string (#3)")
@@ -103,7 +103,7 @@ function LIBRARY:Load(sFileSource, tSandEnv, sAccessPoint, tFileArgs, bLoadSubFo
 	end
 
 	local tSubEnv;
-	local tEnv		= tEnvBuilder:BuildEnvironment(sResolved, tSandEnv, sAccessPoint, tFileArgs, tCapabilities, not bNotLoadLibraries)
+	local tEnv		= tEnvBuilder:BuildEnvironment(sResolved, tSandEnv, sAccessPoint, tFileArgs, tCapabilities, tEnvProfile, not bNotLoadLibraries)
 	if bLoadSubFolders and sResolved:sub(-8) == "init.lua" then
 		local sBasePath			= sResolved:match("^(.*[/\\])")
 		tSubEnv					= self:LoadSubEnvironments(sBasePath, tSandEnv, sAccessPoint, tFileArgs, tCapabilities, {true, true}, tEnv[sAccessPoint].LIBRARIES and tEnv[sAccessPoint].LIBRARIES.BUFFER)
