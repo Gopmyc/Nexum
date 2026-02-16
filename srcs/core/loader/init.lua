@@ -52,7 +52,8 @@ function LOADER:CreateLoaderInstance(tConfig, tLibraries)
 		::continue::
 	end
 
-	tLoader:GetLibrary("ENV_BUILDER"):SetEnvSpecification(tLoader.SAFE_GLOBAL)
+	PrintTable(tConfig.ENV_PROFILES)
+	tLoader:GetLibrary("ENV_BUILDER"):SetEnvSpecification(tConfig.ENV_PROFILES)
 	tLoader:GetLibrary("RUNTIME"):SetRuntimeConfig(tLoader.RUNTIME)
 
 	-- TODO: Make this cleaner, it's really not good to have this kind of logic in the loader, but it works for now
@@ -218,9 +219,11 @@ function LOADER:GetLibrariesBase(sBasePath, tParent)
 			local sLibFolder														= sFile:match("libraries/([^/\\]+)")
 			local sPrefix															= sFileName:sub(1, 3)
 			local fSide																= tBoth[sLibFolder] or tBoth[sPrefix] or tBoth["sh_"]
+			-- local tEnvProfile														= ...
 
 			if not fSide(sFile) then goto continue end
-			tLibSelf.BUFFER[string.upper(sFile:match("libraries/(.-)%.lua$"))]		= self:GetLibrary("ENV_LOADER"):Load(sFile, { LIBRARY = {} }, "LIBRARY", {}, false, {}, true)
+			-- TODO : Use the parent env_profile for each sub libs ?
+			tLibSelf.BUFFER[string.upper(sFile:match("libraries/(.-)%.lua$"))]		= self:GetLibrary("ENV_LOADER"):Load(sFile, { LIBRARY = {} }, "LIBRARY", {}, false, {}, tEnvProfile, true)
 
 			::continue::
 		end
