@@ -40,7 +40,7 @@ function LIBRARY:GetScript(sName)
 	return nil
 end
 
-function LIBRARY:IncludeFiles(FileSource, tSide, tFileArgs, tSandEnv, bIsBinary, bLoadSubFolders, tCapabilities)
+function LIBRARY:IncludeFiles(FileSource, tSide, tFileArgs, tSandEnv, bIsBinary, bLoadSubFolders, tCapabilities, tEnvProfile)
 	assert(IsString(FileSource) or IsFunction(FileSource),	"[RESSOURCES] The 'IncludeFiles' method requires a valid file path as a string or a function [#1]")
 	assert(IsTable(tSide),									"[RESSOURCES] The 'tSide' argument must be a table with 'client' and 'server' keys [#2]")
 	assert((tFileArgs == nil) or IsTable(tFileArgs),		"[RESSOURCES] The 'tFileArgs' argument must be a table or nil [#3]")
@@ -71,7 +71,8 @@ function LIBRARY:IncludeFiles(FileSource, tSide, tFileArgs, tSandEnv, bIsBinary,
 					tSandEnv.ACCESS_POINT,
 					tFileArgs,
 					bLoadSubFolders,
-					tCapabilities
+					tCapabilities,
+					tEnvProfile
 				)
 			)
 			or IsFunction(FileSource) and
