@@ -37,6 +37,14 @@ function SUBLOADER:LoadFile(tFile, fChunk)
 	local bShared		= tFile.SIDES.CLIENT
 	local tDependencies	= self:GetLoader():GetLibrary("RESSOURCES"):ResolveDependencies(tFile.ARGS, tFile.SIDES, self)
 	local tCapabilities	= self:GetLoader():GetLibrary("RESSOURCES"):ResolveCapabilities(self:GetLoader():GetConfig(), tFile.CAPABILITIES)
+	local tEnvProfile	= tFile.ENV_PROFILE
+
+	if not istable(tEnvProfile) then
+		return MsgC(
+			self:GetLoader():GetConfig().DEBUG.COLORS.ERROR,
+			"[OBJECTS SUB-LOADER] 'ENV_PROFILE' not set for file: " .. tFile.KEY
+		)
+	end
 
 	if not IsTable(tDependencies) and (#tFile.ARGS > 0) then 
 		return MsgC(
@@ -52,7 +60,8 @@ function SUBLOADER:LoadFile(tFile, fChunk)
 		self:GetEnv(),
 		tFile.IS_BINARY,
 		tFile.LOAD_SUBFOLDERS,
-		tCapabilities
+		tCapabilities,
+		tEnvProfile
 	)
 
 	if tFileLoaded then
