@@ -52,7 +52,6 @@ function LOADER:CreateLoaderInstance(tConfig, tLibraries)
 		::continue::
 	end
 
-	PrintTable(tConfig.ENV_PROFILES)
 	tLoader:GetLibrary("ENV_BUILDER"):SetEnvSpecification(tConfig.ENV_PROFILES)
 	tLoader:GetLibrary("RUNTIME"):SetRuntimeConfig(tLoader.RUNTIME)
 
@@ -118,7 +117,7 @@ function LOADER:GetSubLoaderBase()
 	return self.SUBLOADER_BASE
 end
 
-function LOADER:LoadSubLoader(sPath, Content, bShared, sID)
+function LOADER:LoadSubLoader(sPath, Content, bShared, sID, tEnvProfile)
 	assert(IsString(sPath),	"[SUB-LOADER] Path must be a string")
 	assert(Content ~= nil,	"[SUB-LOADER] Content must be a table")
 	assert(IsBool(bShared),	"[SUB-LOADER] Shared flag must be a boolean")
@@ -129,50 +128,15 @@ function LOADER:LoadSubLoader(sPath, Content, bShared, sID)
 
 	local bShouldLoad	= (bShared and CLIENT) or SERVER
 	if bShouldLoad then
-		local tSubLoader	= self:GetLibrary("ENV_LOADER"):Load(sPath,
-		{
-			SUBLOADER = (function()
-				local _			= {}
-				_.__index		= _
-
-				_.LIBRARIES		= self:GetLibrariesBase("libraries", _)
-
-				function _:GetLoader()
-					return rawget(self, "__PARENT")
-				end
-
-				function _:GetID()
-					return self.__ID
-				end
-
-				function _:IsInitialized()
-					return self.__Initialized == true
-				end
-
-				function _:GetBuffer()
-					return self.__BUFFER
-				end
-
-				function _:GetEnv()
-					return self.__ENV
-				end
-
-				function _:GetScript(sName)
-					local FileLoaded = self:GetLoader():GetLibrary("RESSOURCES"):GetScript(sName)
-
-					if FileLoaded == nil then
-						for sFileKey, tFile in pairs(self:GetBuffer()) do
-							if sFileKey == sName then return tFile end
-						end
-					end
-
-					return FileLoaded
-				end
-
-				return _
-			end)(),
-		},
-		"SUBLOADER", nil)
+		local tSubLoader	= self:GetLibrary("ENV_LOADER"):Load(
+			sPath,
+			self:GetLibrary("RESSOURCES"):GetSubLoaderEnv(function(tTable) return self:GetLibrariesBase(sPath, tTable) end),
+			"SUBLOADER",
+			nil,
+			nil,
+			nil,
+			tEnvProfile
+		)
 
 		tSubLoader.__PARENT	= self
 		tSubLoader.__ID		= IsString(sID) and sID or "UNKNOWN_SUBLOADER"
@@ -225,7 +189,7 @@ function LOADER:GetLibrariesBase(sBasePath, tParent)
 			if not fSide(sFile) then goto continue end
 
 			if not IsTable(tParentEnv) then
-				MsgC(Color(231,76,60), "[LIBRARY] parent env missing for "..sFile.."\n")
+				MsgC(Color(231,76,60), "[LIBRARY] parent env missing for "..sFile)
 				goto continue
 			end
 
