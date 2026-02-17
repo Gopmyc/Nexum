@@ -3,6 +3,35 @@ LIBRARY.ENTRY_POINT	= {
 	CLIENT	= "init.lua",
 }
 
+function LIBRARY:DeriveEnvironment(tParentEnv)
+	assert(IsTable(tParentEnv), "[ENV] DeriveEnvironment requires parent env")
+
+	local tChild	= {}
+
+	local tMt		= {
+		__index		= tParentEnv,
+		__newindex	= rawset,
+		__metatable	= false
+	}
+
+	return setmetatable(tChild, tMt)
+end
+
+function LIBRARY:LoadWithParentEnv(sFile, tParentEnv, sAccessPoint)
+	local tEnv		= self:DeriveEnvironment(tParentEnv)
+	local fChunk	= LoadFileInEnvironment(sFile, tEnv)
+	if not fChunk then
+		return false
+	end
+
+	local bSuccess, Result = pcall(fChunk)
+	if not bSuccess then
+		return MsgC(Color(231,76,60), "[ENV] runtime error in "..sFile.." : "..Result)
+	end
+
+	return tEnv[sAccessPoint] or Result
+end
+
 function LIBRARY:ResolveFileSource(sFileSource, bIsSubFile)
 	local bIsFile	= lovr.filesystem.isFile(sFileSource)
 	local bIsDir	= lovr.filesystem.isDirectory(sFileSource)
