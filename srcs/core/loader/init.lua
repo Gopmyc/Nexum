@@ -219,11 +219,21 @@ function LOADER:GetLibrariesBase(sBasePath, tParent)
 			local sLibFolder														= sFile:match("libraries/([^/\\]+)")
 			local sPrefix															= sFileName:sub(1, 3)
 			local fSide																= tBoth[sLibFolder] or tBoth[sPrefix] or tBoth["sh_"]
-			-- local tEnvProfile														= ...
+			local tParentEnv														= tParent and tParent.__ENV
+			local sID																= string.upper(sFile:match("libraries/(.-)%.lua$"))
 
 			if not fSide(sFile) then goto continue end
-			-- TODO : Use the parent env_profile for each sub libs ?
-			tLibSelf.BUFFER[string.upper(sFile:match("libraries/(.-)%.lua$"))]		= self:GetLibrary("ENV_LOADER"):Load(sFile, { LIBRARY = {} }, "LIBRARY", {}, false, {}, tEnvProfile, true)
+
+			if not IsTable(tParentEnv) then
+				MsgC(Color(231,76,60), "[LIBRARY] parent env missing for "..sFile.."\n")
+				goto continue
+			end
+
+			tLibSelf.BUFFER[sID]	= self:GetLibrary("ENV_LOADER"):LoadWithParentEnv(
+				sFile,
+				tParentEnv,
+				"LIBRARY"
+			)
 
 			::continue::
 		end
