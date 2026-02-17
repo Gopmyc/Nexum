@@ -1,5 +1,7 @@
 SUBLOADER:  "core/"
 SHARED:     true
+ENV_PROFILE:
+  - "CORE"
 CONTENT:
   # ┌────────────────┐
   # │ FILE #1 : ENET │
