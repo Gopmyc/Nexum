@@ -20,6 +20,7 @@ end
 function LIBRARY:LoadWithParentEnv(sFile, tParentEnv, sAccessPoint)
 	local tEnv		= self:DeriveEnvironment(tParentEnv)
 	local fChunk	= LoadFileInEnvironment(sFile, tEnv)
+
 	if not fChunk then
 		return false
 	end
