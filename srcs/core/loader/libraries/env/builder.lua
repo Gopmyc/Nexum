@@ -189,6 +189,8 @@ function LIBRARY:BuildEnvironment(sFileSource, tSandEnv, sAccessPoint, tFileArgs
 	self:InitAccessPoint(tEnv, sAccessPoint, sFileSource, tFileArgs, tCapabilities)
 	if bLoadLibraries then self:LoadInternalLibraries(tEnv, sAccessPoint) end
 
+	tEnv.__ENV	= tEnv
+
 	return tEnv
 end
 
