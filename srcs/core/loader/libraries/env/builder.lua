@@ -124,7 +124,7 @@ end
 
 function LIBRARY:BuildPolicy(tEnvProfile)
 	if not (IsTable(self.SAFE_GLOBALS) and IsTable(tEnvProfile)) then
-		return nil
+		return MsgC(Color(231, 76, 60), "[ERROR] " .. (not IsTable(self.SAFE_GLOBALS) and "'SAFE_GLOBALS' not set" or "'tEnvProfile' is not a table"))
 	end
 
 	local tPolicy	= {
@@ -138,7 +138,7 @@ function LIBRARY:BuildPolicy(tEnvProfile)
 	for _, profileName in ipairs(tEnvProfile) do
 		local tProfile	= self.SAFE_GLOBALS[profileName]
 		if not IsTable(tProfile) then
-			continue
+			goto continue
 		end
 
 		for k, v in pairs(tProfile.constants or {}) do
@@ -181,6 +181,8 @@ function LIBRARY:BuildEnvironment(sFileSource, tSandEnv, sAccessPoint, tFileArgs
 		return MsgC(Color(241, 196, 15), "[WARNING] 'BuildEnvironement' fail for : '" .. sFileSource .. "', 'SAFE_GLOBALS' not set.")
 	end
 
+	tEnv.__ENV	= tEnv
+
 	self:ApplyConstants(tEnv, tPolicy)
 	self:ApplyFunctions(tEnv, tPolicy)
 	self:ApplyLibraries(tEnv, tPolicy)
@@ -188,9 +190,7 @@ function LIBRARY:BuildEnvironment(sFileSource, tSandEnv, sAccessPoint, tFileArgs
 	self:ApplyFallback(tEnv, tPolicy)
 	self:InitAccessPoint(tEnv, sAccessPoint, sFileSource, tFileArgs, tCapabilities)
 	if bLoadLibraries then self:LoadInternalLibraries(tEnv, sAccessPoint) end
-
-	tEnv.__ENV	= tEnv
-
+	
 	return tEnv
 end
 
