@@ -1,4 +1,4 @@
-LIBRARY.RESSOURCES	= {}
+LIBRARY.RESSOURCES		= {}
 
 function LIBRARY:ResolveDependencies(tDependencies, tSides, tSubLoader)
 	assert(IsTable(tDependencies),	"[RESSOURCES] The 'ResolveDependencies' method requires a table of dependencies")
@@ -141,4 +141,37 @@ function LIBRARY:ResolveCapabilities(tConfig, tCapabilities)
 		__metatable		= false,
 		__newindex		= function() error("Configuration table is read-only", 2) end,
 	})
+end
+
+function LIBRARY:GetSubLoaderEnv(fGetLibrariesBase)
+	assert(IsFunction(fGetLibrariesBase), "[ERROR] 'fGetLibrariesBase' must be a function")
+
+	return {
+		SUBLOADER = (function()
+			local _			= {}
+			_.__index		= _
+
+			_.LIBRARIES		= fGetLibrariesBase(_)
+
+			function _:GetLoader() return rawget(self, "__PARENT") end
+			function _:GetID() return self.__ID end
+			function _:IsInitialized() return self.__Initialized == true end
+			function _:GetBuffer() return self.__BUFFER end
+			function _:GetEnv() return self.__ENV end
+
+			function _:GetScript(sName)
+				local FileLoaded = self:GetLoader():GetLibrary("RESSOURCES"):GetScript(sName)
+
+				if FileLoaded == nil then
+					for sFileKey, tFile in pairs(self:GetBuffer()) do
+						if sFileKey == sName then return tFile end
+					end
+				end
+
+				return FileLoaded
+			end
+
+			return _
+		end)(),
+	}
 end
