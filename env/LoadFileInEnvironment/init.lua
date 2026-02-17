@@ -1,5 +1,5 @@
 return function(sPath, tEnvironment)
-	local sCode					= lovr.filesystem.read(sPath)
+	local sCode					= lovr.filesystem.read(sPath) or lovr.filesystem.read(sPath .. "init.lua")
 	if not sCode then
 		return MsgC(Color(231, 76, 60), "[ENV-LOADER] Cannot read file: " .. sPath)
 	end
