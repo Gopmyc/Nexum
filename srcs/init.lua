@@ -1,10 +1,6 @@
 local CONFIGURATION	= require("configuration/nexum")
 
 local function SetGlobalByPath(sPath, Value)
-	if not bSuccess then
-		return print(Value)
-	end
-
 	local Last;
 	local t	= _G
 	for sPart in sPath:gmatch("[^%.]+") do
