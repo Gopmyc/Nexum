@@ -39,7 +39,7 @@ function SUBLOADER:LoadFile(tFile, fChunk)
 	local tCapabilities	= self:GetLoader():GetLibrary("RESSOURCES"):ResolveCapabilities(self:GetLoader():GetConfig(), tFile.CAPABILITIES)
 	local tEnvProfile	= tFile.ENV_PROFILE
 
-	if not istable(tEnvProfile) then
+	if not IsTable(tEnvProfile) then
 		return MsgC(
 			self:GetLoader():GetConfig().DEBUG.COLORS.ERROR,
 			"[OBJECTS SUB-LOADER] 'ENV_PROFILE' not set for file: " .. tFile.KEY
