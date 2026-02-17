@@ -92,7 +92,7 @@ function SUBLOADER_BASE:InitializeGroup(sGroup)
 	end
 
 	local sPath					= sBasePath .. tGroup.FILES.SUBLOADER
-	local bSubOk, tSubLoader	= pcall(function() return tLoader:LoadSubLoader(sPath, tGroup.FILES.CONTENT, tGroup.FILES.SHARED, sGroup) end)
+	local bSubOk, tSubLoader	= pcall(function() return tLoader:LoadSubLoader(sPath, tGroup.FILES.CONTENT, tGroup.FILES.SHARED, sGroup, tGroup.FILES.ENV_PROFILE) end)
 	if not bSubOk then
 		return MsgC(tLoader:GetConfig().DEBUG.COLORS.ERROR, string.format("[LOADER] Failed to load SubLoader for '%s', sPath : '%s', ERROR : %s", sGroup, sPath, tSubLoader))
 	end
