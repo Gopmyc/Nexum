@@ -125,7 +125,6 @@ end
 function LIBRARY:LoadInternalLibraries(tEnv, sAccessPoint, sPath)
 	local tLib			= tEnv[sAccessPoint].LIBRARIES
 	local sID			= tEnv[sAccessPoint].__PATH .. tEnv[sAccessPoint].__NAME or "unknown"
-	local tParentEnv	= tEnv.__ENV
 	
 	if not (IsTable(tLib) and IsString(tLib.PATH) and IsFunction(tLib.Load)) then
 		MsgC(Color(241, 196, 15), "[WARNING][ENV-RESSOURCES] Cannot load internal libraries for '" .. sID .. "' : invalid LIBRARIES access point")
@@ -135,7 +134,7 @@ function LIBRARY:LoadInternalLibraries(tEnv, sAccessPoint, sPath)
 	local sBasePath	= sPath or tEnv[sAccessPoint].__PATH or ""
 	sBasePath		= (sBasePath:find("/server/$") or sBasePath:find("/client/$")) and sBasePath:match("^(.*[/\\])[^/\\]+[/\\]$") or sBasePath
 
-	tLib:Load(sBasePath .. tLib.PATH, tParentEnv)
+	tLib:Load(sBasePath .. tLib.PATH, table.Copy(tEnv.__ENV), sAccessPoint)
 
 	return tEnv
 end
@@ -203,14 +202,15 @@ function LIBRARY:BuildEnvironment(sFileSource, tSandEnv, sAccessPoint, tFileArgs
 		error("[ENV] Policy build failed for : " .. tostring(sFileSource))
 	end
 
-	tEnv.__ENV	= tEnv
-
 	self:ApplyConstants(tEnv, tPolicy)
 	self:ApplyFunctions(tEnv, tPolicy)
 	self:ApplyLibraries(tEnv, tPolicy)
 	self:ApplyNamespaces(tEnv, tPolicy)
 	self:ApplyFallback(tEnv, tPolicy)
 	self:InitAccessPoint(tEnv, sAccessPoint, sFileSource, tFileArgs, tCapabilities)
+
+	tEnv.__ENV	= tEnv
+
 	if bLoadLibraries then self:LoadInternalLibraries(tEnv, sAccessPoint) end
 
 	return tEnv
