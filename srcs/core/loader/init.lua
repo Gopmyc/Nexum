@@ -158,9 +158,12 @@ function LOADER:GetLibrariesBase(sBasePath, tParent)
 	tLibraries.PATH		= IsString(sBasePath) and sBasePath or "libraries"
 	tLibraries.BUFFER	= {}
 
-	tLibraries.Load	= function(tLibSelf, sPath, tParentEnv)
+	tLibraries.Load	= function(tLibSelf, sPath, tParentEnv, sParentAccessPoint)
 		assert(IsString(sPath),		"[LIBRARY {LOADER}] Path must be a string")
 		assert(IsTable(tParentEnv),	"[LIBRARY] parent env missing for: " .. sPath)
+
+		tParentEnv[sParentAccessPoint]	= nil
+		tParentEnv.__ENV				= nil
 
 		local tBoth		= {
 			["sh_"]	= function(sPath)
