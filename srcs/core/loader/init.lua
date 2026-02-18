@@ -158,8 +158,9 @@ function LOADER:GetLibrariesBase(sBasePath, tParent)
 	tLibraries.PATH		= IsString(sBasePath) and sBasePath or "libraries"
 	tLibraries.BUFFER	= {}
 
-	tLibraries.Load	= function(tLibSelf, sPath)
-		assert(IsString(sPath), "[LIBRARY {LOADER}] Path must be a string")
+	tLibraries.Load	= function(tLibSelf, sPath, tParentEnv)
+		assert(IsString(sPath),		"[LIBRARY {LOADER}] Path must be a string")
+		assert(IsTable(tParentEnv),	"[LIBRARY] parent env missing for: " .. sPath)
 
 		local tBoth		= {
 			["sh_"]	= function(sPath)
@@ -179,25 +180,30 @@ function LOADER:GetLibrariesBase(sBasePath, tParent)
 		if not lovr.filesystem.isDirectory(sPath) then return end
 		
 		for iID, sFile in ipairs(self:GetLibrary("FINDER"):GetLuaFiles(sPath)) do
-			local sFileName															= sFile:match("([^/\\]+)%.lua$")
-			local sLibFolder														= sFile:match("libraries/([^/\\]+)")
-			local sPrefix															= sFileName:sub(1, 3)
-			local fSide																= tBoth[sLibFolder] or tBoth[sPrefix] or tBoth["sh_"]
-			local tParentEnv														= tParent and tParent.__ENV
-			local sID																= string.upper(sFile:match("libraries/(.-)%.lua$"))
+			local sFileName		= sFile:match("([^/\\]+)%.lua$")
+			if not sFileName then goto continue end
+
+			local sLibFolder	= sFile:match("libraries/([^/\\]+)")
+			local sPrefix		= sFileName:sub(1, 3)
+			local fSide			= tBoth[sLibFolder] or tBoth[sPrefix] or tBoth["sh_"]
 
 			if not fSide(sFile) then goto continue end
 
-			if not IsTable(tParentEnv) then
-				MsgC(Color(231,76,60), "[LIBRARY] parent env missing for "..sFile)
+			local sID = sFile:match("libraries/(.-)%.lua$")
+			if not sID then
+				MsgC(Color(231, 76, 60), "[LIBRARY] invalid id for: "..sFile)
 				goto continue
 			end
 
-			tLibSelf.BUFFER[sID]	= self:GetLibrary("ENV_LOADER"):LoadWithParentEnv(
-				sFile,
-				tParentEnv,
-				"LIBRARY"
-			)
+			local bSuccess, Result = pcall(function()
+				return self:GetLibrary("ENV_LOADER"):LoadWithParentEnv(sFile, tParentEnv, "LIBRARY")
+			end)
+			if not bSuccess then
+				MsgC(Color(231, 76, 60), "[LIBRARY] load failed "..sFile.." : "..Result)
+				goto continue
+			end
+
+			tLibSelf.BUFFER[string.upper(sID)] = Result
 
 			::continue::
 		end
