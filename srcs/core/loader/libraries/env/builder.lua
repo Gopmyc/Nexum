@@ -65,7 +65,7 @@ end
 
 function LIBRARY:ApplyFallback(tEnv, tPolicy)
 	local tFallback = tPolicy.fallback
-	if not tFallback then return end
+	if not tFallback then return tEnv end
 
 	local tMt = getmetatable(tEnv)
 	if not IsTable(tMt) then
@@ -74,9 +74,26 @@ function LIBRARY:ApplyFallback(tEnv, tPolicy)
 
 	if not tFallback.global then
 		tMt.__index = function(_, sKey)
+
 			if tFallback.error_on_missing then
-				MsgC(Color(241, 196, 15), "[WARNING] Access denied: " .. tostring(sKey), 2)
+				local info = debug.getinfo(2, "Slfn")
+
+				local sSource	= info and info.short_src or "unknown"
+				local iLine		= info and info.currentline or 0
+				local sName		= info and info.name or "?"
+				local sWhat		= info and info.namewhat or "chunk"
+
+				MsgC(
+					Color(241,196,15),
+					"[SANDBOX WARNING] Access denied\n",
+					Color(200,200,200),
+					"  Key     : ", tostring(sKey), "\n",
+					"  File    : ", tostring(sSource), "\n",
+					"  Line    : ", tostring(iLine), "\n",
+					"  Function: ", tostring(sName), " (", tostring(sWhat), ")"
+				)
 			end
+
 			return nil
 		end
 	else
@@ -106,8 +123,9 @@ function LIBRARY:InitAccessPoint(tEnv, sAccessPoint, sFileSource, tFileArgs, tCa
 end
 
 function LIBRARY:LoadInternalLibraries(tEnv, sAccessPoint, sPath)
-	local tLib		= tEnv[sAccessPoint].LIBRARIES
-	local sID		= tEnv[sAccessPoint].__PATH .. tEnv[sAccessPoint].__NAME or "unknown"
+	local tLib			= tEnv[sAccessPoint].LIBRARIES
+	local sID			= tEnv[sAccessPoint].__PATH .. tEnv[sAccessPoint].__NAME or "unknown"
+	local tParentEnv	= tEnv.__ENV
 	
 	if not (IsTable(tLib) and IsString(tLib.PATH) and IsFunction(tLib.Load)) then
 		MsgC(Color(241, 196, 15), "[WARNING][ENV-RESSOURCES] Cannot load internal libraries for '" .. sID .. "' : invalid LIBRARIES access point")
@@ -117,7 +135,7 @@ function LIBRARY:LoadInternalLibraries(tEnv, sAccessPoint, sPath)
 	local sBasePath	= sPath or tEnv[sAccessPoint].__PATH or ""
 	sBasePath		= (sBasePath:find("/server/$") or sBasePath:find("/client/$")) and sBasePath:match("^(.*[/\\])[^/\\]+[/\\]$") or sBasePath
 
-	tLib:Load(sBasePath .. tLib.PATH)
+	tLib:Load(sBasePath .. tLib.PATH, tParentEnv)
 
 	return tEnv
 end
@@ -175,10 +193,14 @@ end
 
 function LIBRARY:BuildEnvironment(sFileSource, tSandEnv, sAccessPoint, tFileArgs, tCapabilities, tEnvProfile, bLoadLibraries)
 	local tEnv		= table.Copy(tSandEnv, true)
-	local tPolicy	= self:BuildPolicy(tEnvProfile)
 
+	if not IsTable(tEnvProfile) then
+		error("[ENV] Root script without env_profile : " .. tostring(sFileSource))
+	end
+
+	local tPolicy	= self:BuildPolicy(tEnvProfile)
 	if not IsTable(tPolicy) then
-		return MsgC(Color(241, 196, 15), "[WARNING] 'BuildEnvironement' fail for : '" .. sFileSource .. "', 'SAFE_GLOBALS' not set.")
+		error("[ENV] Policy build failed for : " .. tostring(sFileSource))
 	end
 
 	tEnv.__ENV	= tEnv
@@ -190,7 +212,7 @@ function LIBRARY:BuildEnvironment(sFileSource, tSandEnv, sAccessPoint, tFileArgs
 	self:ApplyFallback(tEnv, tPolicy)
 	self:InitAccessPoint(tEnv, sAccessPoint, sFileSource, tFileArgs, tCapabilities)
 	if bLoadLibraries then self:LoadInternalLibraries(tEnv, sAccessPoint) end
-	
+
 	return tEnv
 end
 
