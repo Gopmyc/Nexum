@@ -18,19 +18,29 @@ function LIBRARY:DeriveEnvironment(tParentEnv)
 end
 
 function LIBRARY:LoadWithParentEnv(sFile, tParentEnv, sAccessPoint)
+	assert(IsString(sFile), "[ENV] invalid file")
+	assert(IsTable(tParentEnv), "[ENV] parent env missing : "..tostring(sFile))
+	assert(IsString(sAccessPoint), "[ENV] invalid access point")
+
+	local tOutput;
 	local tEnv		= self:DeriveEnvironment(tParentEnv)
 	local fChunk	= LoadFileInEnvironment(sFile, tEnv)
 
-	if not fChunk then
-		return false
-	end
+	tEnv[sAccessPoint]			= tEnv[sAccessPoint] or {}
+	tEnv[sAccessPoint].__ENV	= tEnv
+	tEnv[sAccessPoint].__NAME	= sFile:match("([^/\\]+)%.lua$") or "chunk"
+	tEnv[sAccessPoint].__PATH	= sFile:match("^(.*[/\\])[^/\\]+%.lua$") or ""
 
-	local bSuccess, Result = pcall(fChunk)
+	local bSuccess, Result	= pcall(fChunk)
 	if not bSuccess then
-		return MsgC(Color(231,76,60), "[ENV] runtime error in "..sFile.." : "..Result)
+		MsgC(Color(Color(231, 76, 60)), "[ERROR][ENV] runtime error in "..sFile.." : "..tostring(Result))
 	end
 
-	return tEnv[sAccessPoint] or Result
+	tOutput	= (tEnv[sAccessPoint] ~= nil) and tEnv[sAccessPoint] or Result
+
+	return (tOutput == nil or tOutput == true) and
+		MsgC(Color(Color(231, 76, 60)), "[ERROR][ENV] "..sFile.." did not expose '"..sAccessPoint.."'") or
+		tOutput
 end
 
 function LIBRARY:ResolveFileSource(sFileSource, bIsSubFile)
@@ -56,7 +66,7 @@ function LIBRARY:ResolveFileSource(sFileSource, bIsSubFile)
 	return self:ResolveFileSource(sFallback .. "init.lua", true)
 end
 
-function LIBRARY:LoadSubEnvironments(sBasePath, tBaseEnv, sAccessPoint, tFileArgs, tCapabilities, tNotLoadLibraries, tLibraries)
+function LIBRARY:LoadSubEnvironments(sBasePath, tBaseEnv, sAccessPoint, tFileArgs, tCapabilities,tNotLoadLibraries, tLibraries, tEnvProfile)
 	tNotLoadLibraries	= IsTable(tNotLoadLibraries) and tNotLoadLibraries or {true, true}
 
 	local fCheckLoadLib	= function(bNotLoadLib)
@@ -74,12 +84,12 @@ function LIBRARY:LoadSubEnvironments(sBasePath, tBaseEnv, sAccessPoint, tFileArg
 
 	local tServerEnv	= SERVER and
 		lovr.filesystem.isFile(sServer) and
-		self:Load(sServer, tSandEnv, sAccessPoint, tFileArgs, false, tCapabilities, fCheckLoadLib(tNotLoadLibraries[1])) or
+		self:Load(sServer, tSandEnv, sAccessPoint, tFileArgs, false, tCapabilities, tEnvProfile, fCheckLoadLib(tNotLoadLibraries[1])) or
 		nil
 
 	local tClientEnv	= CLIENT and
 		lovr.filesystem.isFile(sClient) and
-		self:Load(sClient, tSandEnv, sAccessPoint, tFileArgs, false, tCapabilities, fCheckLoadLib(tNotLoadLibraries[2])) or
+		self:Load(sClient, tSandEnv, sAccessPoint, tFileArgs, false, tCapabilities, tEnvProfile, fCheckLoadLib(tNotLoadLibraries[2])) or
 		nil
 
 	return tServerEnv or tClientEnv or {}
@@ -136,7 +146,7 @@ function LIBRARY:Load(sFileSource, tSandEnv, sAccessPoint, tFileArgs, bLoadSubFo
 	local tEnv		= tEnvBuilder:BuildEnvironment(sResolved, tSandEnv, sAccessPoint, tFileArgs, tCapabilities, tEnvProfile, not bNotLoadLibraries)
 	if bLoadSubFolders and sResolved:sub(-8) == "init.lua" then
 		local sBasePath			= sResolved:match("^(.*[/\\])")
-		tSubEnv					= self:LoadSubEnvironments(sBasePath, tSandEnv, sAccessPoint, tFileArgs, tCapabilities, {true, true}, tEnv[sAccessPoint].LIBRARIES and tEnv[sAccessPoint].LIBRARIES.BUFFER)
+		tSubEnv					= self:LoadSubEnvironments(sBasePath, tSandEnv, sAccessPoint, tFileArgs, tCapabilities, {true, true}, tEnv[sAccessPoint].LIBRARIES and tEnv[sAccessPoint].LIBRARIES.BUFFER, tEnvProfile)
 	end
 
 	self:MergeSubEnvironments(tEnv[sAccessPoint], tSubEnv)
