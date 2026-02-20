@@ -17,6 +17,7 @@ LIBRARIES:
   RESSOURCES:   "ressources.lua"
   FINDER:       "finder.lua"
   RUNTIME:      "runtime.lua"
+  ORDERER:      "orderer.lua"
 
 RUNTIME:
   UPDATE:
@@ -43,32 +44,38 @@ RULES_FILES:
     FIELD:  PATH
     TYPE:   String
   4:
-    FIELD:  ARGS
+    FIELD:  DEPENDENCIES
     TYPE:   Table
   5:
+    FIELD:  DEPENDENCIES.INTERNAL
+    TYPE:   Table
+  6:
+    FIELD:  DEPENDENCIES.EXTERNAL
+    TYPE:   Table
+  7:
     FIELD:  IS_BINARY
     TYPE:   Bool
-  6:
+  8:
     FIELD:  LOAD_SUBFOLDERS
     TYPE:   Bool
-  7:
+  9:
     FIELD:  SIDES
     TYPE:   Table
-  8:
+  10:
     FIELD:  SIDES.CLIENT
     TYPE:   Bool
-  9:
+  11:
     FIELD:  SIDES.SERVER
     TYPE:   Bool
-  10:
+  12:
     FIELD:  CAPABILITIES
     TYPE:   Table
-  11:
+  13:
     FIELD:  CAPABILITIES.SERVER
     TYPE:   Table
-  12:
+  14:
     FIELD:  CAPABILITIES.CLIENT
     TYPE:   Table
-  13:
+  15:
     FIELD:  CAPABILITIES.SHARED
     TYPE:   Table
