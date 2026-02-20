@@ -1,0 +1,14 @@
+PATH:             "enet"
+DEPENDENCIES:
+  INTERNAL: {}
+  EXTERNAL: {}
+IS_BINARY:        true
+LOAD_SUBFOLDERS:  false
+ENV_PROFILE:      {}
+SIDES:
+  CLIENT: true
+  SERVER: true
+CAPABILITIES:
+  SERVER: {}
+  CLIENT: {}
+  SHARED: {}
