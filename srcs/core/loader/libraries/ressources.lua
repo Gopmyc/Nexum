@@ -1,8 +1,10 @@
 LIBRARY.RESSOURCES		= {}
 
 function LIBRARY:ResolveDependencies(tDependencies, tSides, tSubLoader)
-	assert(IsTable(tDependencies),	"[RESSOURCES] The 'ResolveDependencies' method requires a table of dependencies")
-	assert(IsTable(tSides),			"[RESSOURCES] The 'tSides' argument must be a table with 'client' and 'server' keys")
+	assert(IsTable(tDependencies),			"[RESSOURCES] The 'ResolveDependencies' method requires a table of dependencies")
+	assert(IsTable(tDependencies.INTERNAL),	"[RESSOURCES] The dependencies table must contain 'INTERNAL' tables")
+	assert(IsTable(tDependencies.EXTERNAL),	"[RESSOURCES] The dependencies table must contain 'EXTERNAL' tables")
+	assert(IsTable(tSides),					"[RESSOURCES] The 'tSides' argument must be a table with 'client' and 'server' keys")
 
 	local tDependenciesFinded	= {}
 
@@ -10,7 +12,8 @@ function LIBRARY:ResolveDependencies(tDependencies, tSides, tSubLoader)
 	if not bShoulLoad then return tDependenciesFinded end
 
 	local tScopeSearch			= (IsTable(tSubLoader) and IsFunction(tSubLoader.GetScript)) and tSubLoader or self
-	for iID, sDependence in ipairs(tDependencies) do
+	local tMerged				= table.Add(table.Copy(tDependencies.INTERNAL or {}), tDependencies.EXTERNAL or {})
+	for iID, sDependence in ipairs(tMerged) do
 		if not IsString(sDependence) then
 			MsgC(Color(241, 196, 15), "[WARNING][RESSOURCES] Invalid dependency at index '"..iID.."': expected string, got "..type(sDependence))
 			goto continue
@@ -31,6 +34,7 @@ end
 function LIBRARY:GetScript(sName)
 	assert(IsString(sName), "[RESSOURCES] The 'GetScript' method only accepts a string as an argument")
 
+	sName	= string.upper(sName)
 	for sGroupKey, tGroup in pairs(self.RESSOURCES) do
 		if IsTable(tGroup) and tGroup[sName] then
 			return tGroup[sName]
