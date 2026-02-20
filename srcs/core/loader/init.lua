@@ -16,7 +16,7 @@ function LOADER:Initialize(sConfigPath, tLibraries)
 		return (IsTable(tLoader.CONFIG.DEBUG) and tLoader.CONFIG.DEBUG.ENABLED) and fMsgC(...) or (not IsTable(tLoader.CONFIG.DEBUG) and fMsgC(...))
 	end
 
-	tLoader:InitializeSubloaders(tLoader, tLoader.CONFIG)
+	tLoader:InitializeSubloaders()
 
 	return tLoader
 end
@@ -61,21 +61,6 @@ function LOADER:CreateLoaderInstance(tConfig, tLibraries)
 	return tLoader
 end
 
-function LOADER:InitializeSubloaders(tLoader, tConfig)
-	tLoader.SUBLOADER_BASE	= require(tLoader.SUBLOADERS_PATH):Initialize(tConfig, tLoader.SUBLOADERS_PATH, tLoader)
-
-	--if IsTable(tLoader.CONFIG.DEBUG) and tLoader.CONFIG.DEBUG.ENABLED then
-	--	tLoader.LOAD_PRIORITY[#tLoader.LOAD_PRIORITY + 1]	= "HOT_RELOAD"
-	--end
-
-	for _, sGroup in ipairs(tLoader.LOAD_PRIORITY) do
-		local tSubLoader, tInitialized = tLoader.SUBLOADER_BASE:InitializeGroup(sGroup)
-		if IsTable(tSubLoader) then
-			tLoader:GetLibrary("RESSOURCES").RESSOURCES[tSubLoader[1]:GetID()] = tInitialized
-		end
-	end
-end
-
 function LOADER:LoadConfiguration(sPath, tLibraries, tTable, bIsRoot)
 	assert(IsString(sPath), "[CONFIG-LOADER] Path must be a string")
 	assert(IsTable(tLibraries), "[CONFIG-LOADER] Libraries must be a table")
@@ -110,7 +95,25 @@ function LOADER:LoadConfiguration(sPath, tLibraries, tTable, bIsRoot)
 		end
 	end
 
+	-- TODO : Make the configuration an immutable metatable
+
 	return tTable
+end
+
+function LOADER:InitializeSubloaders()
+	assert(IsTable(self.CONFIG), "[LOADER] Configuration not loaded")
+	self.SUBLOADER_BASE	= require(self.SUBLOADERS_PATH):Initialize(self.CONFIG, self.SUBLOADERS_PATH, self)
+
+	--if IsTable(self.CONFIG.DEBUG) and self.CONFIG.DEBUG.ENABLED then
+	--	self.LOAD_PRIORITY[#self.LOAD_PRIORITY + 1]	= "HOT_RELOAD"
+	--end
+
+	for _, sGroup in ipairs(self.LOAD_PRIORITY) do
+		local tSubLoader, tInitialized = self.SUBLOADER_BASE:InitializeGroup(sGroup)
+		if IsTable(tSubLoader) then
+			self:GetLibrary("RESSOURCES").RESSOURCES[tSubLoader[1]:GetID()] = tInitialized
+		end
+	end
 end
 
 function LOADER:GetSubLoaderBase()
@@ -257,7 +260,7 @@ function LOADER:Instanciate(sFileName, sIntanceName, ...)
 
 	local tArgs					= {...}
 	local sGroup, iFileID, _	= self:GetSubLoaderBase():GetGroupByFileName(sFileName)
-	local tFileRuntimeConfig	= self:GetConfig()[sGroup].FILES.CONTENT[iFileID].RUNTIME
+	local tFileRuntimeConfig	= self:GetConfig()[sGroup].CONTENT[iFileID].RUNTIME
 	tFileRuntimeConfig.ID		= sIntanceName
 
 	return self:GetLibrary("RUNTIME"):Instantiate(sFileName, tFileRuntimeConfig, tArgs)
