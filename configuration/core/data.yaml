@@ -1,0 +1,4 @@
+SUBLOADER:  "core/"
+SHARED:     true
+ENV_PROFILE:
+  - "CORE"
