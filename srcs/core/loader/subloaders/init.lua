@@ -15,35 +15,21 @@ local function fResolveField(tRoot, sPath)
 	return tValue
 end
 
-local function fGetConfigGroup(tConfig, sGroup)
-	assert(IsTable(tConfig), "[SUBLOADER] Invalid argument: tConfig must be a table")
-	assert(IsString(sGroup), "[SUBLOADER] Invalid argument: sGroup must be a string")
-
-	local tGroup	= tConfig
-	for _, sPart in ipairs(string.Explode("/", sGroup)) do
-		tGroup = tGroup and tGroup[sPart] or nil
-
-		if not tGroup then
-			MsgC(Color(231,76,60), "[SUBLOADER] Config segment not found: '"..sPart.."' in group '"..sGroup.." in configuration'")
-			break
-		end
-	end
-
-	return tGroup
-end
-
 local function fValidateGroup(sGroup, tGroup)
 	if not IsTable(tGroup) then
 		return false, "[SUBLOADER] Invalid config group '"..sGroup.."': expected table, got "..type(tGroup)
 	end
-	if not IsTable(tGroup.FILES) then
+	if not IsTable(tGroup.DATA) then
 		return false, "[SUBLOADER] Missing 'FILES' table in group '"..sGroup.."'"
 	end
-	if not IsString(tGroup.FILES.SUBLOADER) then
+	if not IsString(tGroup.DATA.SUBLOADER) then
 		return false, "[SUBLOADER] Invalid 'FILES.SUBLOADER' in group '"..sGroup.."': expected string"
 	end
-	if not tGroup.FILES.CONTENT then
-		return false, "[SUBLOADER] Missing 'FILES.CONTENT' in group '"..sGroup.."'"
+	if not IsBool(tGroup.DATA.SHARED) then
+		return false, "[SUBLOADER] Invalid 'FILES.SHARED' in group '"..sGroup.."': expected boolean"
+	end
+	if not IsTable(tGroup.DATA.ENV_PROFILE) then
+		return false, "[SUBLOADER] Missing 'ENV_PROFILE' table in group '"..sGroup.."'"
 	end
 	return true
 end
@@ -82,17 +68,18 @@ function SUBLOADER_BASE:InitializeGroup(sGroup)
 	local tConfig			= self:GetAttribute("CONFIG")
 	local sBasePath			= self:GetAttribute("BASE_PATH")
 	local tLoader			= self:GetAttribute("LOADER")
-	local tGroup			= fGetConfigGroup(tConfig, sGroup)
-	local bShouldLoad		= (tGroup.FILES.SHARED and CLIENT) or SERVER
+	local tGroup			= tLoader:GetConfig()[sGroup]
+	local bShouldLoad		= (tGroup.DATA.SHARED and CLIENT) or SERVER
 	if not bShouldLoad then return end
 
 	local bValid, sError	= fValidateGroup(sGroup, tGroup)
 	if not bValid then
-		return MsgC(tLoader:GetConfig().DEBUG.COLORS.ERROR, string.format("[LOADER] Group '%s' validation failed: %", sGroup, sError or "unknown"))
+		return MsgC(tLoader:GetConfig().DEBUG.COLORS.ERROR, string.format("[LOADER] Group '%s' validation failed: %s", sGroup, sError or "unknown"))
 	end
 
-	local sPath					= sBasePath .. tGroup.FILES.SUBLOADER
-	local bSubOk, tSubLoader	= pcall(function() return tLoader:LoadSubLoader(sPath, tGroup.FILES.CONTENT, tGroup.FILES.SHARED, sGroup, tGroup.FILES.ENV_PROFILE) end)
+	tLoader:GetConfig()[sGroup].CONTENT	= tLoader:GetLibrary("ORDERER"):BuildGlobalOrder(tGroup.CONTENT)
+	local sPath							= sBasePath .. tGroup.DATA.SUBLOADER
+	local bSubOk, tSubLoader			= pcall(function() return tLoader:LoadSubLoader(sPath, tGroup.CONTENT, tGroup.DATA.SHARED, sGroup, tGroup.DATA.ENV_PROFILE) end)
 	if not bSubOk then
 		return MsgC(tLoader:GetConfig().DEBUG.COLORS.ERROR, string.format("[LOADER] Failed to load SubLoader for '%s', sPath : '%s', ERROR : %s", sGroup, sPath, tSubLoader))
 	end
@@ -157,6 +144,9 @@ function SUBLOADER_BASE:GetSubLoader(sGroup)
 end
 
 function SUBLOADER_BASE:GetGroupByFileName(sFileName)
+	assert(IsString(sFileName), "[SUBLOADER_BASE] File name must be a string")
+
+	sFileName	= string.upper(sFileName)
 	for sGroup, tSubLoader in pairs(self.SUBLOADERS) do
 		for iID, tFile in pairs(tSubLoader[2]) do
 			if tFile.KEY == sFileName then
