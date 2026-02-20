@@ -260,6 +260,10 @@ function LOADER:Instanciate(sFileName, sIntanceName, ...)
 
 	local tArgs					= {...}
 	local sGroup, iFileID, _	= self:GetSubLoaderBase():GetGroupByFileName(sFileName)
+	if not (IsString(sGroup) and IsNumber(iFileID)) then
+		return MsgC(Color(231, 76, 60), "[LOADER] No sub-loader found for file: " .. sFileName)
+	end
+	
 	local tFileRuntimeConfig	= self:GetConfig()[sGroup].CONTENT[iFileID].RUNTIME
 	tFileRuntimeConfig.ID		= sIntanceName
 
