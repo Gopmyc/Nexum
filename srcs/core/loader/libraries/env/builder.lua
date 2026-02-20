@@ -113,7 +113,7 @@ function LIBRARY:InitAccessPoint(tEnv, sAccessPoint, sFileSource, tFileArgs, tCa
 	end
 
 	tEnv[sAccessPoint].GetDependence	= function(_, sKey)
-		return tFileArgs and tFileArgs[sKey]
+		return tFileArgs and tFileArgs[string.upper(sKey)]
 	end
 
 	tEnv[sAccessPoint].__PATH			= sFileSource:match("^(.*[/\\])[^/\\]+%.lua$") or nil
