@@ -19,6 +19,7 @@ return {
 		{ KEY = "string.Totable",			PATH = "env/string/Totable"			},
 		{ KEY = "string.Explode",			PATH = "env/string/Explode"			},
 		{ KEY = "table.Copy",				PATH = "env/table/Copy"				},
+		{ KEY = "table.Add",				PATH = "env/table/Add"				},
 		{ KEY = "Color",					PATH = "env/Color"					},
 		{ KEY = "MsgC",						PATH = "env/MsgC"					},
 		{ KEY = "PrintTable",				PATH = "env/PrintTable"				},
