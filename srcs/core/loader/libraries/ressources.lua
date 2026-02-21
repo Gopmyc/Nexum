@@ -1,4 +1,5 @@
 LIBRARY.RESSOURCES		= {}
+LIBRARY.FILE_TO_SEND	= {}
 
 function LIBRARY:ResolveDependencies(tDependencies, tSides, tSubLoader)
 	assert(IsTable(tDependencies),			"[RESSOURCES] The 'ResolveDependencies' method requires a table of dependencies")
@@ -96,7 +97,24 @@ function LIBRARY:LoadBinaryFile(sFilePath) -- <-- Useful for a decoupled logic
 end
 
 function LIBRARY:AddCSLuaFile(sPath)
-	-- TODO : Shared file handling
+	if not SERVER then return end
+	
+	if not IsString(sPath) then
+		return MsgC(Color(231, 76, 60), "[RESSOURCES] 'AddCSLuaFile' method requires a string as an argument")
+	end
+
+	if not IsFile(sPath) then
+		if IsDirectory(sPath) then
+			return self:AddCSLuaFile(sPath .. "/init.lua")
+		end
+		return MsgC(Color(231, 76, 60), "[RESSOURCES] The file '"..sPath.."' does not exist and cannot be added with 'AddCSLuaFile'")
+	end
+
+	if not sPath:sub(-4) == ".lua" then
+		return MsgC(Color(231, 76, 60), "[RESSOURCES] The file '"..sPath.."' is not a Lua file and cannot be added with 'AddCSLuaFile'")
+	end
+
+	self.FILE_TO_SEND[sPath]	= true;
 end
 
 function LIBRARY:ResolveCapabilities(tConfig, tCapabilities)
