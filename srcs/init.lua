@@ -8,10 +8,6 @@ if not (lovr or love or AddCSLuaFile or pcall(require, "lfs")) then
 	error("Nexum requires a compatible environment to run.\nPlease ensure you are running this in a supported environment.\nRefer to the documentation for more details.")
 end
 
-if not (SERVER or CLIENT) then
-	error("Nexum requires a defined environment (SERVER or CLIENT).\nPlease run the application with the appropriate argument: 'SERVER' or 'CLIENT'.")
-end
-
 local function SetGlobalByPath(sPath, Value)
 	local Last;
 	local t	= _G
@@ -38,5 +34,11 @@ end
 for sKey, sPath in pairs(CONFIGURATION.LIBRARIES) do
 	bSuccess, CONFIGURATION.LIBRARIES[sKey]	= pcall(require, sPath)
 end
+
+if not (SERVER or CLIENT) then
+	MsgC(Color(52, 152, 219), "\n[NEXUM] No valid environment detected, set to default environment: ", Color(46, 204, 113), CONFIGURATION.DEFAULT_ENVIRONMENT)
+end
+SERVER	= ((not (SERVER or CLIENT)) and (CONFIGURATION.DEFAULT_ENVIRONMENT == "SERVER") or SERVER)
+CLIENT	= ((not (SERVER or CLIENT)) and (CONFIGURATION.DEFAULT_ENVIRONMENT == "CLIENT") or CLIENT)
 
 return require("srcs/core/loader/init"):Initialize(CONFIGURATION.CONFIGURATION_PATH, CONFIGURATION.LIBRARIES)
