@@ -69,6 +69,10 @@ function SUBLOADER_BASE:InitializeGroup(sGroup)
 	local sBasePath			= self:GetAttribute("BASE_PATH")
 	local tLoader			= self:GetAttribute("LOADER")
 	local tGroup			= tLoader:GetConfig()[sGroup]
+
+	if not IsTable(tGroup) then
+		return MsgC(tLoader:GetConfig().DEBUG.COLORS.WARNING, "[LOADER] No configuration found for group '"..sGroup.."'")
+	end
 	local bShouldLoad		= (tGroup.DATA.SHARED and CLIENT) or SERVER
 	if not bShouldLoad then return end
 
