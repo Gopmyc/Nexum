@@ -21,46 +21,6 @@ function LOADER:Initialize(sConfigPath, tLibraries)
 	return tLoader
 end
 
-function LOADER:CreateLoaderInstance(tConfig, tLibraries)
-	local tLoaderConfig	= tConfig.LOADER
-	if not IsTable(tLoaderConfig) then return error("[CONFIG-LOADER] Missing 'LOADER' configuration table") end
-	tConfig.LOADER				= nil
-
-	local tLoader				= setmetatable(tLoaderConfig, {__index = LOADER})
-	tLoader.CONFIG				= tConfig
-	
-	tLoader.LIBRARIES			= tLoader.LIBRARIES or {}
-	tLoader.LIBRARIES.BUFFER	= {}
-	for sName, sPath in pairs(tLoader.LIBRARIES or {}) do
-		if sName == "BUFFER" then goto continue end
-
-		local tEnv			= setmetatable({ LIBRARY = {
-			GetLibrary	= function(self, sLibName)
-				return tLoader.LIBRARIES.BUFFER and tLoader.LIBRARIES.BUFFER[sLibName]
-			end,
-		} }, { __index = _G })
-		local fChunk		= LoadFileInEnvironment(tLoader.LIBRARIES_PATH .. sPath, tEnv)
-
-		local bOk, sRunErr	= pcall(fChunk)
-		if not bOk then
-			MsgC(tLoader.CONFIG.DEBUG.COLORS.ERROR, "[ENV-LOADER] Runtime error: " .. tostring(sRunErr))
-		end
-
-		tLoader.LIBRARIES[sName]		= nil
-		tLoader.LIBRARIES.BUFFER[sName]	= tEnv.LIBRARY
-
-		::continue::
-	end
-
-	tLoader:GetLibrary("ENV_BUILDER"):SetEnvSpecification(tConfig.ENV_PROFILES)
-	tLoader:GetLibrary("RUNTIME"):SetRuntimeConfig(tLoader.RUNTIME)
-
-	-- TODO: Make this cleaner, it's really not good to have this kind of logic in the loader, but it works for now
-	tLoader:GetLibrary("RESSOURCES").RESSOURCES["EXTERNAL_LIBRARIES"]	= tLibraries
-
-	return tLoader
-end
-
 function LOADER:LoadConfiguration(sPath, tLibraries, tTable, bIsRoot)
 	assert(IsString(sPath), "[CONFIG-LOADER] Path must be a string")
 	assert(IsTable(tLibraries), "[CONFIG-LOADER] Libraries must be a table")
@@ -75,7 +35,7 @@ function LOADER:LoadConfiguration(sPath, tLibraries, tTable, bIsRoot)
 		local sData		= ReadFile(sPath .. "/" .. sFile)
 		local tParsed	= sData and tLibraries.YAML.eval(sData) or nil
 
-		tTable[string.upper(sFile:sub(1, -6))] = IsTable(tParsed) and tParsed or nil
+		tTable[string.upper(sFile:sub(1, -6))] = tParsed
 
 		::continue::
 	end
@@ -100,9 +60,49 @@ function LOADER:LoadConfiguration(sPath, tLibraries, tTable, bIsRoot)
 	return tTable
 end
 
+function LOADER:CreateLoaderInstance(tConfig, tLibraries)
+	local tLoaderConfig	= tConfig.LOADER
+	if not IsTable(tLoaderConfig) then return error("[CONFIG-LOADER] Missing 'LOADER' configuration table") end
+	tConfig.LOADER				= nil
+
+	local tLoader				= setmetatable(tLoaderConfig, {__index = LOADER})
+	tLoader.CONFIG				= tConfig
+	
+	tLoader.LIBRARIES			= tLoader.LIBRARIES or {}
+	tLoader.LIBRARIES.BUFFER	= {}
+	for sName, sPath in pairs(tLoader.LIBRARIES or {}) do
+		if sName == "BUFFER" then goto continue end
+
+		local tEnv			= setmetatable({ LIBRARY = {
+			GetLibrary	= function(self, sLibName)
+				return tLoader.LIBRARIES.BUFFER and tLoader.LIBRARIES.BUFFER[sLibName]
+			end,
+		} }, { __index = _G })
+		local fChunk		= LoadFileInEnvironment(tLoader.DATA.LIBRARIES_PATH .. sPath, tEnv)
+
+		local bOk, sRunErr	= pcall(fChunk)
+		if not bOk then
+			MsgC(tLoader.CONFIG.DEBUG.COLORS.ERROR, "[ENV-LOADER] Runtime error: " .. tostring(sRunErr))
+		end
+
+		tLoader.LIBRARIES[sName]		= nil
+		tLoader.LIBRARIES.BUFFER[sName]	= tEnv.LIBRARY
+
+		::continue::
+	end
+
+	tLoader:GetLibrary("ENV_BUILDER"):SetEnvSpecification(tConfig.ENV_PROFILES)
+	tLoader:GetLibrary("RUNTIME"):SetRuntimeConfig(tLoader.DATA.RUNTIME)
+
+	-- TODO: Make this cleaner, it's really not good to have this kind of logic in the loader, but it works for now
+	tLoader:GetLibrary("RESSOURCES").RESSOURCES["EXTERNAL_LIBRARIES"]	= tLibraries
+
+	return tLoader
+end
+
 function LOADER:InitializeSubloaders()
 	assert(IsTable(self.CONFIG), "[LOADER] Configuration not loaded")
-	self.SUBLOADER_BASE	= require(self.SUBLOADERS_PATH):Initialize(self.CONFIG, self.SUBLOADERS_PATH, self)
+	self.SUBLOADER_BASE	= require(self.DATA.SUBLOADERS_PATH):Initialize(self.CONFIG, self.DATA.SUBLOADERS_PATH, self)
 
 	--if IsTable(self.CONFIG.DEBUG) and self.CONFIG.DEBUG.ENABLED then
 	--	self.LOAD_PRIORITY[#self.LOAD_PRIORITY + 1]	= "HOT_RELOAD"
