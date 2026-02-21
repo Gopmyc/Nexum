@@ -72,7 +72,7 @@ function LOADER:LoadConfiguration(sPath, tLibraries, tTable, bIsRoot)
 	for _, sFile in ipairs(tFiles) do
 		if not (sFile:sub(-5) == ".yaml") then goto continue end
 		
-		local sData		= lovr.filesystem.read(sPath .. "/" .. sFile)
+		local sData		= ReadFile(sPath .. "/" .. sFile)
 		local tParsed	= sData and tLibraries.YAML.eval(sData) or nil
 
 		tTable[string.upper(sFile:sub(1, -6))] = IsTable(tParsed) and tParsed or nil
@@ -183,7 +183,7 @@ function LOADER:GetLibrariesBase(sBasePath, tParent)
 		tBoth["server"]	= tBoth["sv_"]
 		tBoth["client"]	= tBoth["cl_"]
 
-		if not lovr.filesystem.isDirectory(sPath) then return end
+		if not IsDirectory(sPath) then return end
 		
 		for iID, sFile in ipairs(self:GetLibrary("FINDER"):GetLuaFiles(sPath)) do
 			local sFileName		= sFile:match("([^/\\]+)%.lua$")
