@@ -1,4 +1,16 @@
-local CONFIGURATION	= require("configuration/nexum")
+--
+-- ┌─────────────┐
+-- │ ENTRY POINT │
+-- └─────────────┘
+--
+
+if not (lovr and love and AddCSLuaFile and pcall(require, "lfs")) then
+	error("Nexum requires a compatible environment to run.\nPlease ensure you are running this in a supported environment.\nRefer to the documentation for more details.")
+end
+
+if not (SERVER or CLIENT) then
+	error("Nexum requires a defined environment (SERVER or CLIENT).\nPlease run the application with the appropriate argument: 'SERVER' or 'CLIENT'.")
+end
 
 local function SetGlobalByPath(sPath, Value)
 	local Last;
@@ -13,6 +25,7 @@ local function SetGlobalByPath(sPath, Value)
 	t[Last]	= Value
 end
 
+local CONFIGURATION	= require("configuration/nexum")
 
 local bSuccess, Content;
 for iID, tGlobal in ipairs(CONFIGURATION.ENVIRONMENT) do
@@ -26,15 +39,4 @@ for sKey, sPath in pairs(CONFIGURATION.LIBRARIES) do
 	bSuccess, CONFIGURATION.LIBRARIES[sKey]	= pcall(require, sPath)
 end
 
-local LOADER    = require("srcs/core/loader/init"):Initialize(CONFIGURATION.CONFIGURATION_PATH, CONFIGURATION.LIBRARIES)
-
---- TEMPORARY BLOCK ---
-if SERVER then
-	LOADER:Instanciate("networking", "server")
-elseif CLIENT then
-	LOADER:Instanciate("networking", "client")
-end
-------------------------
-
-
-return LOADER
+return require("srcs/core/loader/init"):Initialize(CONFIGURATION.CONFIGURATION_PATH, CONFIGURATION.LIBRARIES)
