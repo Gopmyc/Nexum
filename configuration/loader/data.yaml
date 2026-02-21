@@ -1,0 +1,20 @@
+# Path where all subloader scripts are located
+SUBLOADERS_PATH:  "srcs/core/loader/subloaders/"
+
+# Path where all library scripts are located
+LIBRARIES_PATH: "srcs/core/loader/libraries/"
+
+# Runtime stages for updates and draws
+RUNTIME:
+  UPDATE:
+    BOOTSTRAP:  1
+    INGRESS:    2
+    PROCESS:    3
+    RESOLVE:    4
+    EGRESS:     5
+    OBSERVE:    6
+  DRAW:
+    PREPARE:    1
+    EMIT:       2
+    OVERLAY:    3
+    INSPECT:    4
