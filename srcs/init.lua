@@ -4,7 +4,7 @@
 -- └─────────────┘
 --
 
-if not (lovr and love and AddCSLuaFile and pcall(require, "lfs")) then
+if not (lovr or love or AddCSLuaFile or pcall(require, "lfs")) then
 	error("Nexum requires a compatible environment to run.\nPlease ensure you are running this in a supported environment.\nRefer to the documentation for more details.")
 end
 
