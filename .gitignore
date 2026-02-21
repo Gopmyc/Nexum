@@ -23,3 +23,6 @@ commit_config.json
 # === Ignore tool_builder build ===
 tool_builder.exe
 tool_builder.a
+
+# === Ignore LOVR and LOVE entry point ===
+main.lua
