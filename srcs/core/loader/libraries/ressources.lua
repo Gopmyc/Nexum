@@ -49,7 +49,7 @@ function LIBRARY:IncludeFiles(FileSource, tSide, tFileArgs, tSandEnv, bIsBinary,
 	assert(IsTable(tSide),									"[RESSOURCES] The 'tSide' argument must be a table with 'client' and 'server' keys [#2]")
 	assert((tFileArgs == nil) or IsTable(tFileArgs),		"[RESSOURCES] The 'tFileArgs' argument must be a table or nil [#3]")
 
-	if (SERVER and tSide.CLIENT and IsString(FileSource)) and not lovr.filesystem.isDirectory(FileSource) then
+	if (SERVER and tSide.CLIENT and IsString(FileSource)) and not IsDirectory(FileSource) then
 		self:AddCSLuaFile(FileSource)
 	end
 
