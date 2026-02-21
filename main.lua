@@ -1,7 +1,7 @@
 -- TODO: Delete
 
 function lovr.load(tArgs)
-	assert((tArgs[1] == "SERVER") or (tArgs[1] == "CLIENT"), "error: First argument must be either 'SERVER' or 'CLIENT', use : ./Nexum.exe 'SERVER' or : ./Nexum.exe 'CLIENT'")
+	tArgs[1]	= tArgs[1] and string.upper(tArgs[1]) or nil
 	SERVER	= (tArgs[1] == "SERVER")
 	CLIENT	= (tArgs[1] == "CLIENT")
 
