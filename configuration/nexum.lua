@@ -16,6 +16,8 @@ return {
 		{ KEY = "IsFunction",				PATH = "env/Is/function"			},
 		{ KEY = "IsThread",					PATH = "env/Is/thread"				},
 		{ KEY = "IsUserdata",				PATH = "env/Is/userdata"			},
+		{ KEY = "IsDirectory",				PATH = "env/Is/directory"			},
+		{ KEY = "IsFile",					PATH = "env/Is/file"				},
 		{ KEY = "string.Totable",			PATH = "env/string/Totable"			},
 		{ KEY = "string.Explode",			PATH = "env/string/Explode"			},
 		{ KEY = "table.Copy",				PATH = "env/table/Copy"				},
@@ -25,5 +27,6 @@ return {
 		{ KEY = "PrintTable",				PATH = "env/PrintTable"				},
 		{ KEY = "FilesFind",				PATH = "env/FilesFind"				},
 		{ KEY = "LoadFileInEnvironment",	PATH = "env/LoadFileInEnvironment"	},
+		{ KEY = "ReadFile",					PATH = "env/ReadFile"				},
 	},
 }
