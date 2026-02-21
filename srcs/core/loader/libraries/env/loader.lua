@@ -44,8 +44,8 @@ function LIBRARY:LoadWithParentEnv(sFile, tParentEnv, sAccessPoint)
 end
 
 function LIBRARY:ResolveFileSource(sFileSource, bIsSubFile)
-	local bIsFile	= lovr.filesystem.isFile(sFileSource)
-	local bIsDir	= lovr.filesystem.isDirectory(sFileSource)
+	local bIsFile	= IsFile(sFileSource)
+	local bIsDir	= IsDirectory(sFileSource)
 
 	if not (bIsFile or bIsDir) then
 		return MsgC(Color(241, 196, 15), "[WARNING][ENV-RESSOURCES] File or folder not found: " .. sFileSource)
@@ -56,7 +56,7 @@ function LIBRARY:ResolveFileSource(sFileSource, bIsSubFile)
 	end
 
 	sFileSource		= sFileSource:sub(-1) ~= "/" and sFileSource .. "/" or sFileSource
-	if lovr.filesystem.isFile(sFileSource .. "init.lua") then
+	if IsFile(sFileSource .. "init.lua") then
 		return sFileSource .. "init.lua"
 	end
 
@@ -83,12 +83,12 @@ function LIBRARY:LoadSubEnvironments(sBasePath, tBaseEnv, sAccessPoint, tFileArg
 	end
 
 	local tServerEnv	= SERVER and
-		lovr.filesystem.isFile(sServer) and
+		IsFile(sServer) and
 		self:Load(sServer, tSandEnv, sAccessPoint, tFileArgs, false, tCapabilities, tEnvProfile, fCheckLoadLib(tNotLoadLibraries[1])) or
 		nil
 
 	local tClientEnv	= CLIENT and
-		lovr.filesystem.isFile(sClient) and
+		IsFile(sClient) and
 		self:Load(sClient, tSandEnv, sAccessPoint, tFileArgs, false, tCapabilities, tEnvProfile, fCheckLoadLib(tNotLoadLibraries[2])) or
 		nil
 
