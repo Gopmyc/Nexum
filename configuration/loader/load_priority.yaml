@@ -1,0 +1,2 @@
+# Defines the order in which resource groups should be loaded
+  - "CORE"
