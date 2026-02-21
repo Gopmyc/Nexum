@@ -1,4 +1,5 @@
 return {
+	DEFAULT_ENVIRONMENT	= "SERVER",
 	CONFIGURATION_PATH	= "configuration/",
 	LIBRARIES			= {
 		YAML		= "libraries/yaml",
