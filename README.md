@@ -20,7 +20,7 @@
 		<a href="https://gopmyc.github.io/Nexum/"><strong>Explore the docs »</strong></a>
 	<br />
 	<br />
-		<a href="https://github.com/Gopmyc/Nexum/tests/">View Demo</a>
+		<a href="https://github.com/Gopmyc/Nexum/tree/main/tests">View Demo</a>
 	· <a href="https://github.com/Gopmyc/Nexum/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
 	· <a href="https://github.com/Gopmyc/Nexum/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
 </p>
@@ -181,7 +181,7 @@ function love.quit()
 end
 ```
 
-*For more examples, check the [documentation](https://gopmyc.github.io/Nexum/).*
+*For more examples, check the [documentation](https://gopmyc.github.io/Nexum/) or the [tests](https://github.com/Gopmyc/Nexum/tree/main/tests) folder.*
 
 <p align="right"><a href="#readme-top">🔝</a></p>
 
@@ -189,10 +189,13 @@ end
 
 ## Roadmap
 
-* [ ] Add official Love2D integration examples
-* [ ] Expand plugin system documentation
-* [ ] Implement automated tests for subloaders
-* [ ] Add profiling tools for runtime performance
+* [X] Increase modularity by allowing project configuration and default values ​​via YAML configuration.
+* [X] The file loading process was split into groups named 'subloader'.
+* [X] Add dynamic file loading priority generation based on external dependencies within subloaders
+* [X] Enable secure file management for the parent environment
+* [X] Allow the addition of 'plug and play' modules (without having to modify Nexum for integration)
+* [X] Enabling the instantiation of loaded classes and autonomous management of their lifecycle
+* [ ] Add an interface to facilitate adding and removing modules
 
 Feel free to suggest features via [issues](https://github.com/Gopmyc/Nexum/issues).
 
@@ -241,8 +244,6 @@ See [`LICENSE`](https://github.com/Gopmyc/Nexum/LICENSE) for more info.
 🔗 [https://github.com/Gopmyc/Nexum](https://github.com/Gopmyc/Nexum)
 
 <p align="right"><a href="#readme-top">🔝</a></p>
-
----
 
 [contributors-shield]: https://img.shields.io/github/contributors/Gopmyc/Nexum.svg?style=for-the-badge
 [contributors-url]: https://github.com/Gopmyc/Nexum/graphs/contributors
