@@ -1,0 +1,16 @@
+@NAME:	IsThread
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Checks whether the given value is a Lua thread (coroutine).
+	Returns `true` if the value is of type `thread`, otherwise `false`.
+}
+@PARAM:
+	v <any> : The value to check.
+@RETURN:
+	<boolean> : `true` if `v` is a thread, `false` otherwise.
+@EXAMPLE:
+```lua
+local co = coroutine.create(function() end)
+print(IsThread(co))        -- Output: true
+print(IsThread({}))        -- Output: false
+```
