@@ -1,0 +1,16 @@
+@NAME:	IsTable
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Checks whether the given value is a table.
+	Returns `true` if the value is of type table, otherwise `false`.
+}
+@PARAM:
+	v <any> : The value to check.
+@RETURN:
+	<boolean> : `true` if `v` is a table, `false` otherwise.
+@EXAMPLE:
+```lua
+print(IsTable({}))          -- Output: true
+print(IsTable({1, 2, 3}))   -- Output: true
+print(IsTable(123))         -- Output: false
+```
