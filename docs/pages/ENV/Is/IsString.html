@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="../../../style.css" rel="stylesheet">
+<title>Nexum</title>
+</head>
+<body>
+<div class="container">
+	<aside class="sidebar"> <h2>📘 Nexum </h2> <div class="sidebar-search"> <input type="text" id="sidebarSearch" placeholder="Search..." /> </div>
+ <nav> <ul id="sidebar-menu"></ul> </nav> </aside>
+   <main class="content">
+<section class='doc-block' id='IsString'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> IsString</h2>
+<p><br>	Checks whether the given value is a string.<br>	Returns `true` if the value is of type string, otherwise `false`.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type any'>any</span> :  The value to check.</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type boolean'>boolean</span> :  `true` if `v` is a string, `false` otherwise.</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>print(IsString("Hello"))   -- Output: true
+print(IsString(123))       -- Output: false
+print(IsString(""))        -- Output: true
+</code></pre></div></section>
+    </main>
+</div>
+<script src="../../../root/manifest.js"></script>
+<script src="../../../main.js"></script>
+<script>window.addEventListener('DOMContentLoaded',()=>{buildSidebarMenu(manifest)});</script>
+</body>
+</html>
