@@ -1,0 +1,37 @@
+@GLOBAL_DESCRIPTION:
+{
+	The ORDERER library handles dependency-based ordering of files.  
+	It ensures that files are loaded in an order respecting internal dependencies, detecting circular references, and building a globally sorted list of files.
+}
+
+@NAME:	ORDERER:BuildGlobalOrder
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Generates a globally sorted list of files based on their internal dependencies.  
+	Traverses each file and its dependencies recursively to respect load order, and detects circular references.
+}
+@PARAM:
+	<table>	: Table containing file data. Each file must have a 'DEPENDENCIES.INTERNAL' list of dependent file keys.
+@RETURN:
+	<table>	: Array of file data sorted in load order according to dependencies
+@EXAMPLE:
+```lua
+local tSortedFiles = ORDERER:BuildGlobalOrder(tFileContent)
+```
+
+@NAME:	ORDERER:VisitFileDependencies
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Recursively visits a file and its internal dependencies.  
+	Marks files as visited to avoid reprocessing and detects circular dependencies.  
+	Appends files to the SORTED list in dependency-respecting order.
+}
+@PARAM:
+	<string>	: File name to process
+	<table>		: File data table, must include 'DEPENDENCIES.INTERNAL'
+@RETURN:
+	<nil>
+@EXAMPLE:
+```lua
+ORDERER:VisitFileDependencies("MY_FILE", tFileData)
+```
