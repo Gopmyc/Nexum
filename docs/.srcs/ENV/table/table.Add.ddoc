@@ -1,0 +1,19 @@
+@NAME:	table.Add
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Appends all elements from a source table into a destination table.
+	If either table is nil, the other table is returned directly.
+	The destination table is modified in place.
+}
+@PARAM:
+	tDestination <table> : The table to which elements will be added.
+	tSource <table> : The table whose elements will be appended.
+@RETURN:
+	<table> : The destination table containing the combined elements of both tables.
+@EXAMPLE:
+```lua
+local t1 = {1,2}
+local t2 = {3,4}
+table.Add(t1, t2)
+-- t1 = {1,2,3,4}
+```
