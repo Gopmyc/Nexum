@@ -1,0 +1,21 @@
+@NAME:	ReadFile
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Reads the content of a file from the filesystem across multiple Lua environments (LOVR, LOVE, Garry’s Mod, or standard Lua).
+	- Automatically falls back to reading `init.lua` if the given path is a directory.
+	- Returns the file content as a string, or `nil` if the file cannot be read.
+	- Abstracts platform-specific filesystem differences.
+}
+@PARAM:
+	sPath <string> : The file path to read.
+@RETURN:
+	<string or nil> : The content of the file as a string, or nil if file not found.
+@EXAMPLE:
+```lua
+local content = ReadFile("configs/settings.lua")
+if content then
+    print("File content:\n" .. content)
+else
+    print("File not found or unreadable.")
+end
+```
