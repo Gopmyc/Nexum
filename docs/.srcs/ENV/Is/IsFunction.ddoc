@@ -1,0 +1,16 @@
+@NAME:	IsFunction
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Checks whether the given value is a function.
+	Returns `true` if the value is a Lua function, otherwise `false`.
+}
+@PARAM:
+	v <any> : The value to check.
+@RETURN:
+	<boolean> : `true` if `v` is a function, `false` otherwise.
+@EXAMPLE:
+```lua
+print(IsFunction(print))       -- Output: true
+print(IsFunction(123))         -- Output: false
+print(IsFunction(function() end)) -- Output: true
+```
