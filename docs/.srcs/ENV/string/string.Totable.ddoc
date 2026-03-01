@@ -1,0 +1,18 @@
+@NAME:	string.Totable
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Converts a string or any value into a table of individual characters.
+	The input value is first converted to a string if it is not already a string.
+}
+@PARAM:
+	vInput <any> : The value to convert into a table of characters.
+@RETURN:
+	<table> : A table where each element is a single character from the string representation of the input.
+@EXAMPLE:
+```lua
+local t = string.Totable("hello")
+-- t = {"h","e","l","l","o"}
+
+local tNum = string.Totable(123)
+-- tNum = {"1","2","3"}
+```
