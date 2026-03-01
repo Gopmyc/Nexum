@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="../../../../style.css" rel="stylesheet">
+<title>Nexum</title>
+</head>
+<body>
+<div class="container">
+	<aside class="sidebar"> <h2>📘 Nexum </h2> <div class="sidebar-search"> <input type="text" id="sidebarSearch" placeholder="Search..." /> </div>
+ <nav> <ul id="sidebar-menu"></ul> </nav> </aside>
+   <main class="content">
+<section class='global-description'>
+	<h2>Overview</h2>
+	<p><br>	The RUNTIME library manages runtime instances of scripts, including their update and draw pipelines.  <br>	It handles instantiation, registration, destruction, and safe execution with error handling.<br></p>
+</section>
+<section class='doc-block' id='RUNTIME:SetRuntimeConfig'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> RUNTIME:SetRuntimeConfig</h2>
+<p><br>	Sets the runtime configuration table defining UPDATE and DRAW stages.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type table'>table</span> :  Runtime configuration table</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>RUNTIME:SetRuntimeConfig({
+	UPDATE = { PRE = 0, MAIN = 1, POST = 2 },
+	DRAW   = { BACKGROUND = 0, FOREGROUND = 1 }
+})
+</code></pre></div></section>
+<section class='doc-block' id='RUNTIME:Instantiate'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> RUNTIME:Instantiate</h2>
+<p><br>	Creates a new instance of a script from RESSOURCES.  <br>	Registers the instance to the update and draw pipelines according to runtime configuration.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  File name of the script in RESSOURCES</li><li><span class='param-type table'>table</span> :  Runtime configuration for this file {ID, UPDATE, DRAW}</li><li><span class='param-type table'>table</span> :  Optional arguments passed to Initialize method</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Instantiated object</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local inst = RUNTIME:Instantiate("PLAYER_CONTROLLER", tConfig, {player})
+</code></pre></div></section>
+<section class='doc-block' id='RUNTIME:RegisterInstance'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> RUNTIME:RegisterInstance</h2>
+<p><br>	Registers an already instantiated object into the runtime update and draw pipelines.  <br>	Orders are determined by stage and optional order values in runtime config.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type table'>table</span> :  Instance object</li><li><span class='param-type table'>table</span> :  Update stage configuration {STAGE, ORDER}</li><li><span class='param-type table'>table</span> :  Draw stage configuration {STAGE, ORDER}</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>RUNTIME:RegisterInstance(inst, {STAGE="MAIN"}, {STAGE="FOREGROUND"})
+</code></pre></div></section>
+<section class='doc-block' id='RUNTIME:DestroyInstance'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> RUNTIME:DestroyInstance</h2>
+<p><br>	Safely destroys a runtime instance.  <br>	If called during update/draw, destruction is deferred until after the pipeline finishes.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type table'>table</span> :  Instance to destroy</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>RUNTIME:DestroyInstance(inst)
+</code></pre></div></section>
+<section class='doc-block' id='RUNTIME:DestroyAllInstances'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> RUNTIME:DestroyAllInstances</h2>
+<p><br>	Destroys all registered instances immediately.<br></p>
+<div class='doc-subblock code-block'><pre><code class='language-lua'>RUNTIME:DestroyAllInstances()
+</code></pre></div></section>
+<section class='doc-block' id='RUNTIME:Update'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> RUNTIME:Update</h2>
+<p><br>	Executes the UPDATE pipeline for all registered instances in order of priority.  <br>	Errors in Update calls are caught and logged, and faulty instances are destroyed.<br></p>
+<div class='doc-subblock code-block'><pre><code class='language-lua'>RUNTIME:Update(deltaTime)
+</code></pre></div></section>
+<section class='doc-block' id='RUNTIME:Draw'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> RUNTIME:Draw</h2>
+<p><br>	Executes the DRAW pipeline for all registered instances in order of priority.  <br>	Errors in Draw calls are caught and logged, and faulty instances are destroyed.<br></p>
+<div class='doc-subblock code-block'><pre><code class='language-lua'>RUNTIME:Draw()
+</code></pre></div></section>
+<section class='doc-block' id='RUNTIME:GetInstanceByID'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> RUNTIME:GetInstanceByID</h2>
+<p><br>	Retrieves an instance by its group ID and optional instance ID.  <br>	If no ID is given, returns the first instance in the group.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  Group ID (typically the file name)</li><li><span class='param-type string'>string</span> :  Instance ID</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Instance if found</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local inst = RUNTIME:GetInstanceByID("PLAYER_CONTROLLER", "MAIN")
+</code></pre></div></section>
+    </main>
+</div>
+<script src="../../../../root/manifest.js"></script>
+<script src="../../../../main.js"></script>
+<script>window.addEventListener('DOMContentLoaded',()=>{buildSidebarMenu(manifest)});</script>
+</body>
+</html>
