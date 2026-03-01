@@ -1,0 +1,49 @@
+@GLOBAL_DESCRIPTION:
+{
+	The CORE Sub-Loader handles the initialization and loading of core files for the LOADER system.  
+	It manages the environment, dependencies, capabilities, and execution of all core scripts.
+}
+
+@NAME:	SUBLOADER:Initialize
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Initializes the core sub-loader by creating its environment, loading the library references,  
+	and iterating over the provided content to load each core file into the buffer.
+}
+@PARAM:
+	<table>	: Content table representing the files to load
+@RETURN:
+	<table>	: Loaded buffer containing the initialized core files
+@EXAMPLE:
+```lua
+local coreBuffer = SUBLOADER:Initialize(coreFilesContent)
+```
+
+@NAME:	SUBLOADER:LoadFile
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Loads a single core file by resolving its dependencies, capabilities, and environment profile,  
+	then calling the RESOURCES library to include the file.
+}
+@PARAM:
+	<table>	: File configuration table
+	<function|nil>	: Optional chunk function for reloads
+@RETURN:
+	<table>	: Loaded file object
+	<boolean>	: True if the file is shared (CLIENT-side), false otherwise
+@EXAMPLE:
+```lua
+local tFileLoaded, bShared = SUBLOADER:LoadFile(fileData)
+```
+
+@NAME:	SUBLOADER.__ENV
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Defines the environment of the CORE sub-loader including:
+	- ACCESS_POINT: string identifier for this environment
+	- CONTENT: table containing a CORE table with its own environment and library references
+}
+@EXAMPLE:
+```lua
+print(SUBLOADER.__ENV.ACCESS_POINT) --> "CORE"
+```
