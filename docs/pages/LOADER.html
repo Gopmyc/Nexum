@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="../style.css" rel="stylesheet">
+<title>Nexum</title>
+</head>
+<body>
+<div class="container">
+	<aside class="sidebar"> <h2>📘 Nexum </h2> <div class="sidebar-search"> <input type="text" id="sidebarSearch" placeholder="Search..." /> </div>
+ <nav> <ul id="sidebar-menu"></ul> </nav> </aside>
+   <main class="content">
+<section class='global-description'>
+	<h2>Overview</h2>
+	<p><br>	The core Loader module of Nexum.  <br>	This module is responsible for initializing the Loader system, reading and parsing configuration files (YAML), managing libraries and sub-loaders, and providing runtime APIs for instantiation, update, and draw cycles.  <br>	It isolates libraries in controlled environments, manages client/server/shared state, and ensures proper load order based on configuration rules.<br></p>
+</section>
+<section class='doc-block' id='LOADER:Initialize'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> LOADER:Initialize</h2>
+<p><br>	Initializes the Loader with given configuration path and libraries table.  <br>	Validates input parameters, loads YAML configurations, sets up logging via MsgC, and prepares the environment for loading libraries and sub-loaders.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  Path to the main configuration file (usually 'configuration/nexum.lua')</li><li><span class='param-type table'>table</span> :  Table of available libraries to load</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Initialized loader instance ready to manage libraries and runtime</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local tLibs = {}
+local loader = LOADER:Initialize("configuration/nexum.lua", tLibs)
+</code></pre></div></section>
+<section class='doc-block' id='LOADER:LoadConfiguration'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> LOADER:LoadConfiguration</h2>
+<p><br>	Recursively loads all YAML configuration files in a given directory.  <br>	Parses each YAML file into Lua tables, merges them according to the configuration structure, and returns a complete configuration table for the loader.  <br>	Handles nested directories and maintains hierarchy.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  Path to the folder containing YAML configuration files</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Table representing the merged configuration</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local tConfig = LOADER:LoadConfiguration("configuration/loader")
+</code></pre></div></section>
+<section class='doc-block' id='LOADER:InitializeSubloaders'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> LOADER:InitializeSubloaders</h2>
+<p><br>	Initializes sub-loaders according to configuration.  <br>	Sub-loaders allow loading specialized groups of modules with defined priorities.  <br>	Ensures load order respects the 'LOAD_PRIORITY' table and integrates with main Loader environment.<br></p>
+<div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Table containing initialized sub-loader instances</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local subLoaders = LOADER:SetupSubLoaders()
+</code></pre></div></section>
+<section class='doc-block' id='LOADER:GetLibrary'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> LOADER:GetLibrary</h2>
+<p><br>	Retrieves a loaded library by name.  <br>	Ensures proper scope (server/client/shared) and exposes the library API to the caller.  <br>	Performs lazy loading if the library is not already instantiated.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  Name of the library to retrieve</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  The loaded library instance</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local runtimeLib = LOADER:GetLibrary("runtime")
+</code></pre></div></section>
+<section class='doc-block' id='LOADER:Update'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> LOADER:Update</h2>
+<p><br>	Executes the update cycle for all runtime instances managed by the loader.  <br>	Typically called once per frame in the main loop.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type number'>number</span> :  Delta time since last update</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>LOADER:Update(dt)
+</code></pre></div></section>
+<section class='doc-block' id='LOADER:Draw'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> LOADER:Draw</h2>
+<p><br>	Executes the draw/render cycle for all runtime instances managed by the loader.  <br>	Handles rendering or client-side visual updates if applicable.<br></p>
+<div class='doc-subblock code-block'><pre><code class='language-lua'>LOADER:Draw()
+</code></pre></div></section>
+<section class='doc-block' id='LOADER:Quit'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> LOADER:Quit</h2>
+<p><br>	Cleans up runtime instances, libraries, and sub-loaders.  <br>	Should be called on application exit to ensure proper resource release.<br></p>
+<div class='doc-subblock code-block'><pre><code class='language-lua'>LOADER:Quit()
+</code></pre></div></section>
+    </main>
+</div>
+<script src="../root/manifest.js"></script>
+<script src="../main.js"></script>
+<script>window.addEventListener('DOMContentLoaded',()=>{buildSidebarMenu(manifest)});</script>
+</body>
+</html>
