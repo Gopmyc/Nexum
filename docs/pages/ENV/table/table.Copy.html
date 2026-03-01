@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="../../../style.css" rel="stylesheet">
+<title>Nexum</title>
+</head>
+<body>
+<div class="container">
+	<aside class="sidebar"> <h2>📘 Nexum </h2> <div class="sidebar-search"> <input type="text" id="sidebarSearch" placeholder="Search..." /> </div>
+ <nav> <ul id="sidebar-menu"></ul> </nav> </aside>
+   <main class="content">
+<section class='doc-block' id='table.Copy'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> table.Copy</h2>
+<p><br>	Creates a copy of the given table.<br>	Supports both shallow and deep copying.<br>	Deep copy will recursively duplicate all nested tables, avoiding infinite loops by tracking already-seen tables.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type table'>table</span> :  The table to copy.</li><li><span class='param-type boolean'>boolean</span> :  If true, perform a deep copy; otherwise, a shallow copy.</li><li><span class='param-type default'>table|nil</span> :  Internal tracking table for already-seen tables during deep copy (do not provide manually).</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  The copied table.</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local tOriginal = {a = 1, b = {c = 2}}
+local tShallow = table.Copy(tOriginal)             -- Shallow copy
+local tDeep    = table.Copy(tOriginal, true)       -- Deep copy
+tDeep.b.c = 3                                    -- Does not affect tOriginal.b.c
+</code></pre></div></section>
+    </main>
+</div>
+<script src="../../../root/manifest.js"></script>
+<script src="../../../main.js"></script>
+<script>window.addEventListener('DOMContentLoaded',()=>{buildSidebarMenu(manifest)});</script>
+</body>
+</html>
