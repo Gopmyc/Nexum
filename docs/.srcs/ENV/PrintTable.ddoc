@@ -1,0 +1,35 @@
+@NAME:	PrintTable
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Prints the contents of a Lua table recursively in a human-readable tree format.
+	- Each key/value pair is displayed.
+	- Nested tables are indented and prefixed with a visual tree structure using `+--` and `|`.
+	- Uses `MsgC` for output, so supports colored output if passed colored strings or tables.
+}
+@PARAM:
+	tTable <table> : The Lua table to print.
+	sPrefix <string> [optional] : Internal parameter for indentation prefix, do not pass manually unless needed for recursion.
+@RETURN:
+	<nothing>
+@EXAMPLE:
+```lua
+local tExample = {
+    NAME = "Gopmyc",
+    SKILLS = { "Lua", "C++", "C" },
+    SETTINGS = {
+        DEBUG = true,
+        VERSION = 1.0
+    }
+}
+
+PrintTable(tExample)
+-- Output:
+-- +--NAME : Gopmyc
+-- +--SKILLS : 
+-- |   +--1 : Lua
+-- |   +--2 : C++
+-- |   +--3 : C
+-- +--SETTINGS : 
+-- |   +--DEBUG : true
+-- |   +--VERSION : 1.0
+```
