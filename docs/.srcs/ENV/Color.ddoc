@@ -1,0 +1,21 @@
+@NAME:	Color
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Creates a color table from red, green, and blue values.
+	The resulting table includes:
+	- Numeric indices [1], [2], [3] for R, G, B components
+	- [4] for the alpha channel, always 255
+	- __hex field representing the color as a hexadecimal string (e.g., "#FF00FF")
+}
+@PARAM:
+	<number> iR	: Red component (0–255)
+	<number> iG	: Green component (0–255)
+	<number> iB	: Blue component (0–255)
+@RETURN:
+	<table>	: Color table containing R, G, B, A components and a __hex string
+@EXAMPLE:
+```lua
+local tPink = Color(255, 192, 203)
+print(tPink[1], tPink[2], tPink[3], tPink[4]) --> 255 192 203 255
+print(tPink.__hex) --> "#FFC0CB"
+```
