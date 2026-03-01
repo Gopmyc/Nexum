@@ -1,0 +1,17 @@
+@NAME:	IsFile
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Checks whether a given path points to a regular file.
+	Supports multiple backends: LÖVR, LÖVE, GMod (glua), and standard Lua (lfs).
+	Returns true if the path exists and is a file, false otherwise.
+}
+@PARAM:
+	sPath <string> : The file system path to check.
+@RETURN:
+	<boolean> : `true` if the path is a file, `false` otherwise.
+@EXAMPLE:
+```lua
+print(IsFile("assets/image.png"))   -- Output: true  (if "image.png" exists)
+print(IsFile("assets"))             -- Output: false (it's a directory)
+print(IsFile("nonexistent.txt"))    -- Output: false
+```
