@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="../../../style.css" rel="stylesheet">
+<title>Nexum</title>
+</head>
+<body>
+<div class="container">
+	<aside class="sidebar"> <h2>📘 Nexum </h2> <div class="sidebar-search"> <input type="text" id="sidebarSearch" placeholder="Search..." /> </div>
+ <nav> <ul id="sidebar-menu"></ul> </nav> </aside>
+   <main class="content">
+<section class='doc-block' id='string.Explode'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> string.Explode</h2>
+<p><br>	Splits a string into a table of substrings based on a specified separator.<br>	If the separator is an empty string, the string is split into individual characters.<br>	Optionally, the separator can be treated as a pattern.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  The string or pattern to split on.</li><li><span class='param-type string'>string</span> :  The string to be split.</li><li><span class='param-type default'>boolean, optional</span> :  If true, `sSeparator` is treated as a Lua pattern. Defaults to false.</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  A table containing the substrings in order of appearance.</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local s = "apple,banana,orange"
+local t = string.Explode(",", s)
+-- t = {"apple", "banana", "orange"}
+
+local tChars = string.Explode("", "hello")
+-- tChars = {"h","e","l","l","o"}
+</code></pre></div></section>
+    </main>
+</div>
+<script src="../../../root/manifest.js"></script>
+<script src="../../../main.js"></script>
+<script>window.addEventListener('DOMContentLoaded',()=>{buildSidebarMenu(manifest)});</script>
+</body>
+</html>
