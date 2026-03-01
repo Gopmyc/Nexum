@@ -1,0 +1,20 @@
+@NAME:	table.Copy
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Creates a copy of the given table.
+	Supports both shallow and deep copying.
+	Deep copy will recursively duplicate all nested tables, avoiding infinite loops by tracking already-seen tables.
+}
+@PARAM:
+	tTable <table> : The table to copy.
+	bDeep <boolean> : If true, perform a deep copy; otherwise, a shallow copy.
+	tSeen <table|nil> : Internal tracking table for already-seen tables during deep copy (do not provide manually).
+@RETURN:
+	<table> : The copied table.
+@EXAMPLE:
+```lua
+local tOriginal = {a = 1, b = {c = 2}}
+local tShallow = table.Copy(tOriginal)             -- Shallow copy
+local tDeep    = table.Copy(tOriginal, true)       -- Deep copy
+tDeep.b.c = 3                                    -- Does not affect tOriginal.b.c
+```
