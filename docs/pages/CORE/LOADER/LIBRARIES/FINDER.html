@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="../../../../style.css" rel="stylesheet">
+<title>Nexum</title>
+</head>
+<body>
+<div class="container">
+	<aside class="sidebar"> <h2>📘 Nexum </h2> <div class="sidebar-search"> <input type="text" id="sidebarSearch" placeholder="Search..." /> </div>
+ <nav> <ul id="sidebar-menu"></ul> </nav> </aside>
+   <main class="content">
+<section class='global-description'>
+	<h2>Overview</h2>
+	<p><br>	The FINDER library provides utility functions for locating Lua files within directories.  <br>	It supports recursive scanning and returns full paths for all Lua files found in a given folder structure.<br></p>
+</section>
+<section class='doc-block' id='FINDER:GetLuaFiles'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> FINDER:GetLuaFiles</h2>
+<p><br>	Recursively retrieves all Lua files within a specified folder path.  <br>	Builds a shared table of file paths, including files from nested directories.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  Folder path to search</li><li><span class='param-type table'>table</span> :  Optional shared table to collect file paths</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Table containing full paths of all Lua files found</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local tLuaFiles = FINDER:GetLuaFiles("modules/my_module")
+</code></pre></div></section>
+    </main>
+</div>
+<script src="../../../../root/manifest.js"></script>
+<script src="../../../../main.js"></script>
+<script>window.addEventListener('DOMContentLoaded',()=>{buildSidebarMenu(manifest)});</script>
+</body>
+</html>
