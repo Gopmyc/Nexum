@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="../../../style.css" rel="stylesheet">
+<title>Nexum</title>
+</head>
+<body>
+<div class="container">
+	<aside class="sidebar"> <h2>📘 Nexum </h2> <div class="sidebar-search"> <input type="text" id="sidebarSearch" placeholder="Search..." /> </div>
+ <nav> <ul id="sidebar-menu"></ul> </nav> </aside>
+   <main class="content">
+<section class='global-description'>
+	<h2>Overview</h2>
+	<p><br>	Name        : POLY1305<br>	Version     : 1.0<br>	Description : Pure Lua implementation of the Poly1305 message authentication code (MAC)<br>	Author      : Phil Leblanc, 2015<br>	License     : MIT License<br>	Repository  : https://github.com/floodyberry/poly1305-donna (inspiration for Lua implementation)<br>	Compatibility: Lua 5.1+, LuaJIT<br>	Notes       : Implements RFC 7539 Poly1305 specification for use with ChaCha20 or other stream ciphers. Provides both simple one-shot MAC calculation and multi-part message authentication. Derived from poly1305-donna C implementation.<br>	Usage       : Provides functions init, update, finish for multi-part MAC calculation; auth (or mac) for single-step MAC; verify to check MAC validity<br></p>
+</section>
+    </main>
+</div>
+<script src="../../../root/manifest.js"></script>
+<script src="../../../main.js"></script>
+<script>window.addEventListener('DOMContentLoaded',()=>{buildSidebarMenu(manifest)});</script>
+</body>
+</html>
