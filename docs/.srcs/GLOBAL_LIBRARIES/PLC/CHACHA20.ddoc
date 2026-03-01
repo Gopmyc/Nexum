@@ -1,0 +1,12 @@
+@GLOBAL_DESCRIPTION:
+{
+	Name        : CHACHA20
+	Version     : 1.0
+	Description : Pure Lua implementation of the ChaCha20 stream cipher, including IETF 12-byte nonce variant and XChaCha20 24-byte nonce variant
+	Author      : Phil Leblanc, 2018
+	License     : MIT License
+	Repository  : https://github.com/PhlLeblanc/lua-chacha20 (original)
+	Compatibility: Lua 5.1+, LuaJIT
+	Notes       : Implements RFC 7539 specification for IETF ChaCha20. XChaCha20 implemented using HChaCha20 subkey derivation. AEAD support is provided in a separate module aead_chacha20.lua. Pure Lua implementation, may be slower than native bindings.
+	Usage       : Provides functions encrypt, decrypt (ChaCha20), xchacha20_encrypt, xchacha20_decrypt, hchacha20, as well as constants key_size, nonce_size, xnonce_size
+}
