@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="../../style.css" rel="stylesheet">
+<title>Nexum</title>
+</head>
+<body>
+<div class="container">
+	<aside class="sidebar"> <h2>📘 Nexum </h2> <div class="sidebar-search"> <input type="text" id="sidebarSearch" placeholder="Search..." /> </div>
+ <nav> <ul id="sidebar-menu"></ul> </nav> </aside>
+   <main class="content">
+<section class='doc-block' id='LoadFileInEnvironment'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> LoadFileInEnvironment</h2>
+<p><br>	Loads a Lua file from disk into a specified environment table and returns it as a callable chunk.<br>	The function automatically adapts to the current runtime backend:<br>	- lovr (Lovr engine)<br>	- love (LÖVE engine)<br>	- glua (Garry's Mod Lua)<br>	- standard Lua (io + load)<br>	<br>	It reads the file (or 'init.lua' if the path is a directory), compiles it, and binds it to the given environment.<br>	If any read or compilation error occurs, it prints an error message and returns nil.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  Path to the Lua file to load</li><li><span class='param-type table'>table</span> :  Table to use as the environment for the loaded chunk</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type function'>function</span> :  Compiled Lua function ready to be executed, or nil if an error occurred</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local env = {}
+local fChunk = LoadFileInEnvironment("scripts/init.lua", env)
+if fChunk then
+    fChunk()
+end
+</code></pre></div></section>
+    </main>
+</div>
+<script src="../../root/manifest.js"></script>
+<script src="../../main.js"></script>
+<script>window.addEventListener('DOMContentLoaded',()=>{buildSidebarMenu(manifest)});</script>
+</body>
+</html>
