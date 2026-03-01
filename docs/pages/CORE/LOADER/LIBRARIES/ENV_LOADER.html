@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="../../../../style.css" rel="stylesheet">
+<title>Nexum</title>
+</head>
+<body>
+<div class="container">
+	<aside class="sidebar"> <h2>📘 Nexum </h2> <div class="sidebar-search"> <input type="text" id="sidebarSearch" placeholder="Search..." /> </div>
+ <nav> <ul id="sidebar-menu"></ul> </nav> </aside>
+   <main class="content">
+<section class='global-description'>
+	<h2>Overview</h2>
+	<p><br>	The ENV_LOADER library manages the loading of Lua modules and sub-environments in Nexum.  <br>	It provides functions to derive child environments, resolve file sources, load scripts with parent environments, handle sub-environments, and merge them safely.  <br>	It ensures proper client/server handling, access point initialization, and runtime error reporting.<br></p>
+</section>
+<section class='doc-block' id='ENV_LOADER:DeriveEnvironment'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> ENV_LOADER:DeriveEnvironment</h2>
+<p><br>	Creates a child environment derived from a parent environment.  <br>	Uses metatables to inherit from the parent while preventing metatable tampering.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type table'>table</span> :  Parent environment table</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Child environment table</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local tChildEnv = ENV_LOADER:DeriveEnvironment(parentEnv)
+</code></pre></div></section>
+<section class='doc-block' id='ENV_LOADER:LoadWithParentEnv'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> ENV_LOADER:LoadWithParentEnv</h2>
+<p><br>	Loads a Lua file into a derived environment from the parent environment.  <br>	Initializes the access point with __ENV, __NAME, and __PATH, and executes the file safely with pcall.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  File path</li><li><span class='param-type table'>table</span> :  Parent environment table</li><li><span class='param-type string'>string</span> :  Access point key</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Access point environment table</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local tEnv = ENV_LOADER:LoadWithParentEnv("modules/module.lua", parentEnv, "MY_MODULE")
+</code></pre></div></section>
+<section class='doc-block' id='ENV_LOADER:ResolveFileSource'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> ENV_LOADER:ResolveFileSource</h2>
+<p><br>	Resolves the main file path for a module or folder.  <br>	Checks for 'init.lua' and applies client/server fallback paths.  <br>	Issues warnings if the file or folder does not exist.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  File or folder path</li><li><span class='param-type boolean'>boolean</span> :  Optional flag indicating sub-file context</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type string'>string</span> :  Resolved file path</li><li><span class='param-type boolean'>boolean</span> :  Flag if the resolved path is a sub-file</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local sFile, bSub = ENV_LOADER:ResolveFileSource("modules/my_module")
+</code></pre></div></section>
+<section class='doc-block' id='ENV_LOADER:LoadSubEnvironments'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> ENV_LOADER:LoadSubEnvironments</h2>
+<p><br>	Loads client and server sub-environments for a module.  <br>	Handles separate client/server files, derives environments, and optionally loads internal libraries.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  Base path for the module</li><li><span class='param-type table'>table</span> :  Base environment</li><li><span class='param-type string'>string</span> :  Access point key</li><li><span class='param-type table'>table</span> :  File arguments</li><li><span class='param-type table'>table</span> :  Capabilities</li><li><span class='param-type table'>table</span> :  Not load libraries flags</li><li><span class='param-type table'>table</span> :  Table of libraries</li><li><span class='param-type table'>table</span> :  Environment profile list</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Sub-environment table (server or client)</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local tSubEnv = ENV_LOADER:LoadSubEnvironments("modules/my_module/", baseEnv, "MY_MODULE", tArgs, tCaps, {true, true}, tLibs, {"default"})
+</code></pre></div></section>
+<section class='doc-block' id='ENV_LOADER:ExecuteChunk'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> ENV_LOADER:ExecuteChunk</h2>
+<p><br>	Executes a Lua chunk within a given environment using pcall.  <br>	Reports runtime errors to the console.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  File path</li><li><span class='param-type table'>table</span> :  Environment table</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type boolean'>boolean</span> :  True if execution succeeded, false otherwise</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local bSuccess = ENV_LOADER:ExecuteChunk("modules/my_module/init.lua", tEnv)
+</code></pre></div></section>
+<section class='doc-block' id='ENV_LOADER:MergeSubEnvironments'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> ENV_LOADER:MergeSubEnvironments</h2>
+<p><br>	Merges multiple sub-environments into a main environment.  <br>	Excludes keys '__PATH', '__NAME', and 'LIBRARIES' to avoid overwriting critical metadata.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type table'>table</span> :  Main environment table</li><li><span class='param-type table'>table</span> :  One or more sub-environments to merge</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>ENV_LOADER:MergeSubEnvironments(mainEnv, subEnv1, subEnv2)
+</code></pre></div></section>
+<section class='doc-block' id='ENV_LOADER:Load'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> ENV_LOADER:Load</h2>
+<p><br>	Loads a module file or folder into a sandboxed environment.  <br>	Resolves the file source, builds the environment via ENV_BUILDER, loads sub-environments if applicable, merges them, and executes the chunk.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  Source file or folder path</li><li><span class='param-type table'>table</span> :  Base sandbox environment</li><li><span class='param-type string'>string</span> :  Access point key</li><li><span class='param-type table'>table</span> :  File arguments table</li><li><span class='param-type boolean'>boolean</span> :  Whether to load subfolders</li><li><span class='param-type table'>table</span> :  Capabilities table</li><li><span class='param-type table'>table</span> :  Environment profile list</li><li><span class='param-type boolean'>boolean</span> :  Not load libraries flag</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Fully loaded access point environment</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local tEnv = ENV_LOADER:Load("modules/my_module/", baseEnv, "MY_MODULE", tArgs, true, tCaps, {"default"}, false)
+</code></pre></div></section>
+    </main>
+</div>
+<script src="../../../../root/manifest.js"></script>
+<script src="../../../../main.js"></script>
+<script>window.addEventListener('DOMContentLoaded',()=>{buildSidebarMenu(manifest)});</script>
+</body>
+</html>
