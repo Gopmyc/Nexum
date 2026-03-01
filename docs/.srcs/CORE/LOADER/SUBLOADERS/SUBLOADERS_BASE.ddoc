@@ -1,0 +1,124 @@
+@GLOBAL_DESCRIPTION:
+{
+	The SUBLOADER_BASE library manages the creation, validation, and initialization of sub-loaders within the main loader.  
+	It ensures file integrity, proper environment setup, and provides accessors for sub-loaders and file groups.
+}
+
+@NAME:	SUBLOADER_BASE:Initialize
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Creates a new SUBLOADER_BASE instance and initializes attributes like CONFIG, BASE_PATH, and LOADER reference.
+}
+@PARAM:
+	<table>	: Configuration table for the loader
+	<string>	: Base path for resolving sub-loader scripts
+	<table>	: Reference to the parent loader
+@RETURN:
+	<table>	: Initialized SUBLOADER_BASE object
+@EXAMPLE:
+```lua
+local subLoader = SUBLOADER_BASE:Initialize(tConfig, "addons/myaddon/", Loader)
+```
+
+@NAME:	SUBLOADER_BASE:InitializeGroup
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Initializes a sub-loader group by loading its configuration, validating its content,  
+	and calling the sub-loader's Initialize method.
+}
+@PARAM:
+	<string>	: Group name to initialize
+@RETURN:
+	<table>	: Sub-loader object
+	<table>	: Initialized content of the sub-loader
+@EXAMPLE:
+```lua
+local sub, content = subLoader:InitializeGroup("WEAPONS")
+```
+
+@NAME:	SUBLOADER_BASE:CheckFileStructureIntegrity
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Validates a file against the loader's RULES_FILES to ensure required fields and types are correct.
+}
+@PARAM:
+	<number>	: File ID or index
+	<table>	: File data table to validate
+@RETURN:
+	<boolean>	: True if valid, otherwise outputs an error
+@EXAMPLE:
+```lua
+subLoader:CheckFileStructureIntegrity(1, tFile)
+```
+
+@NAME:	SUBLOADER_BASE:SetAttribute
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Sets a key-value attribute in the sub-loader instance.  
+	Useful for storing references or metadata.
+}
+@PARAM:
+	<string>	: Attribute key
+	<any>	: Attribute value
+@RETURN:
+	<nil>
+@EXAMPLE:
+```lua
+subLoader:SetAttribute("DEBUG_MODE", true)
+```
+
+@NAME:	SUBLOADER_BASE:GetAttribute
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Retrieves a previously set attribute by key.
+}
+@PARAM:
+	<string>	: Attribute key
+@RETURN:
+	<any>	: Value of the attribute
+@EXAMPLE:
+```lua
+local debug = subLoader:GetAttribute("DEBUG_MODE")
+```
+
+@NAME:	SUBLOADER_BASE:GetSubLoaders
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Returns a table containing all initialized sub-loaders.
+}
+@RETURN:
+	<table>	: Table of sub-loaders
+@EXAMPLE:
+```lua
+local allSub = subLoader:GetSubLoaders()
+```
+
+@NAME:	SUBLOADER_BASE:GetSubLoader
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Retrieves a specific sub-loader by group name.
+}
+@PARAM:
+	<string>	: Group name
+@RETURN:
+	<table>	: Sub-loader object
+@EXAMPLE:
+```lua
+local weaponsLoader = subLoader:GetSubLoader("WEAPONS")
+```
+
+@NAME:	SUBLOADER_BASE:GetGroupByFileName
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Finds which group a specific file belongs to within all sub-loaders.
+}
+@PARAM:
+	<string>	: File name (case-insensitive)
+@RETURN:
+	<string>	: Group name
+	<number>	: File ID within the group
+	<table>	: File data table
+@EXAMPLE:
+```lua
+local group, id, file = subLoader:GetGroupByFileName("AK47")
+```
