@@ -1,0 +1,21 @@
+@GLOBAL_DESCRIPTION:
+{
+	The FINDER library provides utility functions for locating Lua files within directories.  
+	It supports recursive scanning and returns full paths for all Lua files found in a given folder structure.
+}
+
+@NAME:	FINDER:GetLuaFiles
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Recursively retrieves all Lua files within a specified folder path.  
+	Builds a shared table of file paths, including files from nested directories.
+}
+@PARAM:
+	<string>	: Folder path to search
+	<table>		: Optional shared table to collect file paths
+@RETURN:
+	<table>		: Table containing full paths of all Lua files found
+@EXAMPLE:
+```lua
+local tLuaFiles = FINDER:GetLuaFiles("modules/my_module")
+```
