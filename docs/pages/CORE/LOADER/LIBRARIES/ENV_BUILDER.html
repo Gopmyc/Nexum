@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="../../../../style.css" rel="stylesheet">
+<title>Nexum</title>
+</head>
+<body>
+<div class="container">
+	<aside class="sidebar"> <h2>📘 Nexum </h2> <div class="sidebar-search"> <input type="text" id="sidebarSearch" placeholder="Search..." /> </div>
+ <nav> <ul id="sidebar-menu"></ul> </nav> </aside>
+   <main class="content">
+<section class='global-description'>
+	<h2>Overview</h2>
+	<p><br>	The ENV_BUILDER library is responsible for constructing secure sandboxed environments for modules and sub-loaders in Nexum.  <br>	It manages safe globals, constants, functions, namespaces, libraries, and fallback policies.  <br>	It ensures that code runs with strict environment rules, applies environment profiles, and optionally loads internal libraries.<br></p>
+</section>
+<section class='doc-block' id='ENV_BUILDER:SetEnvSpecification'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> ENV_BUILDER:SetEnvSpecification</h2>
+<p><br>	Sets the SAFE_GLOBALS table defining safe environment profiles.  <br>	Each profile specifies constants, functions, libraries, namespaces, and fallback rules.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type table'>table</span> :  Table containing environment profiles</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>ENV_BUILDER:SetEnvSpecification(tEnvProfiles)
+</code></pre></div></section>
+<section class='doc-block' id='ENV_BUILDER:BuildPolicy'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> ENV_BUILDER:BuildPolicy</h2>
+<p><br>	Builds a merged policy table from an array of environment profile names.  <br>	Combines constants, function permissions, library scopes, namespace exposure, and fallback rules.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type table'>table</span> :  List of environment profile names</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Merged policy table</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local tPolicy = ENV_BUILDER:BuildPolicy({"default", "client"})
+</code></pre></div></section>
+<section class='doc-block' id='ENV_BUILDER:ApplyConstants'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> ENV_BUILDER:ApplyConstants</h2>
+<p><br>	Applies constants defined in a policy table to the target environment.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type table'>table</span> :  Target environment table</li><li><span class='param-type table'>table</span> :  Policy table containing constants</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Environment with constants applied</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>tEnv = ENV_BUILDER:ApplyConstants(tEnv, tPolicy)
+</code></pre></div></section>
+<section class='doc-block' id='ENV_BUILDER:ApplyFunctions'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> ENV_BUILDER:ApplyFunctions</h2>
+<p><br>	Applies function permissions defined in a policy table to the target environment.  <br>	Only allowed functions from _G are injected.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type table'>table</span> :  Target environment table</li><li><span class='param-type table'>table</span> :  Policy table containing functions</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Environment with functions applied</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>tEnv = ENV_BUILDER:ApplyFunctions(tEnv, tPolicy)
+</code></pre></div></section>
+<section class='doc-block' id='ENV_BUILDER:ApplyLibraries'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> ENV_BUILDER:ApplyLibraries</h2>
+<p><br>	Applies library scopes defined in a policy table to the environment.  <br>	Supports full library exposure or selective function exposure per library.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type table'>table</span> :  Target environment table</li><li><span class='param-type table'>table</span> :  Policy table containing libraries</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Environment with libraries applied</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>tEnv = ENV_BUILDER:ApplyLibraries(tEnv, tPolicy)
+</code></pre></div></section>
+<section class='doc-block' id='ENV_BUILDER:ApplyNamespaces'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> ENV_BUILDER:ApplyNamespaces</h2>
+<p><br>	Creates exposed namespaces in the environment based on the policy.  <br>	Ensures nested tables exist for allowed namespaces.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type table'>table</span> :  Target environment table</li><li><span class='param-type table'>table</span> :  Policy table containing namespaces</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Environment with namespaces applied</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>tEnv = ENV_BUILDER:ApplyNamespaces(tEnv, tPolicy)
+</code></pre></div></section>
+<section class='doc-block' id='ENV_BUILDER:ApplyFallback'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> ENV_BUILDER:ApplyFallback</h2>
+<p><br>	Applies fallback rules to the environment.  <br>	If a key is missing, optionally throws warnings or redirects to _G based on policy.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type table'>table</span> :  Target environment table</li><li><span class='param-type table'>table</span> :  Policy table containing fallback rules</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Environment with fallback applied</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>tEnv = ENV_BUILDER:ApplyFallback(tEnv, tPolicy)
+</code></pre></div></section>
+<section class='doc-block' id='ENV_BUILDER:InitAccessPoint'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> ENV_BUILDER:InitAccessPoint</h2>
+<p><br>	Initializes a module access point in the environment.  <br>	Creates accessors for GetConfig, GetDependence, and sets __PATH and __NAME metadata.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type table'>table</span> :  Target environment table</li><li><span class='param-type string'>string</span> :  Access point key (module name)</li><li><span class='param-type string'>string</span> :  Source file path</li><li><span class='param-type table'>table</span> :  File arguments table</li><li><span class='param-type table'>table</span> :  Capabilities table</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Environment with initialized access point</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>tEnv = ENV_BUILDER:InitAccessPoint(tEnv, "MY_MODULE", "modules/my_module.lua", tArgs, tCaps)
+</code></pre></div></section>
+<section class='doc-block' id='ENV_BUILDER:LoadInternalLibraries'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> ENV_BUILDER:LoadInternalLibraries</h2>
+<p><br>	Loads internal libraries for a module's access point.  <br>	Validates the LIBRARIES object and uses its Load method to inject internal library functions into the environment.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type table'>table</span> :  Environment table</li><li><span class='param-type string'>string</span> :  Access point key</li><li><span class='param-type string'>string</span> :  Optional base path for libraries</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Environment with internal libraries loaded</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>tEnv = ENV_BUILDER:LoadInternalLibraries(tEnv, "MY_MODULE", "srcs/core/loader/libraries")
+</code></pre></div></section>
+<section class='doc-block' id='ENV_BUILDER:BuildEnvironment'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> ENV_BUILDER:BuildEnvironment</h2>
+<p><br>	Constructs a complete sandboxed environment for a module.  <br>	Applies constants, functions, libraries, namespaces, fallback rules, initializes access points, and optionally loads internal libraries.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  Source file path</li><li><span class='param-type table'>table</span> :  Base sandbox environment</li><li><span class='param-type string'>string</span> :  Access point key</li><li><span class='param-type table'>table</span> :  File arguments</li><li><span class='param-type table'>table</span> :  Capabilities</li><li><span class='param-type table'>table</span> :  Environment profile list</li><li><span class='param-type boolean'>boolean</span> :  Whether to load internal libraries</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Fully constructed environment</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local tEnv = ENV_BUILDER:BuildEnvironment("modules/my_module.lua", baseEnv, "MY_MODULE", tArgs, tCaps, {"default"}, true)
+</code></pre></div></section>
+    </main>
+</div>
+<script src="../../../../root/manifest.js"></script>
+<script src="../../../../main.js"></script>
+<script>window.addEventListener('DOMContentLoaded',()=>{buildSidebarMenu(manifest)});</script>
+</body>
+</html>
