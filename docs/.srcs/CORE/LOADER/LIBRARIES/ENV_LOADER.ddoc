@@ -1,0 +1,132 @@
+@GLOBAL_DESCRIPTION:
+{
+	The ENV_LOADER library manages the loading of Lua modules and sub-environments in Nexum.  
+	It provides functions to derive child environments, resolve file sources, load scripts with parent environments, handle sub-environments, and merge them safely.  
+	It ensures proper client/server handling, access point initialization, and runtime error reporting.
+}
+
+@NAME:	ENV_LOADER:DeriveEnvironment
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Creates a child environment derived from a parent environment.  
+	Uses metatables to inherit from the parent while preventing metatable tampering.
+}
+@PARAM:
+	<table>	: Parent environment table
+@RETURN:
+	<table>	: Child environment table
+@EXAMPLE:
+```lua
+local tChildEnv = ENV_LOADER:DeriveEnvironment(parentEnv)
+```
+
+@NAME:	ENV_LOADER:LoadWithParentEnv
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Loads a Lua file into a derived environment from the parent environment.  
+	Initializes the access point with __ENV, __NAME, and __PATH, and executes the file safely with pcall.
+}
+@PARAM:
+	<string>	: File path
+	<table>		: Parent environment table
+	<string>	: Access point key
+@RETURN:
+	<table>	: Access point environment table
+@EXAMPLE:
+```lua
+local tEnv = ENV_LOADER:LoadWithParentEnv("modules/module.lua", parentEnv, "MY_MODULE")
+```
+
+@NAME:	ENV_LOADER:ResolveFileSource
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Resolves the main file path for a module or folder.  
+	Checks for 'init.lua' and applies client/server fallback paths.  
+	Issues warnings if the file or folder does not exist.
+}
+@PARAM:
+	<string>	: File or folder path
+	<boolean>	: Optional flag indicating sub-file context
+@RETURN:
+	<string>	: Resolved file path
+	<boolean>	: Flag if the resolved path is a sub-file
+@EXAMPLE:
+```lua
+local sFile, bSub = ENV_LOADER:ResolveFileSource("modules/my_module")
+```
+
+@NAME:	ENV_LOADER:LoadSubEnvironments
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Loads client and server sub-environments for a module.  
+	Handles separate client/server files, derives environments, and optionally loads internal libraries.
+}
+@PARAM:
+	<string>	: Base path for the module
+	<table>		: Base environment
+	<string>	: Access point key
+	<table>		: File arguments
+	<table>		: Capabilities
+	<table>		: Not load libraries flags
+	<table>		: Table of libraries
+	<table>		: Environment profile list
+@RETURN:
+	<table>	: Sub-environment table (server or client)
+@EXAMPLE:
+```lua
+local tSubEnv = ENV_LOADER:LoadSubEnvironments("modules/my_module/", baseEnv, "MY_MODULE", tArgs, tCaps, {true, true}, tLibs, {"default"})
+```
+
+@NAME:	ENV_LOADER:ExecuteChunk
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Executes a Lua chunk within a given environment using pcall.  
+	Reports runtime errors to the console.
+}
+@PARAM:
+	<string>	: File path
+	<table>		: Environment table
+@RETURN:
+	<boolean>	: True if execution succeeded, false otherwise
+@EXAMPLE:
+```lua
+local bSuccess = ENV_LOADER:ExecuteChunk("modules/my_module/init.lua", tEnv)
+```
+
+@NAME:	ENV_LOADER:MergeSubEnvironments
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Merges multiple sub-environments into a main environment.  
+	Excludes keys '__PATH', '__NAME', and 'LIBRARIES' to avoid overwriting critical metadata.
+}
+@PARAM:
+	<table>		: Main environment table
+	<table> ...	: One or more sub-environments to merge
+@RETURN:
+	<nil>
+@EXAMPLE:
+```lua
+ENV_LOADER:MergeSubEnvironments(mainEnv, subEnv1, subEnv2)
+```
+
+@NAME:	ENV_LOADER:Load
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Loads a module file or folder into a sandboxed environment.  
+	Resolves the file source, builds the environment via ENV_BUILDER, loads sub-environments if applicable, merges them, and executes the chunk.
+}
+@PARAM:
+	<string>	: Source file or folder path
+	<table>		: Base sandbox environment
+	<string>	: Access point key
+	<table>		: File arguments table
+	<boolean>	: Whether to load subfolders
+	<table>		: Capabilities table
+	<table>		: Environment profile list
+	<boolean>	: Not load libraries flag
+@RETURN:
+	<table>	: Fully loaded access point environment
+@EXAMPLE:
+```lua
+local tEnv = ENV_LOADER:Load("modules/my_module/", baseEnv, "MY_MODULE", tArgs, true, tCaps, {"default"}, false)
+```
