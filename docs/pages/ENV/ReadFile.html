@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="../../style.css" rel="stylesheet">
+<title>Nexum</title>
+</head>
+<body>
+<div class="container">
+	<aside class="sidebar"> <h2>📘 Nexum </h2> <div class="sidebar-search"> <input type="text" id="sidebarSearch" placeholder="Search..." /> </div>
+ <nav> <ul id="sidebar-menu"></ul> </nav> </aside>
+   <main class="content">
+<section class='doc-block' id='ReadFile'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> ReadFile</h2>
+<p><br>	Reads the content of a file from the filesystem across multiple Lua environments (LOVR, LOVE, Garry’s Mod, or standard Lua).<br>	- Automatically falls back to reading `init.lua` if the given path is a directory.<br>	- Returns the file content as a string, or `nil` if the file cannot be read.<br>	- Abstracts platform-specific filesystem differences.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  The file path to read.</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type default'>string or nil</span> :  The content of the file as a string, or nil if file not found.</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local content = ReadFile("configs/settings.lua")
+if content then
+    print("File content:\n" .. content)
+else
+    print("File not found or unreadable.")
+end
+</code></pre></div></section>
+    </main>
+</div>
+<script src="../../root/manifest.js"></script>
+<script src="../../main.js"></script>
+<script>window.addEventListener('DOMContentLoaded',()=>{buildSidebarMenu(manifest)});</script>
+</body>
+</html>
