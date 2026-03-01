@@ -1,0 +1,11 @@
+@GLOBAL_DESCRIPTION:
+{
+	Name        : LZW
+	Version     : 1.0
+	Description : Lua implementation of the Lempel–Ziv–Welch (LZW) compression algorithm. Provides functions to compress and decompress strings efficiently.
+	Author      : Rochet2
+	License     : MIT License
+	Repository  : https://github.com/rochet2/LZW-lua (ou lien générique si non officiel)
+	Compatibility: Lua 5.1+, LuaJIT
+	Usage       : Provides compress(input) to compress strings and decompress(input) to restore them.
+}
