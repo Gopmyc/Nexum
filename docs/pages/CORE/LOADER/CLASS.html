@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="../../../style.css" rel="stylesheet">
+<title>Nexum</title>
+</head>
+<body>
+<div class="container">
+	<aside class="sidebar"> <h2>📘 Nexum </h2> <div class="sidebar-search"> <input type="text" id="sidebarSearch" placeholder="Search..." /> </div>
+ <nav> <ul id="sidebar-menu"></ul> </nav> </aside>
+   <main class="content">
+<section class='global-description'>
+	<h2>Overview</h2>
+	<p><br>	The core Loader module of Nexum.  <br>	This module is responsible for initializing the Loader system, reading and parsing configuration files (YAML), managing libraries and sub-loaders, and providing runtime APIs for instantiation, update, draw cycles, and runtime instance management.  <br>	It isolates libraries in controlled environments, manages client/server/shared state, ensures proper load order, and integrates sub-loaders.<br></p>
+</section>
+<section class='doc-block' id='LOADER:Initialize'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> LOADER:Initialize</h2>
+<p><br>	Initializes the Loader with given configuration path and libraries table.  <br>	Validates input parameters, loads YAML configurations, sets up conditional logging via MsgC, creates the loader instance, and initializes sub-loaders.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  Path to the main configuration file (usually 'configuration/nexum.lua')</li><li><span class='param-type table'>table</span> :  Table of available libraries to load</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Initialized loader instance ready to manage libraries, runtime, and sub-loaders</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local tLibs = {}
+local loader = LOADER:Initialize("configuration/nexum.lua", tLibs)
+</code></pre></div></section>
+<section class='doc-block' id='LOADER:LoadConfiguration'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> LOADER:LoadConfiguration</h2>
+<p><br>	Recursively loads all YAML configuration files in a directory.  <br>	Parses YAML files into Lua tables, merges them into a hierarchical configuration table.  <br>	Supports server/client filtering when loading specific folders.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  Path to the folder containing YAML configuration files</li><li><span class='param-type table'>table</span> :  Table of libraries</li><li><span class='param-type table'>table</span> :  Optional table to merge configuration into</li><li><span class='param-type boolean'>boolean</span> :  Optional flag indicating root call (default true)</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Complete merged configuration table</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local tConfig = LOADER:LoadConfiguration("configuration/loader", tLibraries)
+</code></pre></div></section>
+<section class='doc-block' id='LOADER:CreateLoaderInstance'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> LOADER:CreateLoaderInstance</h2>
+<p><br>	Creates a loader instance from configuration.  <br>	Initializes LIBRARIES.BUFFER, sandboxed library environments, ENV_BUILDER, RUNTIME, and RESSOURCES.  <br>	Applies external library references and prepares loader for sub-loaders.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type table'>table</span> :  Loader configuration table</li><li><span class='param-type table'>table</span> :  Table of available libraries</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Loader instance</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local tLoader = LOADER:CreateLoaderInstance(tConfig, tLibraries)
+</code></pre></div></section>
+<section class='doc-block' id='LOADER:InitializeSubloaders'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> LOADER:InitializeSubloaders</h2>
+<p><br>	Initializes sub-loaders according to configuration.  <br>	Loads module groups in order specified by LOAD_PRIORITY, registering resources per sub-loader.<br></p>
+<div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Table of initialized sub-loader instances</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>loader:InitializeSubloaders()
+</code></pre></div></section>
+<section class='doc-block' id='LOADER:GetSubLoaderBase'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> LOADER:GetSubLoaderBase</h2>
+<p><br>	Returns the base sub-loader object initialized by InitializeSubloaders.<br></p>
+<div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Sub-loader base instance</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local subBase = loader:GetSubLoaderBase()
+</code></pre></div></section>
+<section class='doc-block' id='LOADER:LoadSubLoader'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> LOADER:LoadSubLoader</h2>
+<p><br>	Loads a specific sub-loader from a path and content table.  <br>	Handles client/server loading rules and shared flags.  <br>	Wraps loaded sub-loader with __ID and __PARENT metadata.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  Path to sub-loader Lua file</li><li><span class='param-type table'>table</span> :  Content table of the sub-loader</li><li><span class='param-type boolean'>boolean</span> :  Whether the sub-loader is shared</li><li><span class='param-type string'>string</span> :  Optional ID for the sub-loader</li><li><span class='param-type table'>table</span> :  Optional environment profile</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Loaded sub-loader and its content</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local tSub = loader:LoadSubLoader("path/to/subloader.lua", contentTable, true, "SUB_01")
+</code></pre></div></section>
+<section class='doc-block' id='LOADER:GetConfig'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> LOADER:GetConfig</h2>
+<p><br>	Returns the full loader configuration table.<br></p>
+<div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Loader configuration</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local tConfig = loader:GetConfig()
+</code></pre></div></section>
+<section class='doc-block' id='LOADER:GetLibrariesBase'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> LOADER:GetLibrariesBase</h2>
+<p><br>	Provides a table representing a set of libraries with buffered instances.  <br>	Supports server/client/shared prefixes and auto-loading via ENV_LOADER.  <br>	Registers parent environment access for sub-libraries.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  Base path to the library folder</li><li><span class='param-type table'>table</span> :  Optional parent environment table</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Libraries base object with Load method and BUFFER</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local tLibBase = loader:GetLibrariesBase("srcs/core/loader/libraries", parentEnv)
+</code></pre></div></section>
+<section class='doc-block' id='LOADER:GetLibrary'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> LOADER:GetLibrary</h2>
+<p><br>	Retrieves a loaded library by name from LIBRARIES.BUFFER.  <br>	Shows an error message if the library is not found.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  Name of the library</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Library instance</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local runtimeLib = loader:GetLibrary("RUNTIME")
+</code></pre></div></section>
+<section class='doc-block' id='LOADER:PrintLibraries'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> LOADER:PrintLibraries</h2>
+<p><br>	Prints all currently loaded libraries to console with colored MsgC formatting.  <br>	Handles empty or uninitialized LIBRARIES.BUFFER tables gracefully.<br></p>
+<div class='doc-subblock code-block'><pre><code class='language-lua'>loader:PrintLibraries()
+</code></pre></div></section>
+<section class='doc-block' id='LOADER:Instanciate'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> LOADER:Instanciate</h2>
+<p><br>	Creates a runtime instance of a module/entity.  <br>	Fetches sub-loader group and runtime configuration, sets instance ID, and delegates instantiation to RUNTIME library.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  File name of the module</li><li><span class='param-type string'>string</span> :  Instance name</li><li><span class='param-type default'>vararg</span> :  Optional constructor arguments</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Runtime instance</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local entity = loader:Instanciate("player.lua", "Player1", param1, param2)
+</code></pre></div></section>
+<section class='doc-block' id='LOADER:Update'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> LOADER:Update</h2>
+<p><br>	Executes update cycle for all runtime instances.  <br>	Delegates to RUNTIME library.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type default'>vararg</span> :  Arguments passed to runtime update</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>loader:Update(dt)
+</code></pre></div></section>
+<section class='doc-block' id='LOADER:Draw'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> LOADER:Draw</h2>
+<p><br>	Executes draw cycle for all runtime instances.  <br>	Delegates to RUNTIME library.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type default'>vararg</span> :  Arguments passed to runtime draw</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>loader:Draw()
+</code></pre></div></section>
+<section class='doc-block' id='LOADER:Quit'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> LOADER:Quit</h2>
+<p><br>	Destroys all runtime instances managed by RUNTIME library.  <br>	Should be called when exiting to release resources.<br></p>
+<div class='doc-subblock code-block'><pre><code class='language-lua'>loader:Quit()
+</code></pre></div></section>
+    </main>
+</div>
+<script src="../../../root/manifest.js"></script>
+<script src="../../../main.js"></script>
+<script>window.addEventListener('DOMContentLoaded',()=>{buildSidebarMenu(manifest)});</script>
+</body>
+</html>
