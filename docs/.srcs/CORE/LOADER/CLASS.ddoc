@@ -1,0 +1,231 @@
+@GLOBAL_DESCRIPTION:
+{
+	The core Loader module of Nexum.  
+	This module is responsible for initializing the Loader system, reading and parsing configuration files (YAML), managing libraries and sub-loaders, and providing runtime APIs for instantiation, update, draw cycles, and runtime instance management.  
+	It isolates libraries in controlled environments, manages client/server/shared state, ensures proper load order, and integrates sub-loaders.
+}
+
+@NAME:	LOADER:Initialize
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Initializes the Loader with given configuration path and libraries table.  
+	Validates input parameters, loads YAML configurations, sets up conditional logging via MsgC, creates the loader instance, and initializes sub-loaders.
+}
+@PARAM:
+	<string>	: Path to the main configuration file (usually 'configuration/nexum.lua')
+	<table>		: Table of available libraries to load
+@RETURN:
+	<table>		: Initialized loader instance ready to manage libraries, runtime, and sub-loaders
+@EXAMPLE:
+```lua
+local tLibs = {}
+local loader = LOADER:Initialize("configuration/nexum.lua", tLibs)
+```
+
+@NAME:	LOADER:LoadConfiguration
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Recursively loads all YAML configuration files in a directory.  
+	Parses YAML files into Lua tables, merges them into a hierarchical configuration table.  
+	Supports server/client filtering when loading specific folders.
+}
+@PARAM:
+	<string>	: Path to the folder containing YAML configuration files
+	<table>		: Table of libraries
+	<table>		: Optional table to merge configuration into
+	<boolean>	: Optional flag indicating root call (default true)
+@RETURN:
+	<table>		: Complete merged configuration table
+@EXAMPLE:
+```lua
+local tConfig = LOADER:LoadConfiguration("configuration/loader", tLibraries)
+```
+
+@NAME:	LOADER:CreateLoaderInstance
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Creates a loader instance from configuration.  
+	Initializes LIBRARIES.BUFFER, sandboxed library environments, ENV_BUILDER, RUNTIME, and RESSOURCES.  
+	Applies external library references and prepares loader for sub-loaders.
+}
+@PARAM:
+	<table>		: Loader configuration table
+	<table>		: Table of available libraries
+@RETURN:
+	<table>		: Loader instance
+@EXAMPLE:
+```lua
+local tLoader = LOADER:CreateLoaderInstance(tConfig, tLibraries)
+```
+
+@NAME:	LOADER:InitializeSubloaders
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Initializes sub-loaders according to configuration.  
+	Loads module groups in order specified by LOAD_PRIORITY, registering resources per sub-loader.
+}
+@PARAM:
+	<nil>
+@RETURN:
+	<table>	: Table of initialized sub-loader instances
+@EXAMPLE:
+```lua
+loader:InitializeSubloaders()
+```
+
+@NAME:	LOADER:GetSubLoaderBase
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Returns the base sub-loader object initialized by InitializeSubloaders.
+}
+@PARAM:
+	<nil>
+@RETURN:
+	<table>	: Sub-loader base instance
+@EXAMPLE:
+```lua
+local subBase = loader:GetSubLoaderBase()
+```
+
+@NAME:	LOADER:LoadSubLoader
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Loads a specific sub-loader from a path and content table.  
+	Handles client/server loading rules and shared flags.  
+	Wraps loaded sub-loader with __ID and __PARENT metadata.
+}
+@PARAM:
+	<string>	: Path to sub-loader Lua file
+	<table>		: Content table of the sub-loader
+	<boolean>	: Whether the sub-loader is shared
+	<string>	: Optional ID for the sub-loader
+	<table>		: Optional environment profile
+@RETURN:
+	<table>	: Loaded sub-loader and its content
+@EXAMPLE:
+```lua
+local tSub = loader:LoadSubLoader("path/to/subloader.lua", contentTable, true, "SUB_01")
+```
+
+@NAME:	LOADER:GetConfig
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Returns the full loader configuration table.
+}
+@PARAM:
+	<nil>
+@RETURN:
+	<table>	: Loader configuration
+@EXAMPLE:
+```lua
+local tConfig = loader:GetConfig()
+```
+
+@NAME:	LOADER:GetLibrariesBase
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Provides a table representing a set of libraries with buffered instances.  
+	Supports server/client/shared prefixes and auto-loading via ENV_LOADER.  
+	Registers parent environment access for sub-libraries.
+}
+@PARAM:
+	<string>	: Base path to the library folder
+	<table>		: Optional parent environment table
+@RETURN:
+	<table>	: Libraries base object with Load method and BUFFER
+@EXAMPLE:
+```lua
+local tLibBase = loader:GetLibrariesBase("srcs/core/loader/libraries", parentEnv)
+```
+
+@NAME:	LOADER:GetLibrary
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Retrieves a loaded library by name from LIBRARIES.BUFFER.  
+	Shows an error message if the library is not found.
+}
+@PARAM:
+	<string>	: Name of the library
+@RETURN:
+	<table>	: Library instance
+@EXAMPLE:
+```lua
+local runtimeLib = loader:GetLibrary("RUNTIME")
+```
+
+@NAME:	LOADER:PrintLibraries
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Prints all currently loaded libraries to console with colored MsgC formatting.  
+	Handles empty or uninitialized LIBRARIES.BUFFER tables gracefully.
+}
+@PARAM:
+	<nil>
+@RETURN:
+	<nil>
+@EXAMPLE:
+```lua
+loader:PrintLibraries()
+```
+
+@NAME:	LOADER:Instanciate
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Creates a runtime instance of a module/entity.  
+	Fetches sub-loader group and runtime configuration, sets instance ID, and delegates instantiation to RUNTIME library.
+}
+@PARAM:
+	<string>	: File name of the module
+	<string>	: Instance name
+	<vararg>	: Optional constructor arguments
+@RETURN:
+	<table>	: Runtime instance
+@EXAMPLE:
+```lua
+local entity = loader:Instanciate("player.lua", "Player1", param1, param2)
+```
+
+@NAME:	LOADER:Update
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Executes update cycle for all runtime instances.  
+	Delegates to RUNTIME library.
+}
+@PARAM:
+	<vararg>	: Arguments passed to runtime update
+@RETURN:
+	<nil>
+@EXAMPLE:
+```lua
+loader:Update(dt)
+```
+
+@NAME:	LOADER:Draw
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Executes draw cycle for all runtime instances.  
+	Delegates to RUNTIME library.
+}
+@PARAM:
+	<vararg>	: Arguments passed to runtime draw
+@RETURN:
+	<nil>
+@EXAMPLE:
+```lua
+loader:Draw()
+```
+
+@NAME:	LOADER:Quit
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Destroys all runtime instances managed by RUNTIME library.  
+	Should be called when exiting to release resources.
+}
+@PARAM:
+	<nil>
+@RETURN:
+	<nil>
+@EXAMPLE:
+```lua
+loader:Quit()
+```
