@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="../../../../style.css" rel="stylesheet">
+<title>Nexum</title>
+</head>
+<body>
+<div class="container">
+	<aside class="sidebar"> <h2>📘 Nexum </h2> <div class="sidebar-search"> <input type="text" id="sidebarSearch" placeholder="Search..." /> </div>
+ <nav> <ul id="sidebar-menu"></ul> </nav> </aside>
+   <main class="content">
+<section class='global-description'>
+	<h2>Overview</h2>
+	<p><br>	The CORE Sub-Loader handles the initialization and loading of core files for the LOADER system.  <br>	It manages the environment, dependencies, capabilities, and execution of all core scripts.<br></p>
+</section>
+<section class='doc-block' id='SUBLOADER:Initialize'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> SUBLOADER:Initialize</h2>
+<p><br>	Initializes the core sub-loader by creating its environment, loading the library references,  <br>	and iterating over the provided content to load each core file into the buffer.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type table'>table</span> :  Content table representing the files to load</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Loaded buffer containing the initialized core files</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local coreBuffer = SUBLOADER:Initialize(coreFilesContent)
+</code></pre></div></section>
+<section class='doc-block' id='SUBLOADER:LoadFile'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> SUBLOADER:LoadFile</h2>
+<p><br>	Loads a single core file by resolving its dependencies, capabilities, and environment profile,  <br>	then calling the RESOURCES library to include the file.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type table'>table</span> :  File configuration table</li><li><span class='param-type default'>function|nil</span> :  Optional chunk function for reloads</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Loaded file object</li><li><span class='param-type boolean'>boolean</span> :  True if the file is shared (CLIENT-side), false otherwise</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local tFileLoaded, bShared = SUBLOADER:LoadFile(fileData)
+</code></pre></div></section>
+<section class='doc-block' id='SUBLOADER.__ENV'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> SUBLOADER.__ENV</h2>
+<p><br>	Defines the environment of the CORE sub-loader including:<br>	- ACCESS_POINT: string identifier for this environment<br>	- CONTENT: table containing a CORE table with its own environment and library references<br></p>
+<div class='doc-subblock code-block'><pre><code class='language-lua'>print(SUBLOADER.__ENV.ACCESS_POINT) --> "CORE"
+</code></pre></div></section>
+    </main>
+</div>
+<script src="../../../../root/manifest.js"></script>
+<script src="../../../../main.js"></script>
+<script>window.addEventListener('DOMContentLoaded',()=>{buildSidebarMenu(manifest)});</script>
+</body>
+</html>
