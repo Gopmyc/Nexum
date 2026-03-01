@@ -1,0 +1,16 @@
+@NAME:	IsUserdata
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Checks whether the given value is a Lua userdata object.
+	Returns `true` if the value is of type `userdata`, otherwise `false`.
+}
+@PARAM:
+	v <any> : The value to check.
+@RETURN:
+	<boolean> : `true` if `v` is userdata, `false` otherwise.
+@EXAMPLE:
+```lua
+local ud = newproxy(true)
+print(IsUserdata(ud))     -- Output: true
+print(IsUserdata({}))     -- Output: false
+```
