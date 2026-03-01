@@ -1,0 +1,17 @@
+@NAME:	IsBool
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Checks whether a given value is of type boolean.
+	Returns true if the value is a boolean (`true` or `false`), otherwise returns false.
+}
+@PARAM:
+	v <any> : The value to check.
+@RETURN:
+	<boolean> : `true` if `v` is a boolean, `false` otherwise.
+@EXAMPLE:
+```lua
+print(IsBool(true))   -- Output: true
+print(IsBool(false))  -- Output: true
+print(IsBool(0))      -- Output: false
+print(IsBool("true")) -- Output: false
+```
