@@ -1,0 +1,12 @@
+@GLOBAL_DESCRIPTION:
+{
+	Name        : YAML
+	Version     : 1.2
+	Description : Lua parser and tokenizer for YAML-like syntax. Allows parsing YAML strings into Lua tables and dumping Lua tables as string representations.
+	Author      : rxi (modifiée et corrigée)
+	License     : MIT License
+	Repository  : https://github.com/rxi/lua-yaml (originale)
+	Compatibility: Lua 5.1+, LuaJIT
+	Notes       : This version has been slightly modified and corrected compared to the original to improve certain functions and token management.
+	Usage       : Provides eval(str) to parse YAML strings into Lua tables, and dump(table) to print tables.
+}
