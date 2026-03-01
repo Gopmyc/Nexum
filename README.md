@@ -228,6 +228,206 @@ Steps:
 
 ---
 
+## Project Tooling
+
+### Documentation
+
+The documentation for **Nexum** was generated using the [`doc_builder`](https://github.com/Gopmyc/docs_builder) tool.
+The version of `doc_builder` used is specified in [`docs/VERSION`](docs/VERSION) of this repository.
+
+The documentation uses the following YAML configuration file (`docs_config.yaml`):
+
+```yaml id="h3km5t"
+# PROJET
+TITLE:        "Nexum"
+DESCRIPTION:  "Lua framework designed for building dynamic, secure, and modular applications or games.\nIt provides an advanced loader and runtime system, enabling fine-grained control over file execution, dependencies, and environments.\n"
+LICENSE_NAME: "MIT License"
+LICENSE_URL:  "https://github.com/Gopmyc/Nexum/blob/main/LICENSE"
+
+# FILE AND FOLDER CONFIGURATION
+INPUT_FOLDER:   "docs/.srcs"
+OUTPUT_FOLDER:  "docs"
+EXTENSION:      ".html"
+ROOT_PATH:      "docs/root"
+INDENT_WIDTH:   2
+MANIFEST_PATH:  "root/manifest.js"
+MAIN_JS_PATH:   "main.js"
+
+# CONSOL COLORS DEFINITIONS
+CONSOLE:
+  COLOR_RESET:    7
+  COLOR_SUCCESS:  10
+  COLOR_ERROR:    12
+  COLOR_INFO:     11
+
+# THEME ICONS DEFINITIONS
+THEME_ICONS:
+  DEFAULT:  "📚"
+  DARK:     "🌙"
+  LIGHT:    "☀️"
+
+# COLORS FOR CLIENT AND SERVER DOCS
+COLORS_SIDE:
+  CLIENT: "#f1c40f"
+  SERVER: "#3498db"
+
+# THEME / COULEURS
+THEME:
+  BG_MAIN:            "#1F1F2E"
+  BG_GRADIENT_START:  "#272739"
+  BG_GRADIENT_END:    "#3B3B55"
+  BG_PANEL:           "#2B2B42"
+  BG_SIDEBAR:         "#323256"
+  BG_HOVER:           "#3C3C6B"
+  ACCENT:             "#8A6FF7"
+  ACCENT_ALT:         "#F38BFF"
+  TEXT_MAIN:          "#E6E6FA"
+  TEXT_MUTED:         "#B0B0D0"
+  TEXT_SUBTLE:        "#8888AA"
+  BORDER_SOFT:        "#4A4A70"
+  DOCK_BLOCK:         "#222236"
+  TYPE_STRING:        "#E91E63"
+  TYPE_NUMBER:        "#3F51B5"
+  TYPE_BOOLEAN:       "#FF9800"
+  TYPE_FUNCTION:      "#9C27B0"
+  TYPE_TABLE:         "#4CAF50"
+  TYPE_DEFAULT:       "#607D8B"
+  RADIUS_LG:          "16px"
+  RADIUS_MD:          "6px"
+  TRANSITION_FAST:    "0.2s ease"
+  TRANSITION_NORMAL:  "0.3s ease"
+```
+
+<p align="right"><a href="#readme-top">🔝</a></p>
+
+---
+
+### Commit Management
+
+Commits in **Nexum** are managed automatically with [`AutoCommit`](https://github.com/Gopmyc/AutoCommit).
+The commit rules are defined in a JSON configuration that maps file paths to commit actions, tags, emojis, and descriptions:
+
+```json id="9t2wqe"
+[
+  {
+    "path": "srcs/core/",
+    "actions": {
+      "add":     { "tag": "feat",      "emoji": "✨", "desc": "add core functionality" },
+      "modify":  { "tag": "refactor",  "emoji": "♻️", "desc": "update core logic" },
+      "delete":  { "tag": "chore",     "emoji": "🗑️", "desc": "remove core component" }
+    }
+  },
+  {
+    "path": "srcs/core/networking/",
+    "actions": {
+      "add":     { "tag": "feat",      "emoji": "🌐", "desc": "add networking logic" },
+      "modify":  { "tag": "refactor",  "emoji": "🔁", "desc": "update networking code" },
+      "delete":  { "tag": "chore",     "emoji": "🗑️", "desc": "remove networking code" }
+    }
+  },
+  {
+    "path": "srcs/modules/",
+    "actions": {
+      "add":     { "tag": "feat",      "emoji": "➕", "desc": "add module" },
+      "modify":  { "tag": "refactor",  "emoji": "🧩", "desc": "update module" },
+      "delete":  { "tag": "chore",     "emoji": "🗑️", "desc": "remove module" }
+    }
+  },
+  {
+    "path": "srcs/utils/",
+    "actions": {
+      "add":     { "tag": "feat",      "emoji": "🛠️", "desc": "add utility helper" },
+      "modify":  { "tag": "refactor",  "emoji": "🔧", "desc": "update util logic" },
+      "delete":  { "tag": "chore",     "emoji": "🗑️", "desc": "remove utility" }
+    }
+  },
+  {
+    "path": "config/",
+    "actions": {
+      "add":     { "tag": "config",    "emoji": "⚙️", "desc": "add config file" },
+      "modify":  { "tag": "config",    "emoji": "♻️", "desc": "update configuration" },
+      "delete":  { "tag": "chore",     "emoji": "🗑️", "desc": "remove config file" }
+    }
+  },
+  {
+    "path": "docs/.srcs/CORE/LOADER/",
+    "actions": {
+      "add":     { "tag": "docs",      "emoji": "📄", "desc": "add loader documentation" },
+      "modify":  { "tag": "docs",      "emoji": "📝", "desc": "update loader documentation" },
+      "delete":  { "tag": "docs",      "emoji": "🗑️", "desc": "remove loader documentation" }
+    }
+  },
+  {
+    "path": "docs/.srcs/ENV/",
+    "actions": {
+      "add":     { "tag": "docs",      "emoji": "📄", "desc": "add environment documentation" },
+      "modify":  { "tag": "docs",      "emoji": "📝", "desc": "update environment documentation" },
+      "delete":  { "tag": "docs",      "emoji": "🗑️", "desc": "remove environment documentation" }
+    }
+  },
+  {
+    "path": "docs/.srcs/GLOBAL_LIBRARIES/",
+    "actions": {
+      "add":     { "tag": "docs",      "emoji": "📄", "desc": "add global libraries documentation" },
+      "modify":  { "tag": "docs",      "emoji": "📝", "desc": "update global libraries documentation" },
+      "delete":  { "tag": "docs",      "emoji": "🗑️", "desc": "remove global libraries documentation" }
+    }
+  },
+  {
+    "path": "docs/pages/",
+    "actions": {
+      "add":     { "tag": "docs",      "emoji": "📄", "desc": "add generated HTML pages" },
+      "modify":  { "tag": "docs",      "emoji": "📝", "desc": "update generated HTML pages" },
+      "delete":  { "tag": "docs",      "emoji": "🗑️", "desc": "remove generated HTML pages" }
+    }
+  },
+  {
+    "path": "docs/index.html",
+    "actions": {
+      "add":     { "tag": "docs",      "emoji": "📄", "desc": "add documentation index" },
+      "modify":  { "tag": "docs",      "emoji": "📝", "desc": "update documentation index" },
+      "delete":  { "tag": "docs",      "emoji": "🗑️", "desc": "remove documentation index" }
+    }
+  },
+  {
+    "path": "docs/main.js",
+    "actions": {
+      "add":     { "tag": "docs",      "emoji": "📄", "desc": "add documentation JS" },
+      "modify":  { "tag": "docs",      "emoji": "📝", "desc": "update documentation JS" },
+      "delete":  { "tag": "docs",      "emoji": "🗑️", "desc": "remove documentation JS" }
+    }
+  },
+  {
+    "path": "docs/style.css",
+    "actions": {
+      "add":     { "tag": "docs",      "emoji": "📄", "desc": "add documentation CSS" },
+      "modify":  { "tag": "docs",      "emoji": "📝", "desc": "update documentation CSS" },
+      "delete":  { "tag": "docs",      "emoji": "🗑️", "desc": "remove documentation CSS" }
+    }
+  },
+  {
+    "path": "docs/root/manifest.js",
+    "actions": {
+      "add":     { "tag": "docs",      "emoji": "📄", "desc": "add manifest JS" },
+      "modify":  { "tag": "docs",      "emoji": "📝", "desc": "update manifest JS" },
+      "delete":  { "tag": "docs",      "emoji": "🗑️", "desc": "remove manifest JS" }
+    }
+  },
+  {
+    "path": "",
+    "actions": {
+      "add":     { "tag": "chore",     "emoji": "➕", "desc": "add miscellaneous file" },
+      "modify":  { "tag": "chore",     "emoji": "♻️", "desc": "update miscellaneous file" },
+      "delete":  { "tag": "chore",     "emoji": "🗑️", "desc": "delete miscellaneous file" }
+    }
+  }
+]
+```
+
+<p align="right"><a href="#readme-top">🔝</a></p>
+
+---
+
 ## License
 
 Distributed under the MIT License.
@@ -244,6 +444,7 @@ See [`LICENSE`](https://github.com/Gopmyc/Nexum/LICENSE) for more info.
 🔗 [https://github.com/Gopmyc/Nexum](https://github.com/Gopmyc/Nexum)
 
 <p align="right"><a href="#readme-top">🔝</a></p>
+
 
 [contributors-shield]: https://img.shields.io/github/contributors/Gopmyc/Nexum.svg?style=for-the-badge
 [contributors-url]: https://github.com/Gopmyc/Nexum/graphs/contributors
