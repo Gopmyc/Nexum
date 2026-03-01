@@ -1,0 +1,11 @@
+@GLOBAL_DESCRIPTION:
+{
+	Name        : BASE64
+	Version     : 1.5.3
+	Description : A public domain Lua library for encoding and decoding Base64 strings. Compatible with Lua 5.1+, LuaJIT, and Lua 5.2/5.3. Provides both encoder and decoder with optional caching.
+	Author      : Ilya Kolbin (iskolbin@gmail.com)
+	License     : MIT or Public Domain (unlicense.org)
+	Repository  : https://github.com/iskolbin/lbase64
+	Requirements: Requires bit32.extract function or native Lua/BitOp operators. Lua 5.1 fallback uses pure Lua implementation.
+	Usage       : Can be used in any Lua environment to encode/decode Base64 strings with base64.encode(str) and base64.decode(str)
+}
