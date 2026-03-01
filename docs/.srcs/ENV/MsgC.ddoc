@@ -1,0 +1,23 @@
+@NAME:	MsgC
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Prints colored messages to the console.  
+	The function accepts multiple arguments which can be either:
+	- Tables representing colors `{R, G, B}` (or `{r, g, b}`) with an optional `__hex` field
+	- Any other values (strings, numbers, etc.) to print in the current color
+	
+	The color persists for subsequent arguments until a new color table is passed.  
+	ANSI escape sequences are used for terminal colorization.  
+	If an invalid color table is provided, an error message is printed in red.
+}
+@PARAM:
+	vararg ... : Multiple arguments of either
+		- <table> Color table: `{R, G, B}` or `{r, g, b}`, optional `__hex`
+		- <any> Other values to print
+@RETURN:
+	<nothing>
+@EXAMPLE:
+```lua
+MsgC(Color(255,0,0), "Error: ", Color(255,255,0), "File not found")
+MsgC("Normal text ", Color(0,255,0), "green text")
+```
