@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="../../../style.css" rel="stylesheet">
+<title>Nexum</title>
+</head>
+<body>
+<div class="container">
+	<aside class="sidebar"> <h2>📘 Nexum </h2> <div class="sidebar-search"> <input type="text" id="sidebarSearch" placeholder="Search..." /> </div>
+ <nav> <ul id="sidebar-menu"></ul> </nav> </aside>
+   <main class="content">
+<section class='global-description'>
+	<h2>Overview</h2>
+	<p><br>	Name        : CHACHA20<br>	Version     : 1.0<br>	Description : Pure Lua implementation of the ChaCha20 stream cipher, including IETF 12-byte nonce variant and XChaCha20 24-byte nonce variant<br>	Author      : Phil Leblanc, 2018<br>	License     : MIT License<br>	Repository  : https://github.com/PhlLeblanc/lua-chacha20 (original)<br>	Compatibility: Lua 5.1+, LuaJIT<br>	Notes       : Implements RFC 7539 specification for IETF ChaCha20. XChaCha20 implemented using HChaCha20 subkey derivation. AEAD support is provided in a separate module aead_chacha20.lua. Pure Lua implementation, may be slower than native bindings.<br>	Usage       : Provides functions encrypt, decrypt (ChaCha20), xchacha20_encrypt, xchacha20_decrypt, hchacha20, as well as constants key_size, nonce_size, xnonce_size<br></p>
+</section>
+    </main>
+</div>
+<script src="../../../root/manifest.js"></script>
+<script src="../../../main.js"></script>
+<script>window.addEventListener('DOMContentLoaded',()=>{buildSidebarMenu(manifest)});</script>
+</body>
+</html>
