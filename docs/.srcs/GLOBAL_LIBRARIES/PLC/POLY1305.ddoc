@@ -1,0 +1,12 @@
+@GLOBAL_DESCRIPTION:
+{
+	Name        : POLY1305
+	Version     : 1.0
+	Description : Pure Lua implementation of the Poly1305 message authentication code (MAC)
+	Author      : Phil Leblanc, 2015
+	License     : MIT License
+	Repository  : https://github.com/floodyberry/poly1305-donna (inspiration for Lua implementation)
+	Compatibility: Lua 5.1+, LuaJIT
+	Notes       : Implements RFC 7539 Poly1305 specification for use with ChaCha20 or other stream ciphers. Provides both simple one-shot MAC calculation and multi-part message authentication. Derived from poly1305-donna C implementation.
+	Usage       : Provides functions init, update, finish for multi-part MAC calculation; auth (or mac) for single-step MAC; verify to check MAC validity
+}
