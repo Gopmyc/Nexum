@@ -1,0 +1,172 @@
+@GLOBAL_DESCRIPTION:
+{
+	The ENV_BUILDER library is responsible for constructing secure sandboxed environments for modules and sub-loaders in Nexum.  
+	It manages safe globals, constants, functions, namespaces, libraries, and fallback policies.  
+	It ensures that code runs with strict environment rules, applies environment profiles, and optionally loads internal libraries.
+}
+
+@NAME:	ENV_BUILDER:SetEnvSpecification
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Sets the SAFE_GLOBALS table defining safe environment profiles.  
+	Each profile specifies constants, functions, libraries, namespaces, and fallback rules.
+}
+@PARAM:
+	<table>		: Table containing environment profiles
+@RETURN:
+	<nil>
+@EXAMPLE:
+```lua
+ENV_BUILDER:SetEnvSpecification(tEnvProfiles)
+```
+
+@NAME:	ENV_BUILDER:BuildPolicy
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Builds a merged policy table from an array of environment profile names.  
+	Combines constants, function permissions, library scopes, namespace exposure, and fallback rules.
+}
+@PARAM:
+	<table>		: List of environment profile names
+@RETURN:
+	<table>	: Merged policy table
+@EXAMPLE:
+```lua
+local tPolicy = ENV_BUILDER:BuildPolicy({"default", "client"})
+```
+
+@NAME:	ENV_BUILDER:ApplyConstants
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Applies constants defined in a policy table to the target environment.
+}
+@PARAM:
+	<table>		: Target environment table
+	<table>		: Policy table containing constants
+@RETURN:
+	<table>	: Environment with constants applied
+@EXAMPLE:
+```lua
+tEnv = ENV_BUILDER:ApplyConstants(tEnv, tPolicy)
+```
+
+@NAME:	ENV_BUILDER:ApplyFunctions
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Applies function permissions defined in a policy table to the target environment.  
+	Only allowed functions from _G are injected.
+}
+@PARAM:
+	<table>		: Target environment table
+	<table>		: Policy table containing functions
+@RETURN:
+	<table>	: Environment with functions applied
+@EXAMPLE:
+```lua
+tEnv = ENV_BUILDER:ApplyFunctions(tEnv, tPolicy)
+```
+
+@NAME:	ENV_BUILDER:ApplyLibraries
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Applies library scopes defined in a policy table to the environment.  
+	Supports full library exposure or selective function exposure per library.
+}
+@PARAM:
+	<table>		: Target environment table
+	<table>		: Policy table containing libraries
+@RETURN:
+	<table>	: Environment with libraries applied
+@EXAMPLE:
+```lua
+tEnv = ENV_BUILDER:ApplyLibraries(tEnv, tPolicy)
+```
+
+@NAME:	ENV_BUILDER:ApplyNamespaces
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Creates exposed namespaces in the environment based on the policy.  
+	Ensures nested tables exist for allowed namespaces.
+}
+@PARAM:
+	<table>		: Target environment table
+	<table>		: Policy table containing namespaces
+@RETURN:
+	<table>	: Environment with namespaces applied
+@EXAMPLE:
+```lua
+tEnv = ENV_BUILDER:ApplyNamespaces(tEnv, tPolicy)
+```
+
+@NAME:	ENV_BUILDER:ApplyFallback
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Applies fallback rules to the environment.  
+	If a key is missing, optionally throws warnings or redirects to _G based on policy.
+}
+@PARAM:
+	<table>		: Target environment table
+	<table>		: Policy table containing fallback rules
+@RETURN:
+	<table>	: Environment with fallback applied
+@EXAMPLE:
+```lua
+tEnv = ENV_BUILDER:ApplyFallback(tEnv, tPolicy)
+```
+
+@NAME:	ENV_BUILDER:InitAccessPoint
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Initializes a module access point in the environment.  
+	Creates accessors for GetConfig, GetDependence, and sets __PATH and __NAME metadata.
+}
+@PARAM:
+	<table>		: Target environment table
+	<string>	: Access point key (module name)
+	<string>	: Source file path
+	<table>		: File arguments table
+	<table>		: Capabilities table
+@RETURN:
+	<table>	: Environment with initialized access point
+@EXAMPLE:
+```lua
+tEnv = ENV_BUILDER:InitAccessPoint(tEnv, "MY_MODULE", "modules/my_module.lua", tArgs, tCaps)
+```
+
+@NAME:	ENV_BUILDER:LoadInternalLibraries
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Loads internal libraries for a module's access point.  
+	Validates the LIBRARIES object and uses its Load method to inject internal library functions into the environment.
+}
+@PARAM:
+	<table>		: Environment table
+	<string>	: Access point key
+	<string>	: Optional base path for libraries
+@RETURN:
+	<table>	: Environment with internal libraries loaded
+@EXAMPLE:
+```lua
+tEnv = ENV_BUILDER:LoadInternalLibraries(tEnv, "MY_MODULE", "srcs/core/loader/libraries")
+```
+
+@NAME:	ENV_BUILDER:BuildEnvironment
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Constructs a complete sandboxed environment for a module.  
+	Applies constants, functions, libraries, namespaces, fallback rules, initializes access points, and optionally loads internal libraries.
+}
+@PARAM:
+	<string>	: Source file path
+	<table>		: Base sandbox environment
+	<string>	: Access point key
+	<table>		: File arguments
+	<table>		: Capabilities
+	<table>		: Environment profile list
+	<boolean>	: Whether to load internal libraries
+@RETURN:
+	<table>	: Fully constructed environment
+@EXAMPLE:
+```lua
+local tEnv = ENV_BUILDER:BuildEnvironment("modules/my_module.lua", baseEnv, "MY_MODULE", tArgs, tCaps, {"default"}, true)
+```
