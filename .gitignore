@@ -16,6 +16,9 @@ auto_commit
 # === Ignore commit configuration file ===
 commit_config.json
 
+# === Ignore docs configuration file ===
+docs_config.yaml
+
 # === Ignore all object file ===
 *.o
 .objs/
@@ -23,3 +26,4 @@ commit_config.json
 # === Ignore tool_builder build ===
 tool_builder.exe
 tool_builder.a
+docs_builder.exe
