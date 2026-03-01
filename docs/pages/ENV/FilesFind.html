@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="../../style.css" rel="stylesheet">
+<title>Nexum</title>
+</head>
+<body>
+<div class="container">
+	<aside class="sidebar"> <h2>📘 Nexum </h2> <div class="sidebar-search"> <input type="text" id="sidebarSearch" placeholder="Search..." /> </div>
+ <nav> <ul id="sidebar-menu"></ul> </nav> </aside>
+   <main class="content">
+<section class='doc-block' id='FilesFind'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> FilesFind</h2>
+<p><br>	Searches a given directory and separates files and subdirectories.<br>	The function automatically adapts to the current environment by selecting a suitable backend:<br>	- lovr (Lovr engine)<br>	- love (LÖVE engine)<br>	- glua (Garry's Mod Lua)<br>	- lfs (LuaFileSystem)<br>	Returns two tables:<br>	1. List of file names (strings)<br>	2. List of directory names (strings)<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  Path to the directory to search</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  List of files found in the directory</li><li><span class='param-type table'>table</span> :  List of directories found in the directory</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local tFiles, tDirs = FilesFind("scripts")
+for _, f in ipairs(tFiles) do print("File:", f) end
+for _, d in ipairs(tDirs) do print("Dir:", d) end
+</code></pre></div></section>
+    </main>
+</div>
+<script src="../../root/manifest.js"></script>
+<script src="../../main.js"></script>
+<script>window.addEventListener('DOMContentLoaded',()=>{buildSidebarMenu(manifest)});</script>
+</body>
+</html>
