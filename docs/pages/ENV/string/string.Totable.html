@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="../../../style.css" rel="stylesheet">
+<title>Nexum</title>
+</head>
+<body>
+<div class="container">
+	<aside class="sidebar"> <h2>📘 Nexum </h2> <div class="sidebar-search"> <input type="text" id="sidebarSearch" placeholder="Search..." /> </div>
+ <nav> <ul id="sidebar-menu"></ul> </nav> </aside>
+   <main class="content">
+<section class='doc-block' id='string.Totable'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> string.Totable</h2>
+<p><br>	Converts a string or any value into a table of individual characters.<br>	The input value is first converted to a string if it is not already a string.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type any'>any</span> :  The value to convert into a table of characters.</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  A table where each element is a single character from the string representation of the input.</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local t = string.Totable("hello")
+-- t = {"h","e","l","l","o"}
+
+local tNum = string.Totable(123)
+-- tNum = {"1","2","3"}
+</code></pre></div></section>
+    </main>
+</div>
+<script src="../../../root/manifest.js"></script>
+<script src="../../../main.js"></script>
+<script>window.addEventListener('DOMContentLoaded',()=>{buildSidebarMenu(manifest)});</script>
+</body>
+</html>
