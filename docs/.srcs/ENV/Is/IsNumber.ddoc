@@ -1,0 +1,16 @@
+@NAME:	IsNumber
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Checks whether the given value is a number.
+	Returns `true` if the value is of type number, otherwise `false`.
+}
+@PARAM:
+	v <any> : The value to check.
+@RETURN:
+	<boolean> : `true` if `v` is a number, `false` otherwise.
+@EXAMPLE:
+```lua
+print(IsNumber(42))       -- Output: true
+print(IsNumber("42"))     -- Output: false
+print(IsNumber(3.14))     -- Output: true
+```
