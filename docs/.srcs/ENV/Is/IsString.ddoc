@@ -1,0 +1,16 @@
+@NAME:	IsString
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Checks whether the given value is a string.
+	Returns `true` if the value is of type string, otherwise `false`.
+}
+@PARAM:
+	v <any> : The value to check.
+@RETURN:
+	<boolean> : `true` if `v` is a string, `false` otherwise.
+@EXAMPLE:
+```lua
+print(IsString("Hello"))   -- Output: true
+print(IsString(123))       -- Output: false
+print(IsString(""))        -- Output: true
+```
