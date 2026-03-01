@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="../../../../style.css" rel="stylesheet">
+<title>Nexum</title>
+</head>
+<body>
+<div class="container">
+	<aside class="sidebar"> <h2>📘 Nexum </h2> <div class="sidebar-search"> <input type="text" id="sidebarSearch" placeholder="Search..." /> </div>
+ <nav> <ul id="sidebar-menu"></ul> </nav> </aside>
+   <main class="content">
+<section class='global-description'>
+	<h2>Overview</h2>
+	<p><br>	The RESSOURCES library handles management of scripts, external dependencies, file sending, and capability resolution in Nexum.  <br>	It ensures proper client/server inclusion, resolves internal/external dependencies, loads Lua and binary files, and exposes sub-loader environments.<br></p>
+</section>
+<section class='doc-block' id='RESSOURCES:ResolveDependencies'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> RESSOURCES:ResolveDependencies</h2>
+<p><br>	Resolves all dependencies (internal and external) for a given file or sub-loader.  <br>	Filters based on client/server execution context and reports missing dependencies.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type table'>table</span> :  Dependencies table containing 'INTERNAL' and 'EXTERNAL' keys</li><li><span class='param-type table'>table</span> :  Table defining sides to load (CLIENT, SERVER)</li><li><span class='param-type table'>table</span> :  Optional sub-loader environment for resolving dependencies</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Table of resolved scripts keyed by dependency name</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local tDeps = RESSOURCES:ResolveDependencies(tDepsConfig, {CLIENT=true, SERVER=false}, tSubLoader)
+</code></pre></div></section>
+<section class='doc-block' id='RESSOURCES:GetScript'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> RESSOURCES:GetScript</h2>
+<p><br>	Retrieves a script by name from the loaded RESSOURCES table.  <br>	Searches through all groups and returns the first match found.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  Name of the script to retrieve</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Script table if found, otherwise nil</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local tScript = RESSOURCES:GetScript("MY_SCRIPT")
+</code></pre></div></section>
+<section class='doc-block' id='RESSOURCES:IncludeFiles'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> RESSOURCES:IncludeFiles</h2>
+<p><br>	Includes a Lua file, a binary module, or executes a function, depending on type and execution side.  <br>	Handles automatic sending of files to clients via AddCSLuaFile when applicable.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type default'>string|function</span> :  File path or function to include</li><li><span class='param-type table'>table</span> :  Sides table {CLIENT = true/false, SERVER = true/false}</li><li><span class='param-type table'>table</span> :  Arguments passed to the file/function</li><li><span class='param-type table'>table</span> :  Sandbox environment</li><li><span class='param-type boolean'>boolean</span> :  Load as binary module</li><li><span class='param-type boolean'>boolean</span> :  Load sub-folders if present</li><li><span class='param-type table'>table</span> :  Capabilities table</li><li><span class='param-type table'>table</span> :  Environment profile table</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type any'>any</span> :  Result of included file or function</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>RESSOURCES:IncludeFiles("scripts/init.lua", {CLIENT=true, SERVER=false}, tArgs, tEnv)
+</code></pre></div></section>
+<section class='doc-block' id='RESSOURCES:LoadBinaryFile'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> RESSOURCES:LoadBinaryFile</h2>
+<p><br>	Loads a binary file as a Lua module using require.  <br>	Useful for decoupled logic and compiled modules.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  Path to the binary file</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type any'>any</span> :  Loaded module</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local tModule = RESSOURCES:LoadBinaryFile("modules/core.so")
+</code></pre></div></section>
+<section class='doc-block' id='RESSOURCES:AddCSLuaFile'>
+<h2><span class='state-dot' style='background:#3498db;'></span> RESSOURCES:AddCSLuaFile</h2>
+<p><br>	Registers a Lua file to be sent to clients.  <br>	Validates existence and file extension. Handles folders recursively.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  Path to Lua file or folder</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>RESSOURCES:AddCSLuaFile("client/init.lua")
+</code></pre></div></section>
+<section class='doc-block' id='RESSOURCES:ResolveCapabilities'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> RESSOURCES:ResolveCapabilities</h2>
+<p><br>	Filters and structures a configuration table based on defined capabilities.  <br>	Supports CLIENT, SERVER, and SHARED sets.  <br>	Returns a read-only table for safe access.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type table'>table</span> :  Base configuration table</li><li><span class='param-type table'>table</span> :  Capabilities table with SHARED, CLIENT, SERVER keys</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Read-only table filtered according to capabilities</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local tResolved = RESSOURCES:ResolveCapabilities(tConfig, tCapabilities)
+</code></pre></div></section>
+<section class='doc-block' id='RESSOURCES:GetSubLoaderEnv'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> RESSOURCES:GetSubLoaderEnv</h2>
+<p><br>	Creates a sub-loader environment with methods to retrieve the loader, environment, buffer, scripts, and initialization state.  <br>	Uses a callback to provide access to the base libraries.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type function'>function</span> :  Function that returns a libraries table for the sub-loader</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Sub-loader environment</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local tEnv = RESSOURCES:GetSubLoaderEnv(function() return tLibs end)
+</code></pre></div></section>
+    </main>
+</div>
+<script src="../../../../root/manifest.js"></script>
+<script src="../../../../main.js"></script>
+<script>window.addEventListener('DOMContentLoaded',()=>{buildSidebarMenu(manifest)});</script>
+</body>
+</html>
