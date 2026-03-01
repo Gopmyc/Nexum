@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="../../../style.css" rel="stylesheet">
+<title>Nexum</title>
+</head>
+<body>
+<div class="container">
+	<aside class="sidebar"> <h2>📘 Nexum </h2> <div class="sidebar-search"> <input type="text" id="sidebarSearch" placeholder="Search..." /> </div>
+ <nav> <ul id="sidebar-menu"></ul> </nav> </aside>
+   <main class="content">
+<section class='doc-block' id='IsFile'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> IsFile</h2>
+<p><br>	Checks whether a given path points to a regular file.<br>	Supports multiple backends: LÖVR, LÖVE, GMod (glua), and standard Lua (lfs).<br>	Returns true if the path exists and is a file, false otherwise.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  The file system path to check.</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type boolean'>boolean</span> :  `true` if the path is a file, `false` otherwise.</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>print(IsFile("assets/image.png"))   -- Output: true  (if "image.png" exists)
+print(IsFile("assets"))             -- Output: false (it's a directory)
+print(IsFile("nonexistent.txt"))    -- Output: false
+</code></pre></div></section>
+    </main>
+</div>
+<script src="../../../root/manifest.js"></script>
+<script src="../../../main.js"></script>
+<script>window.addEventListener('DOMContentLoaded',()=>{buildSidebarMenu(manifest)});</script>
+</body>
+</html>
