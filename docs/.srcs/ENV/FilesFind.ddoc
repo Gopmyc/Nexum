@@ -1,0 +1,24 @@
+@NAME:	FilesFind
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Searches a given directory and separates files and subdirectories.
+	The function automatically adapts to the current environment by selecting a suitable backend:
+	- lovr (Lovr engine)
+	- love (LÖVE engine)
+	- glua (Garry's Mod Lua)
+	- lfs (LuaFileSystem)
+	Returns two tables:
+	1. List of file names (strings)
+	2. List of directory names (strings)
+}
+@PARAM:
+	<string> sPath	: Path to the directory to search
+@RETURN:
+	<table> tFiles	: List of files found in the directory
+	<table> tDirs	: List of directories found in the directory
+@EXAMPLE:
+```lua
+local tFiles, tDirs = FilesFind("scripts")
+for _, f in ipairs(tFiles) do print("File:", f) end
+for _, d in ipairs(tDirs) do print("Dir:", d) end
+```
