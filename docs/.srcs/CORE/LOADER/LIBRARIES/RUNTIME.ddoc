@@ -1,0 +1,129 @@
+@GLOBAL_DESCRIPTION:
+{
+	The RUNTIME library manages runtime instances of scripts, including their update and draw pipelines.  
+	It handles instantiation, registration, destruction, and safe execution with error handling.
+}
+
+@NAME:	RUNTIME:SetRuntimeConfig
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Sets the runtime configuration table defining UPDATE and DRAW stages.
+}
+@PARAM:
+	<table>	: Runtime configuration table
+@RETURN:
+	<nil>
+@EXAMPLE:
+```lua
+RUNTIME:SetRuntimeConfig({
+	UPDATE = { PRE = 0, MAIN = 1, POST = 2 },
+	DRAW   = { BACKGROUND = 0, FOREGROUND = 1 }
+})
+```
+
+@NAME:	RUNTIME:Instantiate
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Creates a new instance of a script from RESSOURCES.  
+	Registers the instance to the update and draw pipelines according to runtime configuration.
+}
+@PARAM:
+	<string>	: File name of the script in RESSOURCES
+	<table>		: Runtime configuration for this file {ID, UPDATE, DRAW}
+	<table>		: Optional arguments passed to Initialize method
+@RETURN:
+	<table>	: Instantiated object
+@EXAMPLE:
+```lua
+local inst = RUNTIME:Instantiate("PLAYER_CONTROLLER", tConfig, {player})
+```
+
+@NAME:	RUNTIME:RegisterInstance
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Registers an already instantiated object into the runtime update and draw pipelines.  
+	Orders are determined by stage and optional order values in runtime config.
+}
+@PARAM:
+	<table>	: Instance object
+	<table>	: Update stage configuration {STAGE, ORDER}
+	<table>	: Draw stage configuration {STAGE, ORDER}
+@RETURN:
+	<nil>
+@EXAMPLE:
+```lua
+RUNTIME:RegisterInstance(inst, {STAGE="MAIN"}, {STAGE="FOREGROUND"})
+```
+
+@NAME:	RUNTIME:DestroyInstance
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Safely destroys a runtime instance.  
+	If called during update/draw, destruction is deferred until after the pipeline finishes.
+}
+@PARAM:
+	<table>	: Instance to destroy
+@RETURN:
+	<nil>
+@EXAMPLE:
+```lua
+RUNTIME:DestroyInstance(inst)
+```
+
+@NAME:	RUNTIME:DestroyAllInstances
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Destroys all registered instances immediately.
+}
+@RETURN:
+	<nil>
+@EXAMPLE:
+```lua
+RUNTIME:DestroyAllInstances()
+```
+
+@NAME:	RUNTIME:Update
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Executes the UPDATE pipeline for all registered instances in order of priority.  
+	Errors in Update calls are caught and logged, and faulty instances are destroyed.
+}
+@PARAM:
+	variable	: Any arguments passed to the Update method of instances
+@RETURN:
+	<nil>
+@EXAMPLE:
+```lua
+RUNTIME:Update(deltaTime)
+```
+
+@NAME:	RUNTIME:Draw
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Executes the DRAW pipeline for all registered instances in order of priority.  
+	Errors in Draw calls are caught and logged, and faulty instances are destroyed.
+}
+@PARAM:
+	variable	: Any arguments passed to the Draw method of instances
+@RETURN:
+	<nil>
+@EXAMPLE:
+```lua
+RUNTIME:Draw()
+```
+
+@NAME:	RUNTIME:GetInstanceByID
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Retrieves an instance by its group ID and optional instance ID.  
+	If no ID is given, returns the first instance in the group.
+}
+@PARAM:
+	<string>	: Group ID (typically the file name)
+	<string> or nil	: Instance ID
+@RETURN:
+	<table> or nil	: Instance if found
+@EXAMPLE:
+```lua
+local inst = RUNTIME:GetInstanceByID("PLAYER_CONTROLLER", "MAIN")
+```
