@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="../../../../style.css" rel="stylesheet">
+<title>Nexum</title>
+</head>
+<body>
+<div class="container">
+	<aside class="sidebar"> <h2>📘 Nexum </h2> <div class="sidebar-search"> <input type="text" id="sidebarSearch" placeholder="Search..." /> </div>
+ <nav> <ul id="sidebar-menu"></ul> </nav> </aside>
+   <main class="content">
+<section class='global-description'>
+	<h2>Overview</h2>
+	<p><br>	The ORDERER library handles dependency-based ordering of files.  <br>	It ensures that files are loaded in an order respecting internal dependencies, detecting circular references, and building a globally sorted list of files.<br></p>
+</section>
+<section class='doc-block' id='ORDERER:BuildGlobalOrder'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> ORDERER:BuildGlobalOrder</h2>
+<p><br>	Generates a globally sorted list of files based on their internal dependencies.  <br>	Traverses each file and its dependencies recursively to respect load order, and detects circular references.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type table'>table</span> :  Table containing file data. Each file must have a 'DEPENDENCIES.INTERNAL' list of dependent file keys.</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Array of file data sorted in load order according to dependencies</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local tSortedFiles = ORDERER:BuildGlobalOrder(tFileContent)
+</code></pre></div></section>
+<section class='doc-block' id='ORDERER:VisitFileDependencies'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> ORDERER:VisitFileDependencies</h2>
+<p><br>	Recursively visits a file and its internal dependencies.  <br>	Marks files as visited to avoid reprocessing and detects circular dependencies.  <br>	Appends files to the SORTED list in dependency-respecting order.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  File name to process</li><li><span class='param-type table'>table</span> :  File data table, must include 'DEPENDENCIES.INTERNAL'</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>ORDERER:VisitFileDependencies("MY_FILE", tFileData)
+</code></pre></div></section>
+    </main>
+</div>
+<script src="../../../../root/manifest.js"></script>
+<script src="../../../../main.js"></script>
+<script>window.addEventListener('DOMContentLoaded',()=>{buildSidebarMenu(manifest)});</script>
+</body>
+</html>
