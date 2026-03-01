@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="../../style.css" rel="stylesheet">
+<title>Nexum</title>
+</head>
+<body>
+<div class="container">
+	<aside class="sidebar"> <h2>📘 Nexum </h2> <div class="sidebar-search"> <input type="text" id="sidebarSearch" placeholder="Search..." /> </div>
+ <nav> <ul id="sidebar-menu"></ul> </nav> </aside>
+   <main class="content">
+<section class='doc-block' id='PrintTable'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> PrintTable</h2>
+<p><br>	Prints the contents of a Lua table recursively in a human-readable tree format.<br>	- Each key/value pair is displayed.<br>	- Nested tables are indented and prefixed with a visual tree structure using `+--` and `|`.<br>	- Uses `MsgC` for output, so supports colored output if passed colored strings or tables.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type table'>table</span> :  The Lua table to print.</li><li><span class='param-type string'>string</span> :  Internal parameter for indentation prefix, do not pass manually unless needed for recursion.</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local tExample = {
+    NAME = "Gopmyc",
+    SKILLS = { "Lua", "C++", "C" },
+    SETTINGS = {
+        DEBUG = true,
+        VERSION = 1.0
+    }
+}
+
+PrintTable(tExample)
+-- Output:
+-- +--NAME : Gopmyc
+-- +--SKILLS : 
+-- |   +--1 : Lua
+-- |   +--2 : C++
+-- |   +--3 : C
+-- +--SETTINGS : 
+-- |   +--DEBUG : true
+-- |   +--VERSION : 1.0
+</code></pre></div></section>
+    </main>
+</div>
+<script src="../../root/manifest.js"></script>
+<script src="../../main.js"></script>
+<script>window.addEventListener('DOMContentLoaded',()=>{buildSidebarMenu(manifest)});</script>
+</body>
+</html>
