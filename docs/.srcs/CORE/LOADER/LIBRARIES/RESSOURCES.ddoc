@@ -1,0 +1,121 @@
+@GLOBAL_DESCRIPTION:
+{
+	The RESSOURCES library handles management of scripts, external dependencies, file sending, and capability resolution in Nexum.  
+	It ensures proper client/server inclusion, resolves internal/external dependencies, loads Lua and binary files, and exposes sub-loader environments.
+}
+
+@NAME:	RESSOURCES:ResolveDependencies
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Resolves all dependencies (internal and external) for a given file or sub-loader.  
+	Filters based on client/server execution context and reports missing dependencies.
+}
+@PARAM:
+	<table>	: Dependencies table containing 'INTERNAL' and 'EXTERNAL' keys
+	<table>	: Table defining sides to load (CLIENT, SERVER)
+	<table>	: Optional sub-loader environment for resolving dependencies
+@RETURN:
+	<table>	: Table of resolved scripts keyed by dependency name
+@EXAMPLE:
+```lua
+local tDeps = RESSOURCES:ResolveDependencies(tDepsConfig, {CLIENT=true, SERVER=false}, tSubLoader)
+```
+
+@NAME:	RESSOURCES:GetScript
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Retrieves a script by name from the loaded RESSOURCES table.  
+	Searches through all groups and returns the first match found.
+}
+@PARAM:
+	<string>	: Name of the script to retrieve
+@RETURN:
+	<table> or nil	: Script table if found, otherwise nil
+@EXAMPLE:
+```lua
+local tScript = RESSOURCES:GetScript("MY_SCRIPT")
+```
+
+@NAME:	RESSOURCES:IncludeFiles
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Includes a Lua file, a binary module, or executes a function, depending on type and execution side.  
+	Handles automatic sending of files to clients via AddCSLuaFile when applicable.
+}
+@PARAM:
+	<string|function>	: File path or function to include
+	<table>				: Sides table {CLIENT = true/false, SERVER = true/false}
+	<table> or nil		: Arguments passed to the file/function
+	<table> or nil		: Sandbox environment
+	<boolean> or nil	: Load as binary module
+	<boolean> or nil	: Load sub-folders if present
+	<table> or nil		: Capabilities table
+	<table> or nil		: Environment profile table
+@RETURN:
+	<any> or nil	: Result of included file or function
+@EXAMPLE:
+```lua
+RESSOURCES:IncludeFiles("scripts/init.lua", {CLIENT=true, SERVER=false}, tArgs, tEnv)
+```
+
+@NAME:	RESSOURCES:LoadBinaryFile
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Loads a binary file as a Lua module using require.  
+	Useful for decoupled logic and compiled modules.
+}
+@PARAM:
+	<string>	: Path to the binary file
+@RETURN:
+	<any>	: Loaded module
+@EXAMPLE:
+```lua
+local tModule = RESSOURCES:LoadBinaryFile("modules/core.so")
+```
+
+@NAME:	RESSOURCES:AddCSLuaFile
+@STATE:	SERVER
+@DESC:	{
+	Registers a Lua file to be sent to clients.  
+	Validates existence and file extension. Handles folders recursively.
+}
+@PARAM:
+	<string>	: Path to Lua file or folder
+@RETURN:
+	<nil>
+@EXAMPLE:
+```lua
+RESSOURCES:AddCSLuaFile("client/init.lua")
+```
+
+@NAME:	RESSOURCES:ResolveCapabilities
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Filters and structures a configuration table based on defined capabilities.  
+	Supports CLIENT, SERVER, and SHARED sets.  
+	Returns a read-only table for safe access.
+}
+@PARAM:
+	<table>	: Base configuration table
+	<table>	: Capabilities table with SHARED, CLIENT, SERVER keys
+@RETURN:
+	<table>	: Read-only table filtered according to capabilities
+@EXAMPLE:
+```lua
+local tResolved = RESSOURCES:ResolveCapabilities(tConfig, tCapabilities)
+```
+
+@NAME:	RESSOURCES:GetSubLoaderEnv
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Creates a sub-loader environment with methods to retrieve the loader, environment, buffer, scripts, and initialization state.  
+	Uses a callback to provide access to the base libraries.
+}
+@PARAM:
+	<function>	: Function that returns a libraries table for the sub-loader
+@RETURN:
+	<table>	: Sub-loader environment
+@EXAMPLE:
+```lua
+local tEnv = RESSOURCES:GetSubLoaderEnv(function() return tLibs end)
+```
