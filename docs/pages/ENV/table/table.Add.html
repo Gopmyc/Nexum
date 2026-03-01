@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="../../../style.css" rel="stylesheet">
+<title>Nexum</title>
+</head>
+<body>
+<div class="container">
+	<aside class="sidebar"> <h2>📘 Nexum </h2> <div class="sidebar-search"> <input type="text" id="sidebarSearch" placeholder="Search..." /> </div>
+ <nav> <ul id="sidebar-menu"></ul> </nav> </aside>
+   <main class="content">
+<section class='doc-block' id='table.Add'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> table.Add</h2>
+<p><br>	Appends all elements from a source table into a destination table.<br>	If either table is nil, the other table is returned directly.<br>	The destination table is modified in place.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type table'>table</span> :  The table to which elements will be added.</li><li><span class='param-type table'>table</span> :  The table whose elements will be appended.</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  The destination table containing the combined elements of both tables.</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local t1 = {1,2}
+local t2 = {3,4}
+table.Add(t1, t2)
+-- t1 = {1,2,3,4}
+</code></pre></div></section>
+    </main>
+</div>
+<script src="../../../root/manifest.js"></script>
+<script src="../../../main.js"></script>
+<script>window.addEventListener('DOMContentLoaded',()=>{buildSidebarMenu(manifest)});</script>
+</body>
+</html>
