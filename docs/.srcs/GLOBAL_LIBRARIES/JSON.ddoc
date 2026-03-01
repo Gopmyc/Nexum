@@ -1,0 +1,11 @@
+@GLOBAL_DESCRIPTION:
+{
+	Name        : JSON
+	Version     : 0.1.2
+	Description : A lightweight Lua library for encoding Lua tables to JSON strings and decoding JSON strings to Lua tables. Supports arrays, objects, strings, numbers, booleans, and null.
+	Author      : rxi
+	License     : MIT License
+	Repository  : https://github.com/rxi/json.lua
+	Compatibility: Lua 5.1+, LuaJIT
+	Usage       : Provides json.encode(val) to serialize Lua values and json.decode(str) to parse JSON strings.
+}
