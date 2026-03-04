@@ -9,6 +9,10 @@ if not (lovr or love or AddCSLuaFile or pcall(require, "lfs")) then
 end
 
 local function SetGlobalByPath(sPath, Value)
+	if type(Value) == "string" then
+		return error(Value)
+	end
+
 	local Last;
 	local t	= _G
 	for sPart in sPath:gmatch("[^%.]+") do
@@ -27,7 +31,7 @@ local bSuccess, Content;
 for iID, tGlobal in ipairs(CONFIGURATION.ENVIRONMENT) do
 	if tGlobal.KEY and tGlobal.PATH then
 		bSuccess, Content	= pcall(require, tGlobal.PATH)
-		SetGlobalByPath(bSuccess and tGlobal.KEY or false, bSuccess and Content)
+		SetGlobalByPath(bSuccess and tGlobal.KEY or false, Content)
 	end
 end
 
