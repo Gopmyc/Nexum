@@ -1,68 +1,148 @@
-# ┌────────────────┐
-# │ 'CORE' PROFILE │
-# └────────────────┘
-CORE:
-  # ┌───────────┐
-  # │ CONSTANTS │
-  # └───────────┘
+# ┌───────────────────────────────────────────────┐
+# │ DANGER LEVELS DESCRIPTION                     │
+# └───────────────────────────────────────────────┘
+#
+# Each profile in this file is assigned a "Danger Level" from 1 to 5.
+# This level estimates how risky it is to allow the profile in a sandboxed
+# environment.
+#
+# Danger Level Criteria:
+#   1 - Very safe:
+#       * Minimal built-in functions allowed
+#       * No access to files, OS, or environment manipulation
+#       * No dynamic code execution (load, dofile, loadstring)
+#
+#   2 - Safe:
+#       * Limited critical functions allowed (pcall, basic table/string operations)
+#       * Only safe OS functions like os.time or os.date
+#       * No file writing or environment changes
+#
+#   3 - Semi-safe:
+#       * Access to some file reading or environment introspection
+#       * Some critical libraries partially exposed
+#       * Limited dynamic code execution may be possible
+#
+#   4 - Dangerous:
+#       * Broad access to libraries and OS functions
+#       * Partial dynamic code execution allowed
+#       * Metatables can be modified
+#
+#   5 - Very dangerous:
+#       * Full access to all functions and libraries
+#       * Dynamic code execution fully allowed
+#       * File system and OS commands unrestricted
+#       * Metatables fully modifiable
+#
+# Use these danger levels to decide which profile is appropriate for a given
+# sandboxed Lua environment.
+
+# ┌────────────────────┐
+# │ 'UNLOCKED' PROFILE │ Danger Level: 5
+# └────────────────────┘
+UNLOCKED:
   constants:
-    SERVER:   true
-    CLIENT:   true
-    _VERSION: false
-  # ┌───────────┐
-  # │ FUNCTIONS │
-  # └───────────┘
+    SERVER:                true
+    CLIENT:                true
+    _VERSION:              true
   functions:
-    assert:       true
-    error:        true
-    ipairs:       true
-    next:         true
-    pairs:        true
-    pcall:        true
-    select:       true
-    tonumber:     true
-    tostring:     true
-    type:         true
-    unpack:       true
-    xpcall:       true
-    IsTable:      true
-    IsNumber:     true
-    IsUserdata:   true
-    IsString:     true
-    IsBool:       true
-    IsFunction:   true
-    IsThread:     true
-    Color:        true
-    MsgC:         true
-    PrintTable:   true
-    print:        true
-    setmetatable: true
-    getmetatable: false
-  # ┌───────────┐
-  # │ LIBRARIES │
-  # └───────────┘
+    assert:                true
+    error:                 true
+    ipairs:                true
+    next:                  true
+    pairs:                 true
+    pcall:                 true
+    select:                true
+    tonumber:              true
+    tostring:              true
+    type:                  true
+    unpack:                true
+    xpcall:                true
+    IsTable:               true
+    IsNumber:              true
+    IsString:              true
+    IsBool:                true
+    IsFunction:            true
+    IsThread:              true
+    Color:                 true
+    MsgC:                  true
+    PrintTable:            true
+    ReadFile:              true
+    LoadFileInEnvironment: true
+    FilesFind:             true
+    FetchURL:              true
+    WriteFile:             true
+    DeletePath:            true
+    print:                 true
+    setmetatable:          true
+    getmetatable:          true
+    lovr:                  true
+    love:                  true
+    io:                    true
   libraries:
-    math:       full
-    string:     full
-    os:
-      time:     true
-      date:     true
-    table:
-      insert:   true
-      remove:   true
-      sort:     true
-      concat:   true
-      copy:     true
-  # ┌─────────────┐
-  # │ NAME-SPACES │
-  # └─────────────┘
+    math:   full
+    string: full
+    os:     full
+    table:  full
   namespaces:
     ENV:
       exposed:  true
       readonly: false
-  # ┌───────────┐
-  # │ EXECUTION │
-  # └───────────┘
+  execution:
+    load:       true
+    loadstring: true
+    dofile:     true
+    loadfile:   true
+    setfenv:    true
+    getfenv:    true
+  metatable:
+    allow_string_meta: true
+    allow_table_meta:  true
+  fallback:
+    global:           false
+    error_on_missing: true
+
+# ┌─────────────────────┐
+# │ 'SAFE_MODE' PROFILE │ Danger Level: 2
+# └─────────────────────┘
+SAFE_MODE:
+  constants:
+    SERVER:   true
+    CLIENT:   true
+    _VERSION: true
+  functions:
+    assert:     true
+    error:      true
+    ipairs:     true
+    next:       true
+    pairs:      true
+    pcall:      true
+    select:     true
+    tonumber:   true
+    tostring:   true
+    type:       true
+    unpack:     true
+    xpcall:     true
+    IsTable:    true
+    IsNumber:   true
+    IsUserdata: true
+    IsString:   true
+    IsBool:     true
+    IsFunction: true
+    Color:      true
+    MsgC:       true
+    PrintTable: true
+    print:      true
+  libraries:
+    math:   full
+    string: full
+    os:
+      time: true
+      date: true
+    table:  full
+  namespaces:
+    ENV:
+      exposed:  true
+      readonly: true
   execution:
     load:       false
     loadstring: false
@@ -70,15 +150,373 @@ CORE:
     loadfile:   false
     setfenv:    false
     getfenv:    false
-  # ┌────────────┐
-  # │ META-TABLE │
-  # └────────────┘
+  metatable:
+    allow_string_meta: true
+    allow_table_meta:  false
+  fallback:
+    global:           false
+    error_on_missing: true
+
+# ┌──────────────────┐
+# │ 'LOCKED' PROFILE │ Danger Level: 1
+# └──────────────────┘
+LOCKED:
+  constants:
+    SERVER:   true
+    CLIENT:   true
+    _VERSION: true
+  functions:
+    assert:     true
+    error:      true
+    ipairs:     true
+    next:       true
+    pairs:      true
+    tonumber:   true
+    tostring:   true
+    IsTable:    true
+    IsNumber:   true
+    IsUserdata: true
+    IsString:   true
+    IsBool:     true
+    IsFunction: true
+    Color:      true
+    MsgC:       true
+    print:      true
+  libraries:
+    math:
+      abs:   true
+      floor: true
+      ceil:  true
+      min:   true
+      max:   true
+    string:
+      len:    true
+      sub:    true
+      byte:   true
+      char:   true
+      find:   true
+      format: true
+    os:
+      time: true
+      date: true
+    table:
+      insert: true
+      remove: true
+      sort:   true
+      concat: true
+      Add:    true
+      Copy:   true
+  namespaces:
+    ENV:
+      exposed:  false
+      readonly: true
+  execution:
+    load:       false
+    loadstring: false
+    dofile:     false
+    loadfile:   false
+    setfenv:    false
+    getfenv:    false
   metatable:
     allow_string_meta: false
     allow_table_meta:  false
-  # ┌──────────┐
-  # │ FALLBACK │
-  # └──────────┘
+  fallback:
+    global:           false
+    error_on_missing: true
+
+# ┌───────────────────┐
+# │ 'SANDBOX' PROFILE │ Danger Level: 1
+# └───────────────────┘
+SANDBOX:
+  constants:
+    SERVER:   true
+    CLIENT:   true
+    _VERSION: true
+  functions:
+    assert:     true
+    error:      true
+    ipairs:     true
+    next:       true
+    pairs:      true
+    select:     true
+    tonumber:   true
+    tostring:   true
+    IsTable:    true
+    IsNumber:   true
+    IsUserdata: true
+    IsString:   true
+    IsBool:     true
+    IsFunction: true
+    Color:      true
+    MsgC:       true
+    unpack:     true
+    xpcall:     true
+  libraries:
+    math:   full
+    string: full
+    os:
+      time: true
+      date: true
+    table:
+      insert: true
+      remove: true
+      sort:   true
+      concat: true
+      Add:    true
+      Copy:   true
+  namespaces:
+    ENV:
+      exposed:  false
+      readonly: true
+  execution:
+    load:       false
+    loadstring: false
+    dofile:     false
+    loadfile:   false
+    setfenv:    false
+    getfenv:    false
+  metatable:
+    allow_string_meta: false
+    allow_table_meta:  false
+  fallback:
+    global:           false
+    error_on_missing: true
+
+# ┌─────────────────┐
+# │ 'DEBUG' PROFILE │ Danger Level: 2
+# └─────────────────┘
+DEBUG:
+  constants:
+    SERVER:   true
+    CLIENT:   true
+    _VERSION: true
+  functions:
+    assert:        true
+    error:         true
+    ipairs:        true
+    next:          true
+    pairs:         true
+    pcall:         true
+    select:        true
+    tonumber:      true
+    tostring:      true
+    unpack:        true
+    xpcall:        true
+    IsTable:       true
+    IsNumber:      true
+    IsString:      true
+    IsBool:        true
+    IsFunction:    true
+    Color:         true
+    MsgC:          true
+    PrintTable:    true
+    ReadFile:      true
+  libraries:
+    math:   full
+    string: full
+    os:
+      time: true
+      date: true
+    table:
+      insert: true
+      remove: true
+      sort:   true
+      concat: true
+      Add:    true
+      Copy:   true
+  namespaces:
+    ENV:
+      exposed:  true
+      readonly: true
+  execution:
+    load:       false
+    loadstring: false
+    dofile:     false
+    loadfile:   false
+    setfenv:    false
+    getfenv:    false
+  metatable:
+    allow_string_meta: true
+    allow_table_meta:  false
+  fallback:
+    global:           false
+    error_on_missing: true
+
+# ┌───────────────────┐
+# │ 'NETWORK' PROFILE │ Danger Level: 2
+# └───────────────────┘
+NETWORK:
+  constants:
+    SERVER:   true
+    CLIENT:   true
+    _VERSION: true
+  functions:
+    assert:     true
+    error:      true
+    ipairs:     true
+    next:       true
+    pairs:      true
+    pcall:      true
+    select:     true
+    tonumber:   true
+    tostring:   true
+    type:       true
+    unpack:     true
+    xpcall:     true
+    IsTable:    true
+    IsNumber:   true
+    IsString:   true
+    IsBool:     true
+    IsFunction: true
+    FetchURL:   true
+    MsgC:       true
+  libraries:
+    math:   full
+    string: full
+    os:
+      time: true
+      date: true
+    table:
+      insert: true
+      remove: true
+      sort:   true
+      concat: true
+      Add:    true
+      Copy:   true
+  namespaces:
+    ENV:
+      exposed:  false
+      readonly: true
+  execution:
+    load:       false
+    loadstring: false
+    dofile:     false
+    loadfile:   false
+    setfenv:    false
+    getfenv:    false
+  metatable:
+    allow_string_meta: false
+    allow_table_meta:  false
+  fallback:
+    global:           false
+    error_on_missing: true
+
+# ┌────────────────┐
+# │ 'CALC' PROFILE │ Danger Level: 1
+# └────────────────┘
+CALC:
+  constants:
+    SERVER:   true
+    CLIENT:   true
+    _VERSION: true
+  functions:
+    assert:     true
+    error:      true
+    ipairs:     true
+    next:       true
+    pairs:      true
+    select:     true
+    tonumber:   true
+    tostring:   true
+    type:       true
+    unpack:     true
+    xpcall:     true
+    IsTable:    true
+    IsNumber:   true
+    IsString:   true
+    IsBool:     true
+    IsFunction: true
+    MsgC:       true
+  libraries:
+    math:   full
+    string: full
+    os:
+      time: true
+      date: true
+    table:
+      insert: true
+      remove: true
+      sort:   true
+      concat: true
+      Add:    true
+      Copy:   true
+  namespaces:
+    ENV:
+      exposed:  true
+      readonly: true
+  execution:
+    load:       false
+    loadstring: false
+    dofile:     false
+    loadfile:   false
+    setfenv:    false
+    getfenv:    false
+  metatable:
+    allow_string_meta: false
+    allow_table_meta:  false
+  fallback:
+    global:           false
+    error_on_missing: true
+
+# ┌──────────────────┐
+# │ 'PLUGIN' PROFILE │ Danger Level: 3
+# └──────────────────┘
+PLUGIN:
+  constants:
+    SERVER:   true
+    CLIENT:   true
+    _VERSION: true
+  functions:
+    assert:                 true
+    error:                  true
+    ipairs:                 true
+    next:                   true
+    pairs:                  true
+    pcall:                  true
+    select:                 true
+    tonumber:               true
+    tostring:               true
+    type:                   true
+    unpack:                 true
+    xpcall:                 true
+    IsTable:                true
+    IsNumber:               true
+    IsString:               true
+    IsBool:                 true
+    IsFunction:             true
+    Color:                  true
+    MsgC:                   true
+    PrintTable:             true
+    ReadFile:               true
+    LoadFileInEnvironment:  true
+    FilesFind:              true
+  libraries:
+    math:   full
+    string: full
+    os:
+      time: true
+      date: true
+    table:
+      insert: true
+      remove: true
+      sort:   true
+      concat: true
+      Add:    true
+      Copy:   true
+  namespaces:
+    ENV:
+      exposed:  true
+      readonly: false
+  execution:
+    load:       true
+    loadstring: true
+    dofile:     true
+    loadfile:   true
+    setfenv:    true
+    getfenv:    true
+  metatable:
+    allow_string_meta: true
+    allow_table_meta:  true
   fallback:
     global:           false
     error_on_missing: true
