@@ -29,5 +29,8 @@ return {
 		{ KEY = "FilesFind",				PATH = "env/FilesFind"				},
 		{ KEY = "LoadFileInEnvironment",	PATH = "env/LoadFileInEnvironment"	},
 		{ KEY = "ReadFile",					PATH = "env/ReadFile"				},
+		{ KEY = "WriteFile",				PATH = "env/WriteFile"				},
+		{ KEY = "DeletePath",				PATH = "env/DeletePath"				},
+		{ KEY = "FetchURL",					PATH = "env/FetchURL"				},
 	},
 }
