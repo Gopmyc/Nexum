@@ -50,7 +50,7 @@ function LIBRARY:IncludeFiles(FileSource, tSide, tFileArgs, tSandEnv, bIsBinary,
 	assert(IsTable(tSide),									"[RESSOURCES] The 'tSide' argument must be a table with 'client' and 'server' keys [#2]")
 	assert((tFileArgs == nil) or IsTable(tFileArgs),		"[RESSOURCES] The 'tFileArgs' argument must be a table or nil [#3]")
 
-	if (SERVER and tSide.CLIENT and IsString(FileSource)) and not IsDirectory(FileSource) then
+	if (SERVER and tSide.CLIENT and IsString(FileSource)) and not (IsDirectory(FileSource) or bIsBinary) then
 		self:AddCSLuaFile(FileSource)
 	end
 
@@ -124,18 +124,17 @@ function LIBRARY:ResolveCapabilities(tConfig, tCapabilities)
 	assert(IsTable(tCapabilities.SERVER),	"Capabilities.SERVER must be a table")
 	assert(IsTable(tCapabilities.CLIENT),	"Capabilities.CLIENT must be a table")
 
-	local tConfigBuffer = {}
-
-	local tLoad = {
+	local tConfigBuffer	= {}
+	local tLoad			= {
 		SERVER	= SERVER and tCapabilities.SERVER or nil,
 		CLIENT	= CLIENT and tCapabilities.CLIENT or nil,
 		SHARED	= tCapabilities.SHARED,
 	}
-
 	for _, tSourceSet in pairs(tLoad) do
 		for _, sCapability in ipairs(tSourceSet) do
 			local tSource, tTarget	= tConfig, tConfigBuffer
 			local sLastKey
+			local bMissing		= false
 
 			for sKey in string.gmatch(sCapability, "[^%.]+") do
 				local sUpperKey 	= sKey:upper()
@@ -147,13 +146,20 @@ function LIBRARY:ResolveCapabilities(tConfig, tCapabilities)
 					tTarget[sLastKey]	= tTarget[sLastKey] or {}
 					tTarget				= tTarget[sLastKey]
 					tSource				= tSource and tSource[sLastKey] or nil
+					if not tSource then
+						bMissing = true
+					end
 				end
 
-				sLastKey		= sUpperKey
+				sLastKey = sUpperKey
 			end
 
-			if sLastKey and tSource then
-				tTarget[sLastKey]	= tSource[sLastKey]
+			if sLastKey then
+				if tSource and tSource[sLastKey] ~= nil then
+					tTarget[sLastKey] = tSource[sLastKey]
+				else
+					MsgC(Color(255, 180, 0), "[CONFIG WARNING] capability '" .. sCapability .. "' not found in config")
+				end
 			end
 		end
 	end
