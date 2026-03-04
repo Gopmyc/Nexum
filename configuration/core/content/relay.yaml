@@ -1,0 +1,24 @@
+PATH:             "srcs/core/relay/"
+DEPENDENCIES:
+  INTERNAL: {}
+  EXTERNAL:
+    - "YAML"
+IS_BINARY:        false
+LOAD_SUBFOLDERS:  true
+ENV_PROFILE:
+  - "UNLOCKED"
+SIDES:
+  CLIENT: true
+  SERVER: true
+CAPABILITIES:
+  SERVER:
+    - "RELAY"
+  CLIENT: {}
+  SHARED: {}
+RUNTIME:
+  UPDATE:
+    STAGE:  "INGRESS"
+    ORDER:  0
+  DRAW:
+    STAGE:  "EMIT"
+    ORDER:  0
