@@ -27,3 +27,6 @@ docs_config.yaml
 tool_builder.exe
 tool_builder.a
 docs_builder.exe
+
+conf.lua
+main.lua
