@@ -602,7 +602,54 @@ Parser.parseTimestamp = function (self)
   } - os.time{year=1970, month=1, day=1, hour=8}
 end
 
-exports.eval = function (str)
+local function yaml_escape(v)
+	if type(v) == "string" then
+		return '"' .. v:gsub('"', '\\"') .. '"'
+	end
+	return tostring(v)
+end
+
+local function yaml_dump_table(t, nIndent)
+	local tLines = {}
+	local sIndent = string.rep("  ", nIndent)
+
+	local bArray = (#t > 0)
+
+	if bArray then
+		for _, v in ipairs(t) do
+			if type(v) == "table" then
+				table.insert(tLines, sIndent .. "-")
+				local tSub = yaml_dump_table(v, nIndent + 1)
+				for _, s in ipairs(tSub) do
+					table.insert(tLines, s)
+				end
+			else
+				table.insert(tLines, sIndent .. "- " .. yaml_escape(v))
+			end
+		end
+	else
+		for k, v in pairs(t) do
+			if type(v) == "table" then
+				table.insert(tLines, sIndent .. k .. ":")
+				local tSub = yaml_dump_table(v, nIndent + 1)
+				for _, s in ipairs(tSub) do
+					table.insert(tLines, s)
+				end
+			else
+				table.insert(tLines, sIndent .. k .. ": " .. yaml_escape(v))
+			end
+		end
+	end
+
+	return tLines
+end
+
+exports.dump_yaml = function(t)
+	local tLines = yaml_dump_table(t, 0)
+	return table.concat(tLines, "\n")
+end
+
+exports.eval = function(str)
   return Parser:new(exports.tokenize(str)):parse()
 end
 
