@@ -1,0 +1,6 @@
+@GLOBAL_DESCRIPTION:
+{
+	The DOWNLOAD command of the Relay module in Nexum.  
+	It downloads all files of a specified module from the remote repository,  
+	caches the manifest, updates status, and saves module content locally.
+}
