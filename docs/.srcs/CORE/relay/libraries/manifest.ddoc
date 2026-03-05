@@ -1,0 +1,20 @@
+@GLOBAL_DESCRIPTION:
+{
+	The MANIFEST library of the Relay module in Nexum.  
+	It manages module manifests, including registration, validation, link retrieval, and installation status tracking.
+}
+
+@NAME:	LIBRARY:SetManifest
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Sets the global manifest table for the relay system.  
+	Prevents overwriting if a manifest is already registered.
+}
+@PARAM:
+	<table> : Manifest table to register
+@RETURN:
+	<nil>
+@EXAMPLE:
+```lua
+LIBRARY:SetManifest(tManifest)
+```
