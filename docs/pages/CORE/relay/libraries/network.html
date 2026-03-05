@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="../../../../style.css" rel="stylesheet">
+<title>Nexum</title>
+</head>
+<body>
+<div class="container">
+	<aside class="sidebar"> <h2>📘 Nexum </h2> <div class="sidebar-search"> <input type="text" id="sidebarSearch" placeholder="Search..." /> </div>
+ <nav> <ul id="sidebar-menu"></ul> </nav> </aside>
+   <main class="content">
+<section class='global-description'>
+	<h2>Overview</h2>
+	<p><br>	The NETWORK library of the Relay module in Nexum.  <br>	It handles downloading module manifests and files from remote repositories.  <br>	Supports callbacks and error handling for network operations.<br></p>
+</section>
+<section class='doc-block' id='LIBRARY:GetManifestModule'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> LIBRARY:GetManifestModule</h2>
+<p><br>	Fetches the MANIFEST file of a module from a remote repository.  <br>	Executes a callback with the manifest content once retrieved.  <br>	Handles empty or invalid manifests gracefully.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  URL link to the module repository</li><li><span class='param-type string'>string</span> :  Module name</li><li><span class='param-type function'>function</span> :  Callback function to execute with the manifest content</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>LIBRARY:GetManifestModule("https://repo.nexum.io/modules/networking", "NETWORKING", function(content)
+	print("Manifest content:", content)
+end)
+</code></pre></div></section>
+    </main>
+</div>
+<script src="../../../../root/manifest.js"></script>
+<script src="../../../../main.js"></script>
+<script>window.addEventListener('DOMContentLoaded',()=>{buildSidebarMenu(manifest)});</script>
+</body>
+</html>
