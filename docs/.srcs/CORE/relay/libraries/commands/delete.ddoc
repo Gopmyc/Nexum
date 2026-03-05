@@ -1,0 +1,6 @@
+@GLOBAL_DESCRIPTION:
+{
+	The DELETE command of the Relay module in Nexum.  
+	It deletes all files and empty folders of a specified module.  
+	Ensures manifest status is updated and caches are cleaned accordingly.
+}
