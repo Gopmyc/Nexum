@@ -1,0 +1,25 @@
+@GLOBAL_DESCRIPTION:
+{
+	The PARSING library of the Relay module in Nexum.  
+	It provides utilities for parsing module manifests from raw content strings into structured tables.
+}
+
+@NAME:	LIBRARY:ParseManifest
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Parses a raw manifest string into a Lua table.  
+	Each non-empty line becomes an entry in the returned table.
+}
+@PARAM:
+	<string> : Raw manifest content as a string
+@RETURN:
+	<table> : Parsed manifest table, each line as an entry
+@EXAMPLE:
+```lua
+local rawContent = [[
+file1.lua
+file2.lua
+config/settings.lua
+]]
+local tManifest = LIBRARY:ParseManifest(rawContent)
+```
