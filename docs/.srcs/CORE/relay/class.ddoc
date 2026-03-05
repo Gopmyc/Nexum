@@ -1,0 +1,154 @@
+@GLOBAL_DESCRIPTION:
+{
+	The core Relay module of Nexum.  
+	This module handles module management commands for the Nexum project.  
+	It supports downloading modules, caching manifests, deleting files, cleaning folders, and executing commands.  
+	All actions respect CLIENT/SERVER shared state rules.
+}
+
+@NAME:	CORE:Initialize
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Initializes the relay instance.  
+	Reads the main MANIFEST file, sets up internal caches, and prepares the folder cleanup map.
+}
+@PARAM:
+	<nil>
+@RETURN:
+	<table>	: Initialized relay instance
+@EXAMPLE:
+```lua
+local relay = CORE:Initialize()
+````
+
+@NAME:	CORE:RunCommand
+@STATE:	CLIENT/SERVER
+@DESC:	{
+Executes a command line via the COMMAND library.
+}
+@PARAM: <string> : Command line to execute
+@RETURN: <var>	: Result from COMMAND:RunCommand
+@EXAMPLE:
+
+```lua
+relay:RunCommand("/download networking")
+```
+
+@NAME:	CORE:CacheManifest
+@STATE:	CLIENT/SERVER
+@DESC:	{
+Caches a module's manifest in the internal `_CACHE.MODULE_MANIFEST`.
+}
+@PARAM: <string>	: Module name <table>		: Manifest table
+@RETURN: <nil>
+@EXAMPLE:
+
+```lua
+relay:CacheManifest("NETWORKING", tManifest)
+```
+
+@NAME:	CORE:GetCachedManifest
+@STATE:	CLIENT/SERVER
+@DESC:	{
+Returns a cached manifest table for a given module name.
+}
+@PARAM: <string> : Module name
+@RETURN: <table> : Cached manifest table
+@EXAMPLE:
+
+```lua
+local tManifest = relay:GetCachedManifest("NETWORKING")
+```
+
+@NAME:	CORE:Destroy
+@STATE:	CLIENT/SERVER
+@DESC:	{
+Serializes and saves the MANIFEST file.
+Cleans up all internal state and deletes the relay instance.
+}
+@PARAM: <nil>
+@RETURN: <nil>
+@EXAMPLE:
+
+```lua
+relay:Destroy()
+```
+
+@NAME:	CORE:DeleteFiles
+@STATE:	CLIENT/SERVER
+@DESC:	{
+Deletes all files listed in the cached manifest for a module.
+Cleans empty folders and updates manifest status.
+}
+@PARAM: <string> : Module name
+@RETURN: <nil>
+@EXAMPLE:
+
+```lua
+relay:DeleteFiles("NETWORKING")
+```
+
+@NAME:	CORE:CleanEmptyFolders
+@STATE:	CLIENT/SERVER
+@DESC:	{
+Recursively scans directories starting from `sBasePath` and deletes empty folders tracked in `FOLDER_TO_CLEAN`.
+}
+@PARAM: <string> : Optional base path (default: "") <table>  : Optional visited map
+@RETURN: <nil>
+@EXAMPLE:
+
+```lua
+relay:CleanEmptyFolders()
+```
+
+@NAME:	CORE:GetManifestModule
+@STATE:	CLIENT/SERVER
+@DESC:	{
+Fetches the manifest of a module via the NETWORK library.
+}
+@PARAM: <string>	: Module name <function>	: Callback function to execute after fetching
+@RETURN: <var>	: Result from NETWORK:GetManifestModule
+@EXAMPLE:
+
+```lua
+relay:GetManifestModule("NETWORKING", function(result) print(result) end)
+```
+
+@NAME:	CORE:DownloadFile
+@STATE:	CLIENT/SERVER
+@DESC:	{
+Downloads a specific file for a module via NETWORK library.
+}
+@PARAM: <string>	: Module name <string>	: File path to download <function>	: Callback to execute on completion
+@RETURN: <var>	: Result from NETWORK:DownloadFile
+@EXAMPLE:
+
+```lua
+relay:DownloadFile("NETWORKING", "init.lua", function(success) print(success) end)
+```
+
+@NAME:	CORE:SaveCache
+@STATE:	CLIENT/SERVER
+@DESC:	{
+Saves a string content to the module cache folder.
+}
+@PARAM: <string>	: Module name <string>	: Content to save
+@RETURN: <nil>
+@EXAMPLE:
+
+```lua
+relay:SaveCache("NETWORKING", serializedManifest)
+```
+
+@NAME:	CORE:LoadCache
+@STATE:	CLIENT/SERVER
+@DESC:	{
+Loads a module manifest from the cache, parses it, and caches it internally.
+}
+@PARAM: <string> : Module name
+@RETURN: <table> : Loaded manifest table
+@EXAMPLE:
+
+```lua
+local tManifest = relay:LoadCache("NETWORKING")
+```
