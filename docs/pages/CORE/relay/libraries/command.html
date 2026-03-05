@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="../../../../style.css" rel="stylesheet">
+<title>Nexum</title>
+</head>
+<body>
+<div class="container">
+	<aside class="sidebar"> <h2>📘 Nexum </h2> <div class="sidebar-search"> <input type="text" id="sidebarSearch" placeholder="Search..." /> </div>
+ <nav> <ul id="sidebar-menu"></ul> </nav> </aside>
+   <main class="content">
+<section class='global-description'>
+	<h2>Overview</h2>
+	<p><br>	The COMMAND library of the Relay module in Nexum.  <br>	It handles parsing and executing user commands for the relay system.<br></p>
+</section>
+<section class='doc-block' id='LIBRARY:RunCommand'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> LIBRARY:RunCommand</h2>
+<p><br>	Parses a command line string and executes the corresponding command library.  <br>	Supports `/command args` syntax.  <br>	Handles invalid commands and errors gracefully with console messages.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type table'>table</span> :  Relay instance (tRelay)</li><li><span class='param-type string'>string</span> :  Command line to execute, starting with `/`</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local tRelay = CORE:Initialize()
+LIBRARY:RunCommand(tRelay, "/download networking")
+</code></pre></div></section>
+    </main>
+</div>
+<script src="../../../../root/manifest.js"></script>
+<script src="../../../../main.js"></script>
+<script>window.addEventListener('DOMContentLoaded',()=>{buildSidebarMenu(manifest)});</script>
+</body>
+</html>
