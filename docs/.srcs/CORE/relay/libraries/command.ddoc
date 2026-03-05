@@ -1,0 +1,23 @@
+@GLOBAL_DESCRIPTION:
+{
+	The COMMAND library of the Relay module in Nexum.  
+	It handles parsing and executing user commands for the relay system.
+}
+
+@NAME:	LIBRARY:RunCommand
+@STATE:	CLIENT/SERVER
+@DESC:	{
+	Parses a command line string and executes the corresponding command library.  
+	Supports `/command args` syntax.  
+	Handles invalid commands and errors gracefully with console messages.
+}
+@PARAM:
+	<table>	: Relay instance (tRelay)
+	<string> : Command line to execute, starting with `/`
+@RETURN:
+	<nil>
+@EXAMPLE:
+```lua
+local tRelay = CORE:Initialize()
+LIBRARY:RunCommand(tRelay, "/download networking")
+```
