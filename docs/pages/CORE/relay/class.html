@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="../../../style.css" rel="stylesheet">
+<title>Nexum</title>
+</head>
+<body>
+<div class="container">
+	<aside class="sidebar"> <h2>📘 Nexum </h2> <div class="sidebar-search"> <input type="text" id="sidebarSearch" placeholder="Search..." /> </div>
+ <nav> <ul id="sidebar-menu"></ul> </nav> </aside>
+   <main class="content">
+<section class='global-description'>
+	<h2>Overview</h2>
+	<p><br>	The core Relay module of Nexum.  <br>	This module handles module management commands for the Nexum project.  <br>	It supports downloading modules, caching manifests, deleting files, cleaning folders, and executing commands.  <br>	All actions respect CLIENT/SERVER shared state rules.<br></p>
+</section>
+<section class='doc-block' id='CORE:Initialize'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> CORE:Initialize</h2>
+<p><br>	Initializes the relay instance.  <br>	Reads the main MANIFEST file, sets up internal caches, and prepares the folder cleanup map.<br></p>
+<div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Initialized relay instance</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local relay = CORE:Initialize()
+</code></pre></div></section>
+<section class='doc-block' id='CORE:RunCommand'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> CORE:RunCommand</h2>
+<p><br>Executes a command line via the COMMAND library.<br></p>
+</section>
+<section class='doc-block' id='CORE:CacheManifest'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> CORE:CacheManifest</h2>
+<p><br>Caches a module's manifest in the internal `_CACHE.MODULE_MANIFEST`.<br></p>
+</section>
+<section class='doc-block' id='CORE:GetCachedManifest'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> CORE:GetCachedManifest</h2>
+<p><br>Returns a cached manifest table for a given module name.<br></p>
+</section>
+<section class='doc-block' id='CORE:Destroy'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> CORE:Destroy</h2>
+<p><br>Serializes and saves the MANIFEST file.<br>Cleans up all internal state and deletes the relay instance.<br></p>
+</section>
+<section class='doc-block' id='CORE:DeleteFiles'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> CORE:DeleteFiles</h2>
+<p><br>Deletes all files listed in the cached manifest for a module.<br>Cleans empty folders and updates manifest status.<br></p>
+</section>
+<section class='doc-block' id='CORE:CleanEmptyFolders'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> CORE:CleanEmptyFolders</h2>
+<p><br>Recursively scans directories starting from `sBasePath` and deletes empty folders tracked in `FOLDER_TO_CLEAN`.<br></p>
+</section>
+<section class='doc-block' id='CORE:GetManifestModule'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> CORE:GetManifestModule</h2>
+<p><br>Fetches the manifest of a module via the NETWORK library.<br></p>
+</section>
+<section class='doc-block' id='CORE:DownloadFile'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> CORE:DownloadFile</h2>
+<p><br>Downloads a specific file for a module via NETWORK library.<br></p>
+</section>
+<section class='doc-block' id='CORE:SaveCache'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> CORE:SaveCache</h2>
+<p><br>Saves a string content to the module cache folder.<br></p>
+</section>
+<section class='doc-block' id='CORE:LoadCache'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> CORE:LoadCache</h2>
+<p><br>Loads a module manifest from the cache, parses it, and caches it internally.<br></p>
+</section>
+    </main>
+</div>
+<script src="../../../root/manifest.js"></script>
+<script src="../../../main.js"></script>
+<script>window.addEventListener('DOMContentLoaded',()=>{buildSidebarMenu(manifest)});</script>
+</body>
+</html>
