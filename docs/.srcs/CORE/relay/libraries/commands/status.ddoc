@@ -1,0 +1,6 @@
+@GLOBAL_DESCRIPTION:
+{
+	The STATUS command of the Relay module in Nexum.  
+	It displays the installation status of all modules in the manifest,  
+	highlighting installed and not-installed modules in the console.
+}
