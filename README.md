@@ -68,8 +68,13 @@ Nexum is **engine-agnostic**, compatible with LÖVR, Love2D, or any custom real-
 | **env/builder**    | Builds secure environments per profile                 | All              |
 | **env/loader**     | Loads scripts into sandboxed environments              | All              |
 | **Custom Library** | Local libraries per file or subloader                  | CLIENT or SERVER |
+| **relay**          | Automatic external module management                   | All              |
+
 
 > Libraries can be **initialized per file**, isolated by subloader, and configured for CLIENT, SERVER, or both.
+
+> The **Relay** module enables Nexum to manage external modules automatically:  
+> download modules from manifests, cache them locally, delete files and folders safely, and track module status for plug-and-play reuse across sessions.
 
 ---
 
@@ -118,6 +123,11 @@ flowchart TD
 * 🔧 Full error handling; optional debug mode
 * 🔧 Runtime pipelines for instance management
 * 🔧 Plug-and-play modules for extensibility
+* 🔧 **Automatic module management via Relay**:
+  * Download and install modules from remote manifests
+  * Track installed/not installed state
+  * Cache manifests for fast reload
+  * Remove modules and clean folders automatically
 
 <p align="right"><a href="#readme-top">🔝</a></p>
 
@@ -156,15 +166,29 @@ Here’s how to set up the project!
 
 ---
 
+Parfait ! Voici une version complétée et plus détaillée pour la section **Usage**, avec deux exemples clairs d’utilisation de **Relay** :
+
 ## Usage
 
 ```lua
 -- Initialize Nexum
 local Nexum = require("srcs")
 
--- Instantiate an example object
+-- Instantiate a networking instance
 local sInstanceName	= "SERVER ONE"
 local myInstance	= Nexum:Instantiate("networking", sInstanceName)
+
+-- Instantiate Relay for module management
+local tRelay = Nexum:Instantiate("relay", "RELAY #1")
+
+-- Example 1: Download a module
+tRelay:RunCommand("/download MODULE_NAME")  -- Downloads module files, caches manifest, sets status
+
+-- Example 2: Remove a module
+tRelay:RunCommand("/delet MODULE_NAME")     -- Deletes module files and cleans empty folders
+
+-- Example 3: Check module statuses
+tRelay:RunCommand("/status")                -- Lists all modules with INSTALLED/NOT INSTALLED
 
 -- Update loop
 function love.update(dt)
@@ -176,10 +200,20 @@ function love.draw()
     Nexum:Draw()
 end
 
+-- Quit handler
 function love.quit()
-	Nexum:Quit()
+    Nexum:Quit()
 end
+````
+
+> You can also use Relay directly via command-line arguments when launching LOVR or LOVE2D projects, for example:
+
+```bash
+./lovr --console Nexum "SERVER" "/status"
+./lovr --console Nexum "CLIENT" "/download networking"
 ```
+
+> This allows you to dynamically manage external modules without modifying Nexum code. Modules are plug-and-play, cached, and automatically tracked between sessions.
 
 *For more examples, check the [documentation](https://gopmyc.github.io/Nexum/) or the [tests](https://github.com/Gopmyc/Nexum/tree/main/tests) folder.*
 
@@ -195,7 +229,7 @@ end
 * [X] Enable secure file management for the parent environment
 * [X] Allow the addition of 'plug and play' modules (without having to modify Nexum for integration)
 * [X] Enabling the instantiation of loaded classes and autonomous management of their lifecycle
-* [ ] Add an interface to facilitate adding and removing modules
+* [X] Add an interface to facilitate adding and removing modules
 
 Feel free to suggest features via [issues](https://github.com/Gopmyc/Nexum/issues).
 
