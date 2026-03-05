@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="../../../../style.css" rel="stylesheet">
+<title>Nexum</title>
+</head>
+<body>
+<div class="container">
+	<aside class="sidebar"> <h2>📘 Nexum </h2> <div class="sidebar-search"> <input type="text" id="sidebarSearch" placeholder="Search..." /> </div>
+ <nav> <ul id="sidebar-menu"></ul> </nav> </aside>
+   <main class="content">
+<section class='global-description'>
+	<h2>Overview</h2>
+	<p><br>	The SUBLOADER_BASE library manages the creation, validation, and initialization of sub-loaders within the main loader.  <br>	It ensures file integrity, proper environment setup, and provides accessors for sub-loaders and file groups.<br></p>
+</section>
+<section class='doc-block' id='SUBLOADER_BASE:Initialize'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> SUBLOADER_BASE:Initialize</h2>
+<p><br>	Creates a new SUBLOADER_BASE instance and initializes attributes like CONFIG, BASE_PATH, and LOADER reference.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type table'>table</span> :  Configuration table for the loader</li><li><span class='param-type string'>string</span> :  Base path for resolving sub-loader scripts</li><li><span class='param-type table'>table</span> :  Reference to the parent loader</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Initialized SUBLOADER_BASE object</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local subLoader = SUBLOADER_BASE:Initialize(tConfig, "addons/myaddon/", Loader)
+</code></pre></div></section>
+<section class='doc-block' id='SUBLOADER_BASE:InitializeGroup'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> SUBLOADER_BASE:InitializeGroup</h2>
+<p><br>	Initializes a sub-loader group by loading its configuration, validating its content,  <br>	and calling the sub-loader's Initialize method.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  Group name to initialize</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Sub-loader object</li><li><span class='param-type table'>table</span> :  Initialized content of the sub-loader</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local sub, content = subLoader:InitializeGroup("WEAPONS")
+</code></pre></div></section>
+<section class='doc-block' id='SUBLOADER_BASE:CheckFileStructureIntegrity'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> SUBLOADER_BASE:CheckFileStructureIntegrity</h2>
+<p><br>	Validates a file against the loader's RULES_FILES to ensure required fields and types are correct.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type number'>number</span> :  File ID or index</li><li><span class='param-type table'>table</span> :  File data table to validate</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type boolean'>boolean</span> :  True if valid, otherwise outputs an error</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>subLoader:CheckFileStructureIntegrity(1, tFile)
+</code></pre></div></section>
+<section class='doc-block' id='SUBLOADER_BASE:SetAttribute'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> SUBLOADER_BASE:SetAttribute</h2>
+<p><br>	Sets a key-value attribute in the sub-loader instance.  <br>	Useful for storing references or metadata.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  Attribute key</li><li><span class='param-type any'>any</span> :  Attribute value</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>subLoader:SetAttribute("DEBUG_MODE", true)
+</code></pre></div></section>
+<section class='doc-block' id='SUBLOADER_BASE:GetAttribute'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> SUBLOADER_BASE:GetAttribute</h2>
+<p><br>	Retrieves a previously set attribute by key.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  Attribute key</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type any'>any</span> :  Value of the attribute</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local debug = subLoader:GetAttribute("DEBUG_MODE")
+</code></pre></div></section>
+<section class='doc-block' id='SUBLOADER_BASE:GetSubLoaders'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> SUBLOADER_BASE:GetSubLoaders</h2>
+<p><br>	Returns a table containing all initialized sub-loaders.<br></p>
+<div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Table of sub-loaders</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local allSub = subLoader:GetSubLoaders()
+</code></pre></div></section>
+<section class='doc-block' id='SUBLOADER_BASE:GetSubLoader'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> SUBLOADER_BASE:GetSubLoader</h2>
+<p><br>	Retrieves a specific sub-loader by group name.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  Group name</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type table'>table</span> :  Sub-loader object</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local weaponsLoader = subLoader:GetSubLoader("WEAPONS")
+</code></pre></div></section>
+<section class='doc-block' id='SUBLOADER_BASE:GetGroupByFileName'>
+<h2><span class='state-dot' style='background:linear-gradient(135deg,#f1c40f 50%,#3498db 50%);'></span> SUBLOADER_BASE:GetGroupByFileName</h2>
+<p><br>	Finds which group a specific file belongs to within all sub-loaders.<br></p>
+<div class='doc-subblock'><h3>Parameters</h3><ul><li><span class='param-type string'>string</span> :  File name (case-insensitive)</li></ul></div><div class='doc-subblock'><h3>Returns</h3><ul><li><span class='param-type string'>string</span> :  Group name</li><li><span class='param-type number'>number</span> :  File ID within the group</li><li><span class='param-type table'>table</span> :  File data table</li></ul></div><div class='doc-subblock code-block'><pre><code class='language-lua'>local group, id, file = subLoader:GetGroupByFileName("AK47")
+</code></pre></div></section>
+    </main>
+</div>
+<script src="../../../../root/manifest.js"></script>
+<script src="../../../../main.js"></script>
+<script>window.addEventListener('DOMContentLoaded',()=>{buildSidebarMenu(manifest)});</script>
+</body>
+</html>
