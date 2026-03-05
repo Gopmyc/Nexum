@@ -376,6 +376,30 @@ The commit rules are defined in a JSON configuration that maps file paths to com
     }
   },
   {
+    "path": "srcs/relay/",
+    "actions": {
+      "add":     { "tag": "feat",      "emoji": "📡", "desc": "add relay module and init" },
+      "modify":  { "tag": "refactor",  "emoji": "🔁", "desc": "update relay module logic" },
+      "delete":  { "tag": "chore",     "emoji": "🗑️", "desc": "remove relay module" }
+    }
+  },
+  {
+    "path": "srcs/relay/libraries/",
+    "actions": {
+      "add":     { "tag": "feat",      "emoji": "📚", "desc": "add relay library functions" },
+      "modify":  { "tag": "refactor",  "emoji": "🧩", "desc": "update relay library logic" },
+      "delete":  { "tag": "chore",     "emoji": "🗑️", "desc": "remove relay library" }
+    }
+  },
+  {
+    "path": "srcs/relay/libraries/commands/",
+    "actions": {
+      "add":     { "tag": "feat",      "emoji": "📝", "desc": "add relay command handlers" },
+      "modify":  { "tag": "refactor",  "emoji": "🔧", "desc": "update relay command logic" },
+      "delete":  { "tag": "chore",     "emoji": "🗑️", "desc": "remove relay command" }
+    }
+  },
+  {
     "path": "config/",
     "actions": {
       "add":     { "tag": "config",    "emoji": "⚙️", "desc": "add config file" },
