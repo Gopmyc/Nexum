@@ -1,8 +1,8 @@
 const manifest = {
 		"CORE": {
-				"LOADER": {
-						"CLASS.html": null,
-						"LIBRARIES": {
+				"loader": {
+						"class.html": null,
+						"libraries": {
 								"ENV_BUILDER.html": null,
 								"ENV_LOADER.html": null,
 								"FINDER.html": null,
@@ -10,9 +10,23 @@ const manifest = {
 								"RESSOURCES.html": null,
 								"RUNTIME.html": null
 						},
-						"SUBLOADERS": {
-								"CORE.html": null,
-								"SUBLOADERS_BASE.html": null
+						"subloaders": {
+								"core.html": null,
+								"subloader_base.html": null
+						}
+				},
+				"relay": {
+						"class.html": null,
+						"libraries": {
+								"command.html": null,
+								"commands": {
+										"delete.html": null,
+										"download.html": null,
+										"status.html": null
+								},
+								"manifest.html": null,
+								"network.html": null,
+								"parsing.html": null
 						}
 				}
 		},
